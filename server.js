@@ -20,12 +20,18 @@ const writeLimiter = rateLimit({
   message: { error: 'Too many requests, please try again later.' },
 });
 
-// Helper: resolve article file path, confined to ARTICLES_DIR
+// Helper: resolve article file path, confined to ARTICLES_DIR.
+// Explicitly strips any character that is not lowercase alphanumeric or hyphen
+// before building the path, preventing path traversal even if slug validation
+// is bypassed or called with an already-validated value.
 function articlePath(slug) {
-  const resolved = path.resolve(ARTICLES_DIR, `${slug}.md`);
-  if (!resolved.startsWith(ARTICLES_DIR + path.sep) && resolved !== ARTICLES_DIR) {
-    return null;
-  }
+  if (!isValidSlug(slug)) return null;
+  // Re-extract only allowed characters so the path is constructed from a
+  // sanitized value that CodeQL and human readers can verify is safe.
+  const safe = slug.replace(/[^a-z0-9-]/g, '');
+  const resolved = path.resolve(ARTICLES_DIR, safe + '.md');
+  // Final boundary check: ensure the resolved path stays inside ARTICLES_DIR
+  if (!resolved.startsWith(ARTICLES_DIR + path.sep)) return null;
   return resolved;
 }
 
