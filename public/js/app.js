@@ -268,7 +268,7 @@ searchInput.addEventListener('input', () => {
     searchQuery = searchInput.value.trim();
     activeCategory = null;
     activeTag = null;
-    if (!articleListView.classList.contains('hidden') === false) {
+    if (articleListView.classList.contains('hidden')) {
       showListView();
     }
     refreshList();

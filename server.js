@@ -2,13 +2,32 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const { marked } = require('marked');
+const rateLimit = require('express-rate-limit');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const ARTICLES_DIR = process.env.ARTICLES_DIR || path.join(__dirname, 'articles');
+const ARTICLES_DIR = path.resolve(process.env.ARTICLES_DIR || path.join(__dirname, 'articles'));
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Rate limiter for write operations (create, update, delete)
+const writeLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 60,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many requests, please try again later.' },
+});
+
+// Helper: resolve article file path, confined to ARTICLES_DIR
+function articlePath(slug) {
+  const resolved = path.resolve(ARTICLES_DIR, `${slug}.md`);
+  if (!resolved.startsWith(ARTICLES_DIR + path.sep) && resolved !== ARTICLES_DIR) {
+    return null;
+  }
+  return resolved;
+}
 
 // Helper: list all article slugs
 function listSlugs() {
@@ -20,8 +39,8 @@ function listSlugs() {
 
 // Helper: read and parse an article file
 function readArticle(slug) {
-  const filePath = path.join(ARTICLES_DIR, `${slug}.md`);
-  if (!fs.existsSync(filePath)) return null;
+  const filePath = articlePath(slug);
+  if (!filePath || !fs.existsSync(filePath)) return null;
   const raw = fs.readFileSync(filePath, 'utf8');
   return parseArticle(slug, raw);
 }
@@ -50,8 +69,10 @@ function parseArticle(slug, raw) {
 
 // Helper: write article to disk
 function writeArticle(slug, title, category, tags, body) {
+  const filePath = articlePath(slug);
+  if (!filePath) throw new Error('Invalid slug');
   const fm = `---\ntitle: ${title}\ncategory: ${category}\ntags: ${tags.join(', ')}\n---\n`;
-  fs.writeFileSync(path.join(ARTICLES_DIR, `${slug}.md`), fm + body, 'utf8');
+  fs.writeFileSync(filePath, fm + body, 'utf8');
 }
 
 // Helper: validate slug (alphanumeric and hyphens only)
@@ -93,12 +114,13 @@ app.get('/api/articles/:slug', (req, res) => {
 });
 
 // POST /api/articles - create a new article
-app.post('/api/articles', (req, res) => {
+app.post('/api/articles', writeLimiter, (req, res) => {
   const { slug, title, category = 'General', tags = [], body = '' } = req.body;
   if (!slug || !title) return res.status(400).json({ error: 'slug and title are required' });
   if (!isValidSlug(slug)) return res.status(400).json({ error: 'Invalid slug: use lowercase letters, numbers and hyphens only' });
 
-  const filePath = path.join(ARTICLES_DIR, `${slug}.md`);
+  const filePath = articlePath(slug);
+  if (!filePath) return res.status(400).json({ error: 'Invalid slug' });
   if (fs.existsSync(filePath)) return res.status(409).json({ error: 'Article already exists' });
 
   writeArticle(slug, title, category, tags, body);
@@ -106,12 +128,13 @@ app.post('/api/articles', (req, res) => {
 });
 
 // PUT /api/articles/:slug - update an existing article
-app.put('/api/articles/:slug', (req, res) => {
+app.put('/api/articles/:slug', writeLimiter, (req, res) => {
   const { slug } = req.params;
   if (!isValidSlug(slug)) return res.status(400).json({ error: 'Invalid slug' });
-  if (!readArticle(slug)) return res.status(404).json({ error: 'Article not found' });
 
   const current = readArticle(slug);
+  if (!current) return res.status(404).json({ error: 'Article not found' });
+
   const {
     title = current.title,
     category = current.category,
@@ -124,11 +147,11 @@ app.put('/api/articles/:slug', (req, res) => {
 });
 
 // DELETE /api/articles/:slug - delete an article
-app.delete('/api/articles/:slug', (req, res) => {
+app.delete('/api/articles/:slug', writeLimiter, (req, res) => {
   const { slug } = req.params;
   if (!isValidSlug(slug)) return res.status(400).json({ error: 'Invalid slug' });
-  const filePath = path.join(ARTICLES_DIR, `${slug}.md`);
-  if (!fs.existsSync(filePath)) return res.status(404).json({ error: 'Article not found' });
+  const filePath = articlePath(slug);
+  if (!filePath || !fs.existsSync(filePath)) return res.status(404).json({ error: 'Article not found' });
   fs.unlinkSync(filePath);
   res.json({ message: 'Article deleted' });
 });
