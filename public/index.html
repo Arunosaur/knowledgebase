@@ -9754,22 +9754,22 @@ async function sendQA(){
     description: i?.description || ''
   }));
   
-  const knowledgeBlock = !hasAuthoritativeSourceContext && knowledgeHits.length
+  const knowledgeBlock = knowledgeHits.length
     ? `\n=====================================\nRELEVANT KNOWLEDGE (🧠)\n=====================================\n${knowledgeHits.map((h, i)=>`[${i+1}] ${h.question}\n${h.answer}`).join('\n\n')}`
     : '';
-  const buildDocBlock = hits => !hasAuthoritativeSourceContext && hits.length
+  const buildDocBlock = hits => hits.length
     ? `\n=====================================\nRELEVANT DOCUMENTS (📄)\n=====================================\n${hits.map((h, i)=>`[${i+1}] ${h.fileName}\n${h.text}`).join('\n\n')}`
     : '';
   let selectedDocHits = Array.isArray(docHits) ? docHits.slice(0, 10) : [];
   let docBlock = buildDocBlock(selectedDocHits);
-  const jiraContext = !hasAuthoritativeSourceContext && jiraForPrompt.length
+  const jiraContext = jiraForPrompt.length
     ? "Relevant JIRA issues found:\n" + jiraForPrompt.map(i => `${i.key} [${i.type}/${i.status}] ${i.summary}`).join("\n")
     : "";
-  const jiraBlock = !hasAuthoritativeSourceContext && jiraForPrompt.length
+  const jiraBlock = jiraForPrompt.length
     ? `\n=====================================\nRELEVANT JIRA ISSUES (🎫)\n=====================================\n${jiraForPrompt.map(j=>`${j.key} [${j.type}/${j.status}] ${j.summary}`).join('\n')}`
     : '';
   const dbSummaryLines = Array.isArray(dbIssueResults?.summaryLines) ? dbIssueResults.summaryLines : [];
-  const dbBlock = !hasAuthoritativeSourceContext && dbSummaryLines.length
+  const dbBlock = dbSummaryLines.length
     ? `\n=====================================\nLIVE DATABASE FINDINGS (🗄️)\n=====================================\n${dbSummaryLines.map(line=>`- ${line}`).join('\n')}`
     : '';
   const jiraDescriptionBlock = userTicketKeys.length

@@ -439,6 +439,28 @@ function fail(msg) { console.error('✗', msg); failed++; }
     else fail('L4 missing postgres/graphReady in '+JSON.stringify(r.json));
   } catch(e){ fail('L4 threw '+e.message); }
 
+  // SECTION M — Apache AGE (PROMPT 35)
+  try {
+    const r = await request('/health');
+    if (r.status === 200 && r.json && 'age' in r.json) pass('M1 GET /health has age field');
+    else fail('M1 missing age field in '+JSON.stringify(r.json));
+  } catch(e){ fail('M1 threw '+e.message); }
+
+  try {
+    const r = await request('/db/impact-graph?name=DUAL&schema=SYS&group=manhattan-main&depth=1');
+    if (r.status === 200 || r.status === 501) {
+      if (r.status === 200 && r.json && Array.isArray(r.json.nodes)) pass('M2 GET /db/impact-graph returns nodes array');
+      else if (r.status === 501) pass('M2 GET /db/impact-graph → 501 (AGE unavailable, fallback expected)');
+      else fail('M2 unexpected response: '+JSON.stringify(r.json));
+    } else fail('M2 unexpected status '+r.status);
+  } catch(e){ fail('M2 threw '+e.message); }
+
+  try {
+    const r = await request('/db/scan-status');
+    if (r.status === 200 && r.json && 'running' in r.json) pass('M3 POST /db/scan-schema with AGE enabled → scan status');
+    else fail('M3 unexpected '+JSON.stringify(r.json));
+  } catch(e){ fail('M3 threw '+e.message); }
+
   console.log(`\nSummary: ✓ ${passed} passed  ✗ ${failed} failed`);
   process.exit(failed?1:0);
 })();

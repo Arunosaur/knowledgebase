@@ -1,4 +1,4 @@
-# McLane WMS·IQ — GitHub Copilot Instructions (v18)
+# McLane WMS·IQ — GitHub Copilot Instructions (v20)
 
 > Place this file at `.github/copilot-instructions.md` in your project root.
 > Copilot will use it automatically as workspace context in VS Code.
@@ -41,25 +41,27 @@
 | 29 | Self-building semantic layer — background AI discovery | ✅ Done | K1–K4 |
 | 30 | Power Automate JIRA→Knowledge pipeline | ✅ Done | — |
 | 31 | Demo polish — dashboard, sample questions, answer quality, demo mode | ✅ Done | UI1–UI3 |
-| 32 | SQL abstraction layer + remove all hard-coding | 🔜 Next | — |
-| 33 | PostgreSQL + pgvector semantic search | 🔜 Next | — |
+| 32/33 | Oracle Schema Knowledge Graph + pgvector | ✅ Done | L1–L4 |
 | 34 | Auto-detect Oracle code changes via LAST_DDL_TIME polling | 🔜 Future | — |
-| 35 | Claude API for Q&A answers | 🔜 Future | — |
-| 36 | LDAP authentication (multi-user) | 🔜 Future | — |
-| 37 | Docker Compose multi-container deployment | 🔜 Future | — |
+| 35 | Apache AGE graph database — dependency analysis | ✅ Done | M1–M3 |
+| 36 | React + TypeScript frontend migration + conversational Ask mode | 🔜 Next | — |
+| 37 | LDAP authentication (multi-user) | 🔜 Future | — |
+| 38 | Docker Compose multi-container deployment | 🔜 Future | — |
 
-**Test suite:** `node test-bridge.js` → **46/46 passing** (A1–A6, B1–B8, C1–C3, D1–D2, E1–E4, F1–F4, G1–G4, H1–H2, I1–I5, J1–J3, K1–K4)
-> ✅ 46/46 zero failures
+**Test suite:** `node test-bridge.js` → **53/53 passing** (A1–A6, B1–B8, C1–C3, D1–D2, E1–E4, F1–F4, G1–G4, H1–H2, I1–I5, J1–J3, K1–K4, L1–L4, M1–M3)
+> ✅ 53/53 zero failures
 > ✅ E1 uses SYS.DUAL with depth=1 — DUAL guaranteed forever, depth=1 prevents infinite BFS
-> ℹ️ App served at `http://localhost:3333`. `file://` still works as fallback.
-> ℹ️ JIRA search uses `textfields ~ "term*"` JQL with stop word filtering.
+> ℹ️ App served at `http://localhost:3333`.
 > ℹ️ Semantic worker runs on port 3334 (Python Flask). Bridge launches it on startup via .venv.
+> ℹ️ PostgreSQL + pgvector running on port 5432 via Colima + docker-compose
+> ℹ️ Embedding model: mxbai-embed-large (1024 dims) — nomic-embed-text was broken/corrupted
 
 **Live DBs:** All 5 groups confirmed connected over VPN as ASRAJAG
 **Atlassian:** Connected as arun.rajagopalan@mclaneco.com @ mclane.atlassian.net
-**Documents:** 226 documents indexed, reindexed with improved chunking (2500/300)
-**Semantic:** 118+ intents auto-discovered from MANH_CODE + FRAMEWORK
-**Knowledge:** 4+ entries, gold standard quality
+**Documents:** 222 documents indexed (226 total — 4 PDFs failed pdftotext extraction), migrated to pgvector
+**Semantic:** 76 confirmed intents migrated to pgvector
+**Knowledge:** Rebuilt organically — save good Q&A answers to rebuild
+**Graph:** 8,802+ Oracle objects scanned (manhattan-main: MANH, MANH_CODE, SE_DM, SE_MDA)
 
 ---
 
@@ -67,14 +69,16 @@
 
 | Item | Value | Notes |
 |------|-------|-------|
-| SQLCL command | `sql` | On `$PATH` on macOS |
+| SQLCL command | `sql` | On `$PATH` on macOS — do NOT change |
 | MCP args | `["-R", "2", "-mcp"]` | Restrict level 2, MCP mode |
 | Bridge port | `3333` | Default, no conflicts |
 | Semantic worker port | `3334` | Python Flask, launched by bridge |
+| PostgreSQL port | `5432` | Colima Docker, wmsiq/wmsiq/wmsiq |
 | Ollama URL | `http://localhost:11434` | Local, default port |
-| Ollama model | `llama3:latest` (8B) | Confirmed working |
-| Embedding model | `nomic-embed-text:latest` | 274MB, needed for pgvector |
-| Other models | `mistral`, `phi`, `tinyllama` | Can be removed to free RAM |
+| Ollama model | `qwen2.5:14b` | Upgraded from llama3 — better WMS answers |
+| Available models | `gemma4:26b`, `qwen2.5:14b`, `llama3`, `phi`, `mistral`, `tinyllama` | |
+| Embedding model | `mxbai-embed-large` | 1024 dimensions — confirmed working |
+| ⚠️ nomic-embed-text | BROKEN — returns identical vectors | Do NOT use — repull does not fix it |
 | Ollama health check | Uses `/api/tags` not `/api/models` | `/api/models` does not exist |
 | Ollama response format | NDJSON streaming by default | Must use `stream: false` in ALL /ollama/chat calls |
 | Ollama timeout | 60s AbortController | Prevents Q&A hang on large prompts |
@@ -91,11 +95,13 @@
 | Sleep: after notification | `400ms` | Do not reduce |
 | Sleep: after each tool call | `600ms` | Critical: connect must finish before run-sql |
 | Pool shape | queue-based FIFO, not busy-flag | Concurrent requests serialise per group |
-| OS | macOS | 32GB RAM |
+| OS | macOS | 32GB RAM, Apple Silicon (arm64) |
+| Docker runtime | Colima (not Docker Desktop) | Work laptop — no Docker Desktop allowed |
+| Docker image | `pgvector/pgvector:pg16` | arm64 image pulled via crane from outside corporate network |
+| docker-compose command | `docker-compose` (hyphenated) | New `docker compose` plugin not installed |
 | MSAL | Blocked by McLane Azure AD (AADSTS65002) | Use Power Automate POST /docs/upload instead |
 | Oracle views | Use `DBA_*` not `ALL_*` | ASRAJAG has DBA privileges in all databases |
-| LAST_DDL_TIME | Removed from /db/objects | Caused CSV parse failures — do NOT add back |
-| SQLcl footer filter | Strip "N rows selected." variants | parseMCPResult() must filter these |
+| SQLcl footer filter | Strip "N rows selected." variants | parseMCPResult() must filter these — "076 rows selected." appears as ghost object |
 | JSON encoding | UTF-8 | `Content-Type: application/json; charset=utf-8` on all responses |
 | POST /db/query | SELECT-only, max 50 rows | Rejects all DDL/DML |
 | /db/impact depth | Optional, default 3, max 5 | depth=1 for E1/E2 tests (fast path) |
@@ -104,22 +110,18 @@
 | Atlassian email | arun.rajagopalan@mclaneco.com | Confirmed working |
 | Atlassian auth | Basic auth (email:apiToken) | NOT MCP OAuth — REST API only |
 | JIRA JQL | `textfields ~ "term*" AND textfields ~ "term2*"` | Stop words filtered, max 4 terms |
-| JIRA stop words | Full list in lib/jira-routes.js STOP_WORDS | Includes solving, fixing, handling etc |
-| Doc chunk size | 2500 chars, 300 overlap | Upgraded from 800/100 — better for technical docs |
-| Doc search results | 10 results | Upgraded from 5 |
+| Doc chunk size | 2500 chars, 300 overlap | Better for technical docs |
+| Doc search results | 10 results | config: docsMaxResults |
 | Doc preprocessing | preprocessDocText() strips TOC/PAGEREF noise | Word field codes, layout numbers removed |
 | Doc context prefix | `[Document: {title}]` prepended to each chunk | AI knows which document it is reading |
 | Doc reindex | POST /docs/reindex | Re-processes all existing docs without re-upload |
+| Doc upload | bulk_upload_docs.py --dir --group --extensions docx,pdf,txt,xlsx | PDFs need: brew install poppler |
 | Semantic auto-pause | After full scan: paused=true | User must manually Rescan |
-| Semantic bulk confirm | ✓ Confirm all ≥ N% | Threshold: 70/80/90/95/100% |
 | JIRA upload | POST /jira/upload | Resolved/Closed only → docs-index |
 | User personas | Business (Ask mode) vs Technical (Explore Ask AI) | Different AI prompt rules per persona |
 | Demo mode | Settings toggle, yellow banner, write guards | All reads work, writes blocked |
 | Auto DC routing | No user choice dialogs ever | System decides Manhattan vs CIG automatically |
 | Date fallback | today→week→month→all | Shows fallback note when widening window |
-| Shipment query | Live Oracle via POST /db/query | Real shipment IDs confirmed from SE_DM, MD_DM, NE_DM |
-| App entry point | `http://localhost:3333` | Static server added in 28b |
-| Group env field | All 5 current groups: "env": "prod" | Future UAT/test: "env": "uat" or "env": "test" |
 | Production guardrail | Q&A + data queries: prod only | Compare modal is the ONLY exempt feature |
 | SQLcl MCP connection | connectionName field in groups | e.g. "connectionName": "MANP" — do NOT rename |
 | Groups readOnly | All 5 groups have "readOnly": true | WMS·IQ never writes to Oracle |
@@ -127,9 +129,15 @@
 | WMSHUB schemas | WMSHUB WMSHUB_CODE EM EM_CODE | EM not EMS — verified from config.json |
 | MANH_CODE location | All 3 Manhattan DBs | MANP + MAN002P + MAN001P each have own instance |
 | CIG-only DCs | 19 DCs with manhattanGroup: null | Route to cigwms-prod only, no Manhattan schema |
-| config jiraStopWords | Full list in config.json | Moved from code to config ✅ |
-| config semanticConfidence | High: 0.8, Medium: 0.5 | In config.json ✅ |
-| config docsChunkSize | 2500 chars, 300 overlap | In config.json ✅ |
+| SE_DM total objects | 7,077 scanned (2,126 tables confirmed match Oracle) | Full scan complete |
+| Vector dimensions | 1024 | mxbai-embed-large — all tables use vector(1024) |
+| Query enrichment | findTableByQuery enriches: "TABLE SCHEMA.OBJECTNAME" | Must match scan embedding format |
+| Column enrichment | findColumnsByQuery enriches: "TABLENAME.COLUMNNAME" | Looks up table name from objectId |
+| Hybrid doc search | Extension codes → title ILIKE; else → pgvector semantic | EX01/EX33/SDN-215 all resolved by title |
+| Extension code variants | EX01, EX1, EX 01, extension 01, ext01, SDN-215 | extractExtensionCode() normalises all variants |
+| hasAuthoritativeSourceContext bug | FIXED: removed guard from doc/knowledge/jira blocks | Docs were silently excluded when schema source present |
+| config.json | in .gitignore — never commit | Copy from config.example.json on fresh clone |
+| pgdata/ | in .gitignore — Docker volume data | Delete to reset PostgreSQL |
 
 ---
 
@@ -142,6 +150,7 @@ Currently migrating from **Manhattan WMOS 2019** to **Manhattan Active WM**.
 - **Short form:** WMS·IQ
 - **Tagline:** Navigate the McLane WMS landscape
 - **Scope:** WMS only — NOT Financials, ERP, eCommerce, MDM, Data Intelligence
+- **Active WM note:** Manhattan provides read-only PostgreSQL replicated tables, not direct DB access. All current Oracle connections via SQLcl MCP are unaffected.
 
 ### Two Entry Modes
 1. **💬 Ask a Question** — business user, DC-aware, plain English answers ✅
@@ -150,18 +159,17 @@ Currently migrating from **Manhattan WMOS 2019** to **Manhattan Active WM**.
 ### User Persona Rules
 | | Business User (Ask mode) | Technical User (Explore Ask AI) |
 |---|---|---|
-| JIRA results | Plain English summaries, no ticket keys | Full keys, summaries, status |
-| DB results | Business impact only, no schema names | Raw data, row counts, schema names |
+| JIRA results | Plain English, no ticket keys | Full keys, summaries, status |
+| DB results | Business impact only | Raw data, row counts, schema names |
 | INVALID objects | Never shown | Shown with full detail |
-| Schema names | Never mentioned | Full technical context |
-| System names | Never (no "Manhattan", "WMSHUB") | Full detail |
-| Answer tone | Plain business English, max 200 words | Technical detail |
+| Schema/system names | Never mentioned | Full technical context |
+| Answer length | Max 200 words | No limit |
 
 ---
 
 ## 🗄️ Database Connections & Groups (5 Groups)
 
-All connections use **SQLcl MCP via queryDB()** — never change this.
+All connections use **SQLcl MCP via queryDB()** — do NOT change this mechanism.
 Connection names match SQLcl named connections on macOS.
 
 ```
@@ -171,7 +179,7 @@ manhattan-main  connectionName: MANP      env: prod  color: #3fb950
            MZ_DM MZ_MDA  NE_DM NE_MDA  SE_DM SE_MDA
   Shared:  MANH  MANH_CODE
   DCs:     06(FS06) FE MD MK MN MY MZ NE SE
-  UT_DM/UT_MDA: defined but active:false until Sept 2026
+  Pending: UT_DM UT_MDA (active:false, goLive: 2026-09)
 
 manhattan-ck    connectionName: MAN002P   env: prod  color: #58a6ff
   Per-DC:  C1_DM C1_MDA  C2_DM C2_MDA  C3_DM C3_MDA
@@ -189,74 +197,62 @@ wmshub-prod     connectionName: OMSP      env: prod  color: #39d0d8
 
 cigwms-prod     connectionName: OPCIGP    env: prod  color: #d29922
   Schemas: CIGWMS  CIGWMS_CODE  OP  OP_CODE  MCLANE  MCLANE_CODE  FRAMEWORK
-  DCs:     GA GM HP ME MG MI MO MP MS MW NC NT NW PA SO SW SZ WJ
-           (CIG WMS only — manhattanGroup: null for these DCs)
+  DCs(CIG-only, manhattanGroup:null):
+    GA GM HP ME MG MI MO MP MS MW NC NT NW PA SO SW SZ WJ
 ```
 
 > ⚠️ MANH and MANH_CODE exist in ALL THREE Manhattan databases independently.
-> Always specify group when querying MANH_CODE — it is not unique to manhattan-main.
-
-> ⚠️ Groups use `connectionName` field (not `db`) — e.g. "connectionName": "MANP"
-> This matches the SQLcl named connection. Do NOT rename this field.
-
-> ℹ️ All groups have `"readOnly": true` — no DDL/DML via WMS·IQ
-> ℹ️ Total DCs: 32 active + 1 pending (UT, active:false, goLive: 2026-09)
-> ℹ️ 19 CIG-only DCs have manhattanGroup: null — route to cigwms-prod only
+> Always specify group when querying — MANH_CODE is not unique to manhattan-main.
+> ⚠️ Groups use `connectionName` field — do NOT rename to `db`.
+> ℹ️ 19 CIG-only DCs have manhattanGroup: null — route to cigwms-prod only.
 
 ### Key Source Code Schemas
-- `MANH_CODE` — in ALL 3 Manhattan DBs (MANP, MAN002P, MAN001P)
-  Contains: DOCK_PK, DC_SCHEMA_PK, LOG_PK, LOCATION_PK, TIMER, DOCK_WRAPPER_PK
+- `MANH_CODE` — ALL 3 Manhattan DBs: DOCK_PK, DC_SCHEMA_PK, LOG_PK, LOCATION_PK, TIMER, DOCK_WRAPPER_PK
 - `FRAMEWORK` (cigwms-prod) — LOGS (874 spec + 1231 body lines)
 - `OP` (cigwms-prod) — CIG WMS operational packages
 - `MCLANE` (cigwms-prod) — McLane-specific packages
 - `WMSHUB_CODE` (wmshub-prod) — WMSHUB packages
 - `EM_CODE` (wmshub-prod) — EM packages
 
-### Active WM — Future Architecture (do not implement yet)
-Manhattan Active WM will provide read-only PostgreSQL replicated tables.
-The existing SQLcl MCP Oracle connections are NOT affected.
-When Active WM replicas are available, add a NEW group:
-  { "id": "active-wm-prod", "engine": "postgres",
-    "connectionString": "...", "replicaOnly": true, "env": "prod" }
-This requires a separate PostgreSQL adapter — future work.
-Until then: all 5 groups connect via SQLcl MCP as today.
+### Verified Oracle Table Names (SE_DM — confirmed live)
+```
+⚠️ These are the ACTUAL table names — not assumed names:
+SHIPMENT          ← NOT SHIPMENT_HDR
+WAVE              ← NOT WAVE_HDR
+PICK_LOCN_HDR     ← NOT LOCN_HDR
+TASK_HDR  TASK_DTL  LPN  LPN_DETAIL  OUTPT_LPN
+ITEM_CBO  SHIPMENT_STATUS  SHIPMENT_EVENT
+```
+> These are discovered dynamically via /db/find-table — NEVER hardcode table names.
 
 ---
 
 ## 🏭 Distribution Centers
 
-### 13 Manhattan + WMSHUB DCs
+### 13 Manhattan DCs (active)
 
-| DC_ID | Code | Name | Type | DB | DM Schema | MDA Schema |
-|-------|------|------|------|----|-----------|------------|
-| 606 | 06 | Lakeland 606 | food-service | MANP | FS06_DM | FS06_MDA |
-| 290 | FE | McLane Ocala | grocery | MANP | FE_DM | FE_MDA |
-| 160 | MD | Dothan | grocery | MANP | MD_DM | MD_MDA |
-| 360 | MK | Cumberland | grocery | MANP | MK_DM | MK_MDA |
-| 460 | MN | Minnesota | grocery | MANP | MN_DM | MN_MDA |
-| 260 | MY | NE/Concord | grocery | MANP | MY_DM | MY_MDA |
-| 450 | MZ | Mid-Atlantic | grocery | MANP | MZ_DM | MZ_MDA |
-| 800 | NE | Northeast | grocery | MANP | NE_DM | NE_MDA |
-| 400 | SE | Southeast | grocery | MANP | SE_DM | SE_MDA |
-| 421 | C1 | CK Otsego | grocery | MAN002P | C1_DM | C1_MDA |
-| 431 | C2 | CK St Louis | grocery | MAN002P | C2_DM | C2_MDA |
-| 411 | C3 | CK Columbus | grocery | MAN002P | C3_DM | C3_MDA |
-| 490 | WK | McLane Bluegrass | grocery | MAN001P | MAN490_DM | MAN490_MDA |
+| DC_ID | Code | Name | Type | Group | DM Schema | MDA Schema |
+|-------|------|------|------|-------|-----------|------------|
+| 606 | 06 | Lakeland 606 | food-service | manhattan-main | FS06_DM | FS06_MDA |
+| 290 | FE | McLane Ocala | grocery | manhattan-main | FE_DM | FE_MDA |
+| 160 | MD | Dothan | grocery | manhattan-main | MD_DM | MD_MDA |
+| 360 | MK | Cumberland | grocery | manhattan-main | MK_DM | MK_MDA |
+| 460 | MN | Minnesota | grocery | manhattan-main | MN_DM | MN_MDA |
+| 260 | MY | NE/Concord | grocery | manhattan-main | MY_DM | MY_MDA |
+| 450 | MZ | Mid-Atlantic | grocery | manhattan-main | MZ_DM | MZ_MDA |
+| 800 | NE | Northeast | grocery | manhattan-main | NE_DM | NE_MDA |
+| 400 | SE | Southeast | grocery | manhattan-main | SE_DM | SE_MDA |
+| 421 | C1 | CK Otsego | grocery | manhattan-ck | C1_DM | C1_MDA |
+| 431 | C2 | CK St Louis | grocery | manhattan-ck | C2_DM | C2_MDA |
+| 411 | C3 | CK Columbus | grocery | manhattan-ck | C3_DM | C3_MDA |
+| 490 | WK | McLane Bluegrass | grocery | manhattan-wk | MAN490_DM | MAN490_MDA |
 
-### 19 Non-Manhattan DCs (CIG WMS / OP only — filter by LEG_DIV_ID)
+### 1 Pending Manhattan DC
+| 210 | UT | McLane Salt Lake City | grocery | manhattan-main | UT_DM | UT_MDA | active:false, goLive:2026-09 |
 
-| Code | Name | Code | Name |
-|------|------|------|------|
-| GA | MIW GA | MW | Western |
-| GM | McLane Interstate | NC | Carolina |
-| HP | High Plains | NT | North Texas |
-| ME | Suneast | NW | Northwest |
-| MG | McLane Ohio | PA | McLane PA |
-| MI | Midwest | SO | Southern |
-| MO | McLane Ozark | SW | Southwest |
-| MP | Pacific | SZ | So. Calif. |
-| MS | Sunwest | WJ | New Jersey |
-| UT | Salt Lake City *(Manhattan Sept 2026)* | | |
+### 19 CIG WMS-only DCs (manhattanGroup: null)
+GA GM HP ME MG MI MO MP MS MW NC NT NW PA SO SW SZ WJ
+All route to cigwms-prod with LEG_DIV_ID filter.
 
 ---
 
@@ -270,253 +266,204 @@ const responses = await runMCP([{ name: 'run-sql', arguments: { sql } }]);
 const rows = await queryDB(group, sql);
 ```
 
-### #2 — DBA_* views for all queries
+### #2 — DBA_* views for all Oracle queries
 ```
 DBA_OBJECTS  DBA_TAB_COLUMNS  DBA_SOURCE
 DBA_CONSTRAINTS  DBA_CONS_COLUMNS  DBA_DEPENDENCIES
+DBA_TABLES  DBA_PROCEDURES
 ```
+Use DBA_* not ALL_* — ASRAJAG has DBA privileges in all 5 databases.
 
-### #3 — Ollama stream: false always + 60s timeout
+### #3 — Ollama always stream:false + 60s timeout
 ```javascript
 const controller = new AbortController();
-const timeoutId = setTimeout(() => controller.abort(), 60000);
-const response = await fetch(BRIDGE + '/ollama/chat', {
+setTimeout(() => controller.abort(), 60000);
+fetch(BRIDGE + '/ollama/chat', {
   method: 'POST', signal: controller.signal,
   body: JSON.stringify({ model, messages, stream: false })
 });
-clearTimeout(timeoutId);
 ```
 
 ### #4 — AI hallucination prevention
-- Always inject /db/source (PACKAGE BODY) into system prompt
-- Always inject only real JIRA issues from jiraResults.issues array
-- Never render ticket keys not present in jiraResults
-- Explicit prompt rule: "Only reference JIRA ticket keys that appear in the above list. Do NOT invent ticket numbers."
-- When context is empty (0 JIRA + 0 knowledge hits): "I don't have enough information" — never invent
+- Inject /db/source (PACKAGE BODY) into system prompt
+- Only inject real JIRA keys from jiraResults.issues
+- Empty context → "I don't have enough information" — never invent
+- Extension codes (EX01, EX33) are NEVER stop words
+- ⚠️ hasAuthoritativeSourceContext must NOT suppress docs/knowledge/jira blocks
 
 ### #5 — Production guardrail ⚠️ CRITICAL
-Every group has `"env"` field. Bridge exposes it in `GET /groups`.
-- Q&A, DC resolver, POST /db/query: **ONLY** `env === "prod"` groups
-- Compare modal: exempt — may use any group, shows ⚠ warning for non-prod
 ```javascript
 const prodGroups = config.groups.filter(g => g.env === 'prod');
+// Q&A, DC resolver, POST /db/query: prod only
+// Compare modal: exempt — may use any group
 ```
 
-### #6 — SQL abstraction (PROMPT 32 — in progress)
-All SQL queries must live in `lib/sql-catalog.js`.
-No SQL strings anywhere else in the codebase.
-Table names must reference `config.tableAliases` for Active WM migration safety.
+### #6 — No hardcoded table names ⚠️
+Never hardcode Oracle table names anywhere in code.
+Use the knowledge graph: GET /db/find-table?q=shipment&schema=SE_DM
+The graph discovers actual names from DBA_TABLES at runtime.
+Verified actual names: SHIPMENT (not SHIPMENT_HDR), WAVE (not WAVE_HDR),
+PICK_LOCN_HDR (not LOCN_HDR) — see environment facts table.
 
 ### #7 — Document pipeline
 ```
-Upload → extract text (mammoth/.docx, pdftotext/.pdf)
+Upload → mammoth(.docx) / pdftotext(.pdf) / readFileSync(.txt)
        → preprocessDocText() strips TOC/PAGEREF/Word noise
-       → find content start (skip TOC, start at first narrative paragraph)
-       → chunkTextSentenceAware(text, 2500, 300)  ← paragraph boundary splits
+       → find content start (skip TOC)
+       → chunkTextSentenceAware(text, 2500, 300)
        → prepend [Document: {title}] to each chunk
-       → write to docs-index/{group}-{filename}.json (atomic write)
+       → atomic write to docs-index/{group}-{name}.json
+Re-index: POST /docs/reindex → {"reindexed":222}
 ```
-Re-index without re-upload: `POST /docs/reindex` → `{"reindexed":226}`
 
-### #8 — JIRA JQL pattern
+### #8 — JIRA JQL keyword extraction
 ```javascript
-// Extract meaningful terms, strip stop words, max 4 terms
-// Build: textfields ~ "MZIC6101*" AND textfields ~ "VARIANCE*"
-// Never strip extension codes: EX01, EX33, SDN-215 etc
+// Strip stop words (from config.jiraStopWords)
+// Keep extension codes: EX01, EX33, SDN-215 etc
 if (/^[A-Z]{1,4}[-_]?\d+$/i.test(term)) keepAlways = true;
+// Build: textfields ~ "MZIC6101*" AND textfields ~ "VARIANCE*"
+// Max 4 terms (config: jiraMaxTerms)
 ```
 
-### #9 — Q&A context assembly (parallel, every question)
+### #9 — Q&A context assembly (parallel)
 ```
-1. GET /semantic/search?q=  → semantic intent match (first — highest priority)
-2. GET /knowledge/search?q= → knowledge hits (🧠)
-3. GET /docs/search?q=      → document chunks (📄) — 10 results
-4. GET /jira/search?q=      → JIRA tickets (🎫) — if atlassianEnabled
-5. POST /db/query           → live DB findings (🗄️) — if issue keywords + prod group
-Total context capped at 12,000 chars (complete chunks, never truncated mid-chunk)
+1. GET /semantic/search   → semantic intent (highest priority)
+2. GET /knowledge/search  → knowledge hits 🧠
+3. GET /docs/search       → document chunks 📄 (hybrid: code→title, else→pgvector)
+4. GET /jira/search       → JIRA tickets 🎫
+5. POST /db/query         → live DB 🗄️ (issue keywords only)
+Total capped at 12,000 chars — complete chunks never truncated
+⚠️ NEVER suppress docs/knowledge/jira with hasAuthoritativeSourceContext guard
 ```
 
-### #10 — Classifier rules (Ask mode never navigates to Explore)
-- Issue/problem guard: "issues", "problem", "error", "failing" → always Q&A
-- Schema routing ONLY on: "table", "column", "package", "procedure", "index", "view"
-- Cross-DC phrases → cigwms-prod then wmshub-prod
-- Default fallback: Q&A mode
-- Extension codes (EX01, EX33) are NEVER stop words
-
-### #11 — Hard-coding policy ⚠️
-**NO hard-coded values anywhere in lib/*.js or public/index.html.**
-All configurable values must be in config.json and loaded at startup.
-This includes: chunk sizes, thresholds, row limits, table names, model names,
-port numbers, stop words, schema names, SQL queries.
-See PROMPT 32 for the complete list.
-
-### #12 — Manhattan Active WM migration safety
-All SQL table names reference `config.tableAliases`:
+### #10 — Hybrid document search (lib/docs-routes.js)
 ```javascript
-const t = config.tableAliases;
-// Use: `FROM ${schema}.${t.SHIPMENT_HDR}`
-// Not: `FROM ${schema}.SHIPMENT_HDR`
+// extractExtensionCode() normalises all user variants:
+// "EX01" | "EX1" | "EX 01" | "extension 01" | "ext01" | "SDN-215" → canonical
+// Step 1: if code detected → searchDocChunksByTitle(code) → title ILIKE %EX01%
+// Step 2: if no title match → searchDocChunksByText(code) → chunk_text ILIKE %EX01%
+// Step 3: no code → semanticDocSearch() → pgvector similarity
+// Step 4: postgres down → docsSearch() keyword fallback
 ```
-When Active WM renames tables, only config.json changes — zero code changes.
+
+### #11 — Knowledge graph embedding rules ⚠️
+```javascript
+// Embedding model: mxbai-embed-large (1024 dims) — NEVER change back to nomic
+// Schema objects embedded as: "TABLE SE_DM.SHIPMENT" or "PACKAGE MANH_CODE.DOCK_PK"
+// findTableByQuery enriches query: `TABLE ${schema}.${queryText.toUpperCase()}`
+// findColumnsByQuery looks up tableName from objectId, enriches: "TABLENAME.COLNAME"
+// Embedding cache: max 5000 entries, LRU eviction
+// Null embedding → ILIKE fallback — NEVER crash
+// ivfflat indexes: need >100 rows — wrapped in try/catch
+```
+
+### #12 — Active WM migration safety
+Existing SQLcl MCP Oracle connections unchanged.
+When Active WM PostgreSQL replicas available:
+add new group with engine:postgres, replicaOnly:true.
+Graph automatically learns new schemas when scanned.
 
 ---
 
 ## 🗺️ Architecture
 
 ```
-public/index.html  (served at http://localhost:3333)
+public/index.html  (http://localhost:3333) ← PROMPT 36: migrating to React+TS
         │
-        ▼
   Mode Selector
-  ├── 💬 Ask a Question  [BUSINESS PERSONA]
-  │     ⏳ Connecting... while groups load (groupsLoadPromise)
-  │     → DC resolver → classifier → routing
-  │     → ONLY env="prod" groups ← GUARDRAIL
-  │     → Parallel context: semantic + knowledge + docs + JIRA + DB
-  │     → System prompt: BUSINESS persona rules + 12,000 char cap
-  │     → Ollama (stream:false, 60s timeout) → plain English answer
-  │     → Pills: 🧠 🎫 📄 🗄️
-  │     → Related JIRA tickets (plain English, no ticket keys shown)
-  │     → Date-aware shipment queries: today→week→month→all fallback
-  │     → [💾 Save] → knowledge entry + jiraIssues captured
+  ├── 💬 Ask a Question [BUSINESS PERSONA]
+  │     → Parallel context: semantic + knowledge + docs(hybrid) + JIRA + DB
+  │     → Business persona rules, 200 word cap
+  │     → Date-aware shipment queries with fallback chain
+  │     → Table names from knowledge graph (no hardcoding)
+  │     → PROMPT 36: conversational history + context length bar
   │
-  └── 🔧 Explore Systems → Group Picker
-        → Main App [TECHNICAL PERSONA]
+  └── 🔧 Explore Systems [TECHNICAL PERSONA]
         Tabs: ⚡Impact | Home | 💬Ask AI | 📚Docs | 🧠Knowledge | 🔬Semantic
-                    │
-        Home tab: WMS Intelligence Overview dashboard
-          Stats: groups, DCs, schemas, objects, packages,
-                 source units, docs, knowledge, intents, JIRA
-          🏛️ Governance: INVALID objects, Compare, Impact, Export docs
-                    │
-        Global search: [🔍 This group] [🔍 All systems]
-        ⟷ Compare → background diff job (Blob URL download, no browser prompt)
-          Source/Target: Group + Schema + Type (Live DB | Snapshot)
-          Status bar: stage + % + cancel ✕ + auto-pause after scan
-          History: 🕐 session-only, download/retry/delete
-                    │
-        🔬 Semantic tab:
-          Left: intent list with 🟢🟡🔴 confidence dots
-          Right: detail editor + SQL template test + ✓ Confirm / ✗ Reject
-          Bulk confirm: ✓ Confirm all ≥ N% (70/80/90/95/100%)
-          Scan status: auto-pauses after full scan
-                    │
-                    ▼
-bridge.js  (http://localhost:3333) — thin entry point
+        Home: WMS Intelligence Overview + Governance quick actions
+        🔬 Semantic: intent list, confirm/reject, bulk confirm, scan status
+        ⟷ Compare: background diff job, history panel
+
+bridge.js  (http://localhost:3333)
         │
-        ├── lib/mcp-pool.js       → MCP pool + queryDB()
-        ├── lib/db-routes.js      → /db/* handlers
-        ├── lib/docs-routes.js    → /docs/* handlers
-        ├── lib/knowledge-routes.js → /knowledge/* handlers
-        ├── lib/jira-routes.js    → /jira/* + JQL builder + /jira/upload
-        ├── lib/ollama-routes.js  → /ollama/* handlers
+        ├── lib/mcp-pool.js        → MCP pool + queryDB() [NEVER CHANGE]
+        ├── lib/db-routes.js       → /db/* + /db/find-table + /db/find-columns
+        │                             + /db/scan-schema + /db/scan-status
+        ├── lib/docs-routes.js     → /docs/* + hybrid search + migrate-to-graph
+        ├── lib/knowledge-routes.js → /knowledge/*
+        ├── lib/jira-routes.js     → /jira/* + JQL builder
+        ├── lib/ollama-routes.js   → /ollama/*
         ├── lib/semantic-routes.js → /semantic/* proxy to Python worker
-        └── lib/sql-catalog.js    → ALL SQL queries (PROMPT 32)
+        └── lib/graph-store.js     → PostgreSQL + pgvector (1024 dims, mxbai)
                 │
                 ▼
-        Oracle (5 DBs — all ASRAJAG, all env:prod)
+        Oracle (5 DBs via SQLcl MCP — ASRAJAG, all env:prod)
         MANP / MAN002P / MAN001P / OMSP / OPCIGP
         +
         Atlassian REST API (mclane.atlassian.net)
         +
-        semantic-worker/app.py (port 3334, Python Flask)
+        semantic-worker/app.py (port 3334)
         +
-        PostgreSQL + pgvector (port 5432, Docker) ← PROMPT 33
+        PostgreSQL + pgvector port 5432 (Colima Docker)
+          Tables: schema_objects, schema_columns, schema_source
+                  schema_dependencies, doc_chunks
+                  knowledge_entries, semantic_intents
+          All vector(1024) — mxbai-embed-large
 ```
 
 ---
 
-## 📋 Current config.json structure
+## 📋 Current config.json (key fields)
 
 ```json
 {
   "bridge": {
     "port": 3333,
+    "semanticWorkerPort": 3334,
     "ollamaUrl": "http://localhost:11434",
-    "defaultModel": "llama3",
+    "defaultModel": "qwen2.5:14b",
     "sqlclCommand": "sql",
     "sqlclArgs": ["-R", "2", "-mcp"],
     "poolEnabled": true,
     "poolIdleTimeoutMs": 300000,
     "poolMaxQueueDepth": 20,
     "toolCallTimeoutMs": 15000,
-    "sleepAfterInit": 400,
-    "sleepAfterNotification": 400,
-    "sleepAfterToolCall": 600,
     "rateLimitPerMinute": 120,
     "allowedOrigins": ["null", "file://", "http://localhost:3333"],
     "authToken": "",
+    "docsChunkSize": 2500,
+    "docsChunkOverlap": 300,
+    "docsMaxResults": 10,
+    "answerWordCap": 200,
+    "qaContextCharLimit": 12000,
+    "jiraMaxResults": 10,
+    "jiraMaxTerms": 4,
+    "jiraStopWords": ["... full list in config.json ..."],
+    "semanticConfidenceHigh": 0.8,
+    "semanticConfidenceMedium": 0.5,
     "atlassianEnabled": true,
     "atlassianDomain": "mclane.atlassian.net",
     "atlassianEmail": "arun.rajagopalan@mclaneco.com",
-    "atlassianToken": "<set — do not commit>",
-    "atlassianProjectKeys": [],
-    "docsIndexDir": "./docs-index",
-    "docsChunkSize": 2500,
-    "docsChunkOverlap": 300,
-    "docsMaxSearchResults": 10,
-    "docsContextBudget": 12000,
+    "atlassianToken": "<set — never commit>",
     "uploadToken": "",
-    "postgresEnabled": false,
+    "postgresEnabled": true,
     "postgresUrl": "postgresql://wmsiq:wmsiq@localhost:5432/wmsiq",
-    "oracleChangePollingEnabled": false,
-    "oracleChangePollingIntervalMinutes": 15,
-    "oracleChangePollingSchemas": ["MANH_CODE", "FRAMEWORK"],
-    "claudeApiEnabled": false,
-    "claudeApiModel": "claude-sonnet-4-6",
-    "claudeApiForQA": false
+    "graphScanEnabled": true,
+    "graphScanIncludeSource": true,
+    "graphScanIncludeColumns": true
   },
-  "queryLimits": {
-    "defaultRowLimit": 50,
-    "impactAnalysisNodeCap": 200,
-    "impactAnalysisDefaultDepth": 3,
-    "impactAnalysisMaxDepth": 5,
-    "shipmentQueryLimit": 5,
-    "jiraSearchLimit": 10,
-    "semanticSearchLimit": 5
+  "graphScanSchemas": {
+    "manhattan-main": ["MANH_CODE", "MANH", "SE_DM", "SE_MDA"],
+    "cigwms-prod": ["FRAMEWORK", "OP", "MCLANE", "CIGWMS"],
+    "wmshub-prod": ["WMSHUB_CODE", "EM_CODE"]
   },
-  "schemaDefaults": {
-    "codeSchemas": ["MANH_CODE", "FRAMEWORK"],
-    "sharedSchemas": ["MANH", "WMSHUB", "WMSHUB_CODE"],
-    "excludedObjectTypes": ["INDEX","SYNONYM","GRANT","JAVA CLASS","SCHEDULE","TRIGGER"],
-    "excludedNamePatterns": ["%$%"]
-  },
-  "shipmentTables": {
-    "headerTable": "SHIPMENT_HDR",
-    "detailTable": "SHIPMENT_DTL",
-    "dateColumns": ["CREATION_DATE","CREATE_DATE","CREATED_DATE","INSERT_DATE","INSR_DATE","SHIP_DATE"],
-    "idColumns": ["TC_SHIPMENT_ID","SHIPMENT_ID","SHIPMENT_NBR"]
-  },
-  "tableAliases": {
-    "SHIPMENT_HDR": "SHIPMENT_HDR",
-    "SHIPMENT_DTL": "SHIPMENT_DTL",
-    "TASK_HDR": "TASK_HDR",
-    "TASK_DTL": "TASK_DTL",
-    "LPN": "LPN",
-    "LOCN_HDR": "LOCN_HDR",
-    "ITEM_CBO": "ITEM_CBO",
-    "WAVE_HDR": "WAVE_HDR",
-    "WAVE_DTL": "WAVE_DTL"
-  },
-  "semantic": {
-    "workerUrl": "http://localhost:3334",
-    "confirmedThreshold": 0.8,
-    "unconfirmedThreshold": 0.5,
-    "scanIntervalMinutes": 60,
-    "maxParallelScans": 2
-  },
-  "qa": {
-    "ollamaTimeoutMs": 60000,
-    "maxContextChars": 12000,
-    "businessMaxWords": 200
-  },
-  "distributionCenters": [ "... 33 entries ..." ],
+  "distributionCenters": ["... 32 active + 1 pending ..."],
   "groups": [
-    { "id": "manhattan-main", "env": "prod", "db": "MANP", ... },
-    { "id": "manhattan-ck",   "env": "prod", "db": "MAN002P", ... },
-    { "id": "manhattan-wk",   "env": "prod", "db": "MAN001P", ... },
-    { "id": "wmshub-prod",    "env": "prod", "db": "OMSP", ... },
-    { "id": "cigwms-prod",    "env": "prod", "db": "OPCIGP", ... }
+    { "id": "manhattan-main", "connectionName": "MANP", "env": "prod", "readOnly": true },
+    { "id": "manhattan-ck",   "connectionName": "MAN002P", "env": "prod", "readOnly": true },
+    { "id": "manhattan-wk",   "connectionName": "MAN001P", "env": "prod", "readOnly": true },
+    { "id": "wmshub-prod",    "connectionName": "OMSP", "env": "prod", "readOnly": true },
+    { "id": "cigwms-prod",    "connectionName": "OPCIGP", "env": "prod", "readOnly": true }
   ]
 }
 ```
@@ -527,394 +474,397 @@ bridge.js  (http://localhost:3333) — thin entry point
 
 ---
 
-### PROMPT 32 — SQL Abstraction Layer + Remove All Hard-Coding 🔜 NEXT
-
-```
-Read .github/copilot-instructions.md in full before writing anything.
-
-The codebase has hard-coded SQL, thresholds, table names, and
-configuration values scattered throughout lib/*.js and public/index.html.
-This is a critical fix before Active WM migration.
-
-PART 1 — Create lib/sql-catalog.js:
-All SQL queries must move here. No SQL string anywhere else.
-Use config.tableAliases for all table names.
-
-module.exports = function(config) {
-  const t = config.tableAliases || {};
-  const lim = config.queryLimits || {};
-  return {
-    listObjects: (schema) => `
-      SELECT OBJECT_NAME, OBJECT_TYPE, STATUS
-      FROM DBA_OBJECTS
-      WHERE OWNER = '${schema}'
-      AND OBJECT_TYPE NOT IN (${
-        (config.schemaDefaults?.excludedObjectTypes || [])
-          .map(t => `'${t}'`).join(',')
-      })
-      AND OBJECT_NAME NOT LIKE '%$%'
-      ORDER BY OBJECT_TYPE, OBJECT_NAME`,
-
-    listColumns: (schema, table) => `
-      SELECT COLUMN_NAME, DATA_TYPE, NULLABLE,
-             DATA_LENGTH, COLUMN_ID
-      FROM DBA_TAB_COLUMNS
-      WHERE OWNER = '${schema}'
-      AND TABLE_NAME = '${table}'
-      ORDER BY COLUMN_ID`,
-
-    getSource: (schema, name, type) => `
-      SELECT TEXT FROM DBA_SOURCE
-      WHERE OWNER = '${schema}'
-      AND NAME = '${name}'
-      AND TYPE = '${type}'
-      ORDER BY LINE`,
-
-    getDependencies: (schema, name) => `
-      SELECT OWNER, NAME, TYPE,
-             REFERENCED_OWNER, REFERENCED_NAME, REFERENCED_TYPE
-      FROM DBA_DEPENDENCIES
-      WHERE (OWNER = '${schema}' AND NAME = '${name}')
-      OR (REFERENCED_OWNER = '${schema}'
-          AND REFERENCED_NAME = '${name}')`,
-
-    getInvalidObjects: (schema) => `
-      SELECT OBJECT_NAME, OBJECT_TYPE, STATUS
-      FROM DBA_OBJECTS
-      WHERE OWNER = '${schema}'
-      AND STATUS = 'INVALID'
-      ORDER BY OBJECT_TYPE, OBJECT_NAME`,
-
-    getChangedObjects: (schema, since) => `
-      SELECT OBJECT_NAME, OBJECT_TYPE, LAST_DDL_TIME
-      FROM DBA_OBJECTS
-      WHERE OWNER = '${schema}'
-      AND LAST_DDL_TIME > TIMESTAMP '${since}'
-      AND OBJECT_TYPE IN ('PACKAGE','PACKAGE BODY',
-        'PROCEDURE','FUNCTION')
-      ORDER BY LAST_DDL_TIME DESC`,
-
-    getRecentShipments: (schema, dateCol, limit) => `
-      SELECT * FROM ${schema}.${t.SHIPMENT_HDR || 'SHIPMENT_HDR'}
-      WHERE TRUNC(${dateCol}) >= TRUNC(SYSDATE) - 7
-      ORDER BY ${dateCol} DESC
-      FETCH FIRST ${limit || lim.shipmentQueryLimit || 5} ROWS ONLY`,
-
-    getShipmentColumns: (schema) => `
-      SELECT COLUMN_NAME, DATA_TYPE
-      FROM DBA_TAB_COLUMNS
-      WHERE OWNER = '${schema}'
-      AND TABLE_NAME = '${t.SHIPMENT_HDR || 'SHIPMENT_HDR'}'
-      AND COLUMN_NAME IN (${
-        (config.shipmentTables?.dateColumns || [])
-          .concat(config.shipmentTables?.idColumns || [])
-          .map(c => `'${c}'`).join(',')
-      })
-      ORDER BY COLUMN_ID`,
-
-    getWhoami: () => `
-      SELECT SYS_CONTEXT('USERENV','SESSION_USER') AS DB_USER,
-             SYS_CONTEXT('USERENV','DB_NAME') AS DB_NAME
-      FROM DUAL`,
-  };
-};
-
-PART 2 — Add to config.json all missing values:
-  queryLimits, schemaDefaults, shipmentTables, tableAliases,
-  semantic, qa sections (see config.json structure above).
-  Move every hard-coded value from code to config.
-
-PART 3 — Update all lib/*.js to use sql-catalog.js:
-  const sqlCatalog = require('./sql-catalog')(config);
-  Replace every inline SQL string with sqlCatalog.methodName()
-
-PART 4 — Update public/index.html:
-  Replace const BRIDGE = 'http://localhost:3333'
-  with: fetch /config on startup, use config.bridge.appUrl
-        or default to window.location.origin
-  Move all hard-coded thresholds to read from /config response
-
-PART 5 — Verify:
-  node test-bridge.js → still 46/46 passing
-  grep -r "FETCH FIRST\|DBA_OBJECTS\|SHIPMENT_HDR" lib/
-  → zero results (all in sql-catalog.js only)
-  grep -r "localhost:3333\|localhost:3334" public/
-  → zero results (loaded from config)
-
-Do NOT change test-bridge.js test logic.
-```
-
----
-
-### PROMPT 33 — PostgreSQL + pgvector Semantic Search 🔜 NEXT (after 32)
-
-```
-Read .github/copilot-instructions.md in full before writing anything.
-
-POC phase — Docker PostgreSQL on MacBook.
-nomic-embed-text already installed in Ollama.
-Goal: replace keyword /docs/search with semantic similarity search.
-
-PART 1 — docker-compose.yml in project root:
-  version: '3.8'
-  services:
-    postgres:
-      image: ankane/pgvector:latest
-      environment:
-        POSTGRES_DB: wmsiq
-        POSTGRES_USER: wmsiq
-        POSTGRES_PASSWORD: wmsiq
-      ports:
-        - "5432:5432"
-      volumes:
-        - ./pgdata:/var/lib/postgresql/data
-      healthcheck:
-        test: ["CMD-SHELL", "pg_isready -U wmsiq"]
-        interval: 5s
-        timeout: 5s
-        retries: 10
-
-PART 2 — lib/vector-store.js:
-  Uses 'pg' npm package (add to package.json)
-  
-  initSchema() — creates tables:
-    CREATE EXTENSION IF NOT EXISTS vector;
-    CREATE TABLE IF NOT EXISTS doc_chunks (
-      id SERIAL PRIMARY KEY,
-      file_id TEXT NOT NULL,
-      file_name TEXT,
-      title TEXT,
-      group_id TEXT,
-      site TEXT,
-      source TEXT,
-      chunk_index INTEGER,
-      chunk_text TEXT,
-      embedding vector(768),
-      last_modified TIMESTAMPTZ,
-      synced_at TIMESTAMPTZ DEFAULT NOW(),
-      UNIQUE(file_id, chunk_index)
-    );
-    CREATE INDEX IF NOT EXISTS doc_chunks_embedding_idx
-      ON doc_chunks USING ivfflat (embedding vector_cosine_ops)
-      WITH (lists = 100);
-
-  generateEmbedding(text):
-    POST http://localhost:11434/api/embeddings
-    { model: "nomic-embed-text", prompt: text }
-    Returns float[] (768 dimensions)
-    Cache embeddings in memory for duplicate chunks
-
-  upsertChunk(chunk):
-    INSERT ... ON CONFLICT (file_id, chunk_index) DO UPDATE
-
-  semanticSearch(queryText, groupId, limit=10):
-    embedding = await generateEmbedding(queryText)
-    SELECT chunk_text, file_name, title, group_id,
-      1 - (embedding <=> $1::vector) AS similarity
-    FROM doc_chunks
-    WHERE ($2::text IS NULL OR group_id = $2)
-    ORDER BY embedding <=> $1::vector
-    LIMIT $3
-
-  deleteByFileId(fileId):
-    DELETE FROM doc_chunks WHERE file_id = $1
-
-PART 3 — POST /docs/migrate-to-vector endpoint:
-  Reads all docs-index/*.json files
-  For each chunk: generateEmbedding(chunk.text)
-  Upserts into PostgreSQL
-  Returns { migrated: N, chunks: N, errors: [] }
-  Progress: console.log every 10 files
-  Note: 226 files × avg 10 chunks × embedding time ~0.5s = ~18 minutes
-
-PART 4 — Hybrid search in lib/docs-routes.js:
-  GET /docs/search:
-    if (config.bridge.postgresEnabled && vectorStore.isConnected()):
-      return await vectorStore.semanticSearch(q, group, limit)
-    else:
-      return existingKeywordSearch(q, group, limit)  ← zero regression risk
-
-PART 5 — Also migrate knowledge-index to vector:
-  CREATE TABLE IF NOT EXISTS knowledge_entries (
-    id TEXT PRIMARY KEY,
-    question TEXT,
-    answer TEXT,
-    tags TEXT[],
-    quality INTEGER,
-    embedding vector(768),
-    created_at TIMESTAMPTZ DEFAULT NOW()
-  );
-  GET /knowledge/search → semantic search if postgres enabled
-
-PART 6 — Health + startup:
-  GET /health → add "postgres": true/false
-  start.sh: if postgresEnabled and docker installed:
-    docker compose up -d postgres
-    Wait for healthcheck to pass
-    Print: ✓ PostgreSQL + pgvector running (port 5432)
-
-PART 7 — SETUP.md — add PostgreSQL section:
-  ## PostgreSQL + pgvector Setup
-  Requires Docker Desktop.
-  1. docker compose up -d postgres
-  2. curl -X POST http://localhost:3333/docs/migrate-to-vector
-  Takes ~20 minutes for 226 documents.
-  After migration, set postgresEnabled: true in config.json.
-
-Do NOT change test-bridge.js.
-Do NOT break existing keyword search fallback.
-```
-
----
-
 ### PROMPT 34 — Auto-Detect Oracle Code Changes 🔜 FUTURE
 
 ```
-Read .github/copilot-instructions.md before writing anything.
-
-When PL/SQL packages change in production Oracle, WMS·IQ should
-automatically detect the change and update its semantic intent mappings.
-
-Config fields (already in config.json):
-  oracleChangePollingEnabled: false
-  oracleChangePollingIntervalMinutes: 15
-  oracleChangePollingSchemas: ["MANH_CODE", "FRAMEWORK"]
-
-In bridge.js startup:
-  If oracleChangePollingEnabled:
-    setInterval(pollForChanges, intervalMs)
-
-pollForChanges():
-  lastCheckTime stored in memory (initialized to startup time)
-  For each schema in oracleChangePollingSchemas:
-    rows = await queryDB(group, sqlCatalog.getChangedObjects(schema, lastCheckTime))
-    For each changed object:
-      Log: "[ORACLE CHANGE] DOCK_PK (PACKAGE BODY) modified at ..."
-      POST http://localhost:3334/discover-object
-        { schema, objectName, objectType, group }
-  lastCheckTime = new Date().toISOString()
-
-New bridge endpoint:
-  GET /db/changes?since=<ISO8601>&group=<id>
-  Returns objects changed since given timestamp
-  Uses sqlCatalog.getChangedObjects()
-
-GET /health → add:
-  "oracleChangePolling": {
-    "enabled": bool,
-    "lastCheck": ISO8601,
-    "changesDetected": N
-  }
-
-In semantic-worker/app.py — add POST /discover-object:
-  Receives { schema, objectName, objectType, group }
-  Fetches source via Oracle MCP (calls bridge /db/source)
-  Runs Ollama intent extraction on just that object
-  Updates existing intent if found, adds new if not
-  Returns { updated: N, added: N }
-
-Do NOT change test-bridge.js.
+Poll DBA_OBJECTS.LAST_DDL_TIME every N minutes.
+When packages change → trigger semantic re-scan for that object.
+Config: oracleChangePollingEnabled, oracleChangePollingIntervalMinutes,
+        oracleChangePollingSchemas.
+Endpoint: GET /db/changes?since=<ISO8601>&group=<id>
+Health: add oracleChangePolling status object.
+Do NOT implement until PROMPT 35/36 are stable.
 ```
 
 ---
 
-### PROMPT 35 — Claude API for Q&A Answers 🔜 FUTURE
+### PROMPT 35 — Apache AGE Graph Database 🔜 NEXT
 
 ```
-Read .github/copilot-instructions.md before writing anything.
+Read .github/copilot-instructions.md in full before writing anything.
 
-Switch Q&A answers from Ollama to Claude API for better quality.
-Claude API already used for PDF export (claude-sonnet-4-6).
+Add Apache AGE (graph extension) to the existing PostgreSQL container.
+AGE runs inside PostgreSQL alongside pgvector — same container, same port.
+Replace the BFS impact analysis in lib/db-routes.js with Cypher graph traversal.
 
-Config fields (already in config.json):
-  claudeApiEnabled: false
-  claudeApiModel: "claude-sonnet-4-6"
-  claudeApiForQA: false
-  claudeApiFallbackToOllama: true
+━━━ PART 1 — Docker image upgrade ━━━
 
-In lib/ollama-routes.js:
-  POST /ollama/chat:
-    If request body has useClaudeApi:true AND config.claudeApiEnabled
-       AND config.claudeApiForQA:
-      Call Claude API:
-        POST https://api.anthropic.com/v1/messages
-        Headers:
-          x-api-key: process.env.ANTHROPIC_API_KEY or config.claudeApiKey
-          anthropic-version: 2023-06-01
-          anthropic-dangerous-direct-browser-access: true
-        Body: { model: config.claudeApiModel, max_tokens: 2048, messages }
-      Return same shape: { response: text }
-    Else: existing Ollama path unchanged
+The current docker-compose.yml uses pgvector/pgvector:pg16.
+AGE requires a custom image that has BOTH pgvector AND AGE.
 
-In public/index.html sendQA():
-  If claudeApiEnabled AND claudeApiForQA:
-    Add useClaudeApi: true to POST /ollama/chat body
+Create Dockerfile.postgres in project root:
+  FROM pgvector/pgvector:pg16
+  RUN apt-get update && apt-get install -y \
+      build-essential postgresql-server-dev-16 \
+      libreadline-dev zlib1g-dev \
+    && git clone https://github.com/apache/age.git /tmp/age \
+    && cd /tmp/age && git checkout PG16 \
+    && make && make install \
+    && rm -rf /tmp/age \
+    && apt-get remove -y build-essential postgresql-server-dev-16 \
+    && apt-get autoclean
 
-Settings panel — add AI Provider section:
-  AI Provider: [Ollama ●] [Claude API ○]
-  (Claude API option only shown if ANTHROPIC_API_KEY detected in /health)
+Update docker-compose.yml:
+  build: { context: ., dockerfile: Dockerfile.postgres }
+  # Remove: image: pgvector/pgvector:pg16
+  Add to healthcheck env: PGPASSWORD=wmsiq
 
-GET /health → add "claudeApi": true/false
-  true if ANTHROPIC_API_KEY set and reachable
+━━━ PART 2 — initSchema() additions in lib/graph-store.js ━━━
 
-Cost: ~$0.003 per Q&A question (negligible for internal use)
-Quality improvement: dramatic on complex multi-document WMS questions
+After CREATE EXTENSION IF NOT EXISTS vector, add:
+  CREATE EXTENSION IF NOT EXISTS age;
+  LOAD 'age';
+  SET search_path = ag_catalog, "$user", public;
 
-Do NOT change test-bridge.js.
+Create the WMS dependency graph:
+  SELECT * FROM ag_catalog.create_graph('wms_dependencies')
+  ON CONFLICT DO NOTHING;
+
+Vertex labels:
+  SELECT * FROM ag_catalog.create_vlabel('wms_dependencies', 'OracleObject')
+  ON CONFLICT DO NOTHING;
+
+Edge labels:
+  SELECT * FROM ag_catalog.create_elabel('wms_dependencies', 'DEPENDS_ON')
+  ON CONFLICT DO NOTHING;
+  SELECT * FROM ag_catalog.create_elabel('wms_dependencies', 'USED_BY')
+  ON CONFLICT DO NOTHING;
+
+━━━ PART 3 — lib/graph-store.js new functions ━━━
+
+upsertAgeVertex(groupId, schemaName, objectName, objectType, status):
+  Upsert vertex in AGE graph:
+  SELECT * FROM cypher('wms_dependencies', $$
+    MERGE (o:OracleObject {
+      id: $id,
+      groupId: $groupId,
+      schema: $schema,
+      name: $name,
+      type: $type,
+      status: $status
+    })
+    RETURN o
+  $$, $params) AS (o agtype);
+  id = "{groupId}::{schemaName}::{objectName}::{objectType}"
+
+upsertAgeEdge(fromId, toId, edgeType, dependencyType):
+  SELECT * FROM cypher('wms_dependencies', $$
+    MATCH (a:OracleObject {id: $fromId}),
+          (b:OracleObject {id: $toId})
+    MERGE (a)-[r:DEPENDS_ON {type: $depType}]->(b)
+    RETURN r
+  $$, $params) AS (r agtype);
+
+traverseImpact(objectId, direction, maxDepth):
+  direction: 'outbound' (what this depends on) or 'inbound' (what uses this)
+  SELECT * FROM cypher('wms_dependencies', $$
+    MATCH path = (start:OracleObject {id: $id})-[:DEPENDS_ON*1..$depth]-(related)
+    RETURN related, length(path) as depth
+    LIMIT 200
+  $$, $params) AS (related agtype, depth agtype);
+
+━━━ PART 4 — Update POST /db/scan-schema in lib/db-routes.js ━━━
+
+After upserting schema_objects and schema_dependencies into PostgreSQL:
+  Also upsert into AGE graph:
+  await graphStore.upsertAgeVertex(scanGroupId, schema, objName, objType, status)
+  
+After scanning DBA_DEPENDENCIES:
+  await graphStore.upsertAgeEdge(fromId, toId, 'DEPENDS_ON', dep.DEPENDENCY_TYPE)
+
+━━━ PART 5 — New endpoint GET /db/impact-graph ━━━
+
+Replace or supplement existing /db/impact BFS with AGE Cypher traversal:
+GET /db/impact-graph?name=&schema=&group=&depth=3&direction=both
+
+Uses graphStore.traverseImpact() for fast graph traversal.
+Returns same shape as /db/impact for UI compatibility:
+{ root, nodes, edges, crossSchemaEdges, truncated, queryMs }
+
+Falls back to existing BFS /db/impact if AGE not available.
+⚠️ Do NOT remove existing /db/impact — keep both endpoints.
+
+━━━ PART 6 — GET /health additions ━━━
+
+Add:
+  "age": true/false,
+  "ageGraph": "wms_dependencies",
+  "ageVertices": N
+
+━━━ TESTS — add section M to test-bridge.js ━━━
+
+M1: GET /health → has age field (true or false)
+M2: GET /db/impact-graph?name=DUAL&schema=SYS&group=manhattan-main&depth=1
+    → 200, has nodes array
+M3: POST /db/scan-schema with AGE enabled → vertices appear in AGE graph
+
+Do NOT change test sections A–L.
+Do NOT remove existing /db/impact endpoint.
+AGE unavailable → graceful fallback to BFS, do NOT crash.
 ```
 
 ---
 
-### PROMPT 36 — LDAP Authentication (Multi-User) 🔜 FUTURE (post-demo)
+### PROMPT 36 — React + TypeScript Frontend + Conversational Ask Mode 🔜 NEXT
+
+```
+Read .github/copilot-instructions.md in full before writing anything.
+
+Migrate public/index.html (single ~4000 line file) to a proper
+React + TypeScript + Vite application. The bridge.js server is unchanged —
+only the frontend changes. Output still goes to public/ which bridge serves.
+
+━━━ TECH STACK ━━━
+
+  Vite + React 18 + TypeScript
+  Tailwind CSS (keep existing dark theme + color palette)
+  No Next.js — bridge.js is already the server
+  Build output: public/dist/ (bridge serves index.html from there)
+  Dev: vite dev server proxies /api/* to localhost:3333
+
+━━━ COMPONENT STRUCTURE ━━━
+
+src/
+  main.tsx                    ← React entry point
+  App.tsx                     ← mode selector (Ask / Explore)
+  
+  types/
+    config.ts                 ← Group, DC, BridgeConfig, HealthStatus
+    qa.ts                     ← QAMessage, DocHit, KnowledgeHit, JiraHit
+    graph.ts                  ← SchemaObject, ImpactNode, ImpactEdge
+    semantic.ts               ← SemanticIntent, ConfidenceLevel
+  
+  api/
+    bridge.ts                 ← typed fetch wrappers for ALL bridge endpoints
+    useHealth.ts              ← polling hook for /health
+  
+  hooks/
+    useConversation.ts        ← conversation history, context window tracking
+    useBridge.ts              ← bridge config loader
+    useGroups.ts              ← group loading + active group state
+  
+  components/
+    AskMode/
+      AskMode.tsx             ← main Ask mode container
+      ChatThread.tsx          ← conversation history display
+      MessageBubble.tsx       ← single Q&A message with pills
+      QuestionInput.tsx       ← input bar + Ask button
+      ContextBar.tsx          ← context length progress bar (see below)
+      SampleQuestions.tsx     ← suggested question chips
+      LearningHint.tsx        ← optional hint field
+    
+    ExploreMode/
+      ExploreMode.tsx         ← group picker → main explore app
+      GroupCard.tsx           ← group picker card with health indicator
+      SchemaExplorer.tsx      ← schema browser tab
+      ImpactAnalysis.tsx      ← ⚡Impact tab
+      ErdDiagram.tsx          ← ERD SVG viewer
+    
+    tabs/
+      AskAITab.tsx            ← 💬Ask AI tab in Explore mode
+      DocsTab.tsx             ← 📚Docs library tab
+      KnowledgeTab.tsx        ← 🧠Knowledge tab
+      SemanticTab.tsx         ← 🔬Semantic tab
+      HomeTab.tsx             ← Home dashboard tab
+    
+    shared/
+      Toast.tsx               ← toast notifications
+      Settings.tsx            ← settings panel
+      DemoModeBanner.tsx      ← yellow demo mode banner
+      HealthBadge.tsx         ← postgres/ollama/atlassian status dots
+
+━━━ CONVERSATIONAL ASK MODE ━━━
+
+Replace single-answer box with a chat thread (like this interface).
+State lives in useConversation.ts hook.
+
+interface ConversationMessage {
+  id: string;
+  role: 'user' | 'assistant';
+  content: string;
+  docHits: DocHit[];
+  knowledgeHits: KnowledgeHit[];
+  jiraHits: JiraHit[];
+  dbHits: DbHit[];
+  timestamp: Date;
+}
+
+Ollama call includes last N turns of history:
+  messages: [
+    { role: 'system', content: systemPrompt },
+    ...conversationHistory.slice(-8),   // last 8 turns
+    { role: 'user', content: currentQuestion }
+  ]
+
+New Conversation button: clears history, starts fresh.
+History persists for browser session only (no localStorage).
+
+━━━ CONTEXT LENGTH PROGRESS BAR (ContextBar.tsx) ━━━
+
+Shown as thin bar below the chat input, always visible.
+
+Token estimate: (systemPrompt.length + historyChars) / 4
+Model context limits (fetch from GET /health → model field, then lookup):
+  qwen2.5:14b  → 32,768 tokens
+  gemma4:26b   → 131,072 tokens
+  llama3       → 8,192 tokens
+  default      → 8,192 tokens
+
+Color thresholds:
+  0–70%   → green  (#3fb950)
+  70–90%  → amber  (#d29922)
+  90%+    → red    (#f85149)
+
+Display: "Context: 73% used  [███████████░░░░] 5,832 / 8,192 tokens"
+
+At 90% — non-blocking prompt appears above input:
+  ┌─────────────────────────────────────────────┐
+  │ ⚠️  You're near the context limit (91%)      │
+  │ [📋 Summarize & start new chat]              │
+  │ [↩️  Keep going until limit]                 │
+  └─────────────────────────────────────────────┘
+
+If user chooses "Summarize & start new chat":
+  1. Send Ollama request: "Summarize this conversation into a compact
+     session brief covering: key WMS topics discussed, schemas/DCs mentioned,
+     conclusions reached, any open questions. Max 200 words."
+  2. Show brief to user + copy to clipboard
+  3. Pre-fill new conversation with: "Continuing from previous session: {brief}"
+  4. Clear history, start fresh conversation
+
+If user chooses "Keep going":
+  Dismiss prompt.
+  At 95%: oldest turns start dropping (sliding window).
+  Show note: "Oldest messages trimmed to fit context"
+
+━━━ TYPESCRIPT INTERFACES (types/config.ts) ━━━
+
+export interface Group {
+  id: string;
+  name: string;
+  env: 'prod' | 'uat' | 'test';
+  connectionName: string;
+  schemas: string[];
+  color: string;
+  icon: string;
+  readOnly: boolean;
+  description: string;
+}
+
+export interface DistributionCenter {
+  code: string;
+  dcId: number;
+  name: string;
+  type: string;
+  active: boolean;
+  manhattanGroup: string | null;
+  dmSchema: string | null;
+  mdaSchema: string | null;
+  cigwmsGroup: string | null;
+  wmshubGroup: string | null;
+}
+
+export interface BridgeConfig {
+  port: number;
+  ollamaUrl: string;
+  defaultModel: string;
+  postgresEnabled: boolean;
+  qaContextCharLimit: number;
+  docsMaxResults: number;
+  atlassianEnabled: boolean;
+}
+
+export interface HealthStatus {
+  bridge: boolean;
+  ollama: boolean;
+  postgres: boolean;
+  atlassian: boolean;
+  graphReady: boolean;
+  graphObjects: number;
+  model: string;
+  groups: number;
+}
+
+━━━ VITE CONFIG ━━━
+
+vite.config.ts:
+  build.outDir: '../public/dist'
+  build.emptyOutDir: true
+  server.proxy: { '/api': 'http://localhost:3333' }
+  
+  All fetch calls use relative paths (/api/...) in dev,
+  and window.location.origin in production.
+
+━━━ BRIDGE CHANGES (minimal) ━━━
+
+bridge.js: add static file serving for public/dist/:
+  if (fs.existsSync(path.join(__dirname, 'public/dist/index.html'))):
+    serve public/dist/ for all non-API routes
+  else:
+    serve public/index.html (fallback to old app during migration)
+
+This means old and new UIs coexist during migration.
+Zero changes to any lib/*.js files.
+
+━━━ MIGRATION STRATEGY ━━━
+
+1. Scaffold Vite + React + TS in new src/ directory
+2. Create all TypeScript interfaces
+3. Create api/bridge.ts with typed wrappers for ALL endpoints
+4. Build AskMode first (most complex — sendQA, context assembly, history)
+5. Build ExploreMode (group picker, schema browser, ERD)
+6. Build tabs one by one
+7. Run both UIs side by side until React version is verified
+8. Remove public/index.html when migration complete
+
+⚠️ NEVER change lib/mcp-pool.js or queryDB() during this prompt.
+⚠️ NEVER break the bridge API — all existing endpoints stay unchanged.
+⚠️ Keep public/index.html until React version is fully verified.
+⚠️ The hasAuthoritativeSourceContext guard must NOT suppress docs/knowledge/jira.
+⚠️ Document context must always be included in the prompt when found.
+
+━━━ START.SH ADDITION ━━━
+
+If public/dist/index.html exists:
+  echo "⚛️  React UI available at http://localhost:3333"
+Else:
+  echo "📄 Legacy UI at http://localhost:3333 (React build not found)"
+```
+
+---
+
+### PROMPT 37 — LDAP Authentication (Multi-User) 🔜 FUTURE (post-demo)
 
 ```
 After stakeholder approval and server deployment.
 Use LDAP/Active Directory — already proven in another McLane POC.
 Azure AD SSO requires IT approval (AADSTS65002 blocks direct access).
 
-Add to config.json:
-  "ldapEnabled": false,
-  "ldapUrl": "ldap://mclaneco.com",
-  "ldapBaseDn": "DC=mclaneco,DC=com",
-  "ldapBindDn": "",
-  "ldapBindPassword": "",
-  "sessionSecret": "",
-  "sessionTimeoutMinutes": 480
-
-POST /auth/login → LDAP bind with user credentials
-GET /auth/logout → clear session
-All /db/*, /docs/*, /knowledge/* → require valid session
-Knowledge entries → capturedBy: real username from LDAP
-Semantic confirmations → confirmedBy: real username
-
-Do NOT implement until server deployment is planned.
+Config: ldapEnabled, ldapUrl, ldapBaseDn, sessionSecret.
+Multi-user: capturedBy/confirmedBy = real LDAP username.
+Do NOT implement until server deployment planned.
 ```
 
 ---
 
-### PROMPT 37 — Docker Compose Multi-Container 🔜 FUTURE (post-demo)
+### PROMPT 38 — Docker Compose Multi-Container 🔜 FUTURE (post-demo)
 
 ```
-After stakeholder approval.
-Full production-ready Docker Compose setup.
-
-Services:
-  frontend  — Nginx serving public/ (port 80/443)
-  bridge    — Node.js TypeScript (port 3333, internal)
-  worker    — Python semantic worker (port 3334, internal)
-  postgres  — PostgreSQL + pgvector (port 5432, internal)
-  ollama    — Ollama LLM (port 11434, internal, GPU preferred)
-
-Network:
-  All services on internal Docker network
-  Only frontend exposed externally
-  Bridge connects to on-prem Oracle via VPN/McLane network
-
-Environment variables (not config.json) for secrets:
-  ATLASSIAN_TOKEN, ANTHROPIC_API_KEY, LDAP_BIND_PASSWORD,
-  POSTGRES_PASSWORD, SESSION_SECRET
-
-Do NOT implement until server is provisioned by IT.
+Full production Docker Compose:
+  frontend (Nginx), bridge (Node.js), worker (Python),
+  postgres (pgvector + AGE), ollama (GPU preferred).
+Secrets via environment variables, not config.json.
+Do NOT implement until IT provisions server.
 ```
 
 ---
@@ -922,13 +872,12 @@ Do NOT implement until server is provisioned by IT.
 ### PROMPT 23 — UT DC Activation (September 2026) 🔜 FUTURE
 
 ```
-Config-only change when McLane Salt Lake City (UT, DC 210)
-goes live on Manhattan in September 2026.
-1. config.json distributionCenters: set "active": true for UT
-2. config.json manhattan-main schemas: add "UT_DM", "UT_MDA"
-3. Verify schemas exist via DBA_OBJECTS
-4. Restart bridge.js — zero code changes needed
-5. Update this file: UT row → "✅ Live"
+Config-only when UT goes live:
+1. distributionCenters UT: set "active": true
+2. manhattan-main schemas: add "UT_DM", "UT_MDA"
+3. Verify schemas in DBA_OBJECTS
+4. Restart bridge — zero code changes
+5. Update this file: UT → "✅ Live"
 ```
 
 ---
@@ -937,29 +886,35 @@ goes live on Manhattan in September 2026.
 
 | Symptom | Fix |
 |---------|-----|
-| "Bridge offline" | Run `node bridge.js`; check `/health` |
-| "Ollama offline" | verifyOllamaReady() checks h.ollama === true |
-| Ollama hangs | 60s AbortController timeout — check context cap |
-| AI hallucinated ticket numbers | jiraResults not injected — check sendQA() |
-| 🎫 pill not showing | Check jiraHits in scope at pill render |
-| atlassian:false in health | Check domain/email/token all set in config.json |
-| JIRA search returns empty | textfields~ JQL — check stop word filtering |
-| JIRA extension code stripped | EX01/EX33 must never be stop words |
-| Ask mode shows "No prod groups" | groupsLoadPromise timing — loadGroups() must complete |
-| Ask mode switches to Explore | Classifier bug — check issue guard terms |
-| Doc chunks still TOC garbage | preprocessDocText() — run POST /docs/reindex |
-| chunkCount: 1 for large doc | extractionMode check — mammoth must run for .docx |
-| JSON truncated in docs-index | Atomic write fix — write to .tmp then rename |
+| "Bridge offline" | `node bridge.js`; check `/health` |
+| "Ollama offline" | h.ollama === true check in verifyOllamaReady() |
+| Ollama hangs | 60s AbortController — check qaContextCharLimit |
+| AI hallucinated ticket numbers | jiraResults not injected into prompt |
+| 🎫 pill not showing | Check jiraHits scope at pill render |
+| atlassian:false | Check domain/email/token in config.json |
+| JIRA returns empty | textfields~ JQL — check stop word filtering |
+| Extension code stripped (EX01) | Never strip /^[A-Z]{1,4}[-_]?\d+$/i patterns |
+| Ask mode "No prod groups" | groupsLoadPromise timing — await loadGroups() |
+| Doc chunks show TOC garbage | preprocessDocText() — run POST /docs/reindex |
 | Any /db/* returns [] | Using raw runMCP() — always use queryDB() |
-| Schema shows (0) objects | Must use DBA_OBJECTS not ALL_OBJECTS |
-| E1 hangs forever | depth=1 parameter missing — never remove it |
-| E1 fails intermittently | Was SYS.DUAL infinite BFS — now fixed with depth=1 |
-| Q&A hits wrong database | Check env field — all prod groups must have "env":"prod" |
-| Shipment query returns empty | Date fallback chain — today→week→month→all |
-| Hard-coded SQL breaks Active WM | Must use sql-catalog.js + tableAliases — see PROMPT 32 |
+| Schema shows (0) objects | Use DBA_OBJECTS not ALL_OBJECTS |
+| E1 hangs forever | depth=1 parameter missing — never remove |
+| Q&A hits wrong database | env field — all prod groups need "env":"prod" |
+| AI answer ignores found documents | hasAuthoritativeSourceContext guard — must be removed from doc/knowledge/jira block conditions |
+| EX01 returns wrong document | extractExtensionCode() not firing — check pattern match |
+| Vector search all same similarity | mxbai-embed-large may be returning identical vectors — restart Ollama |
+| nomic-embed-text identical vectors | Known broken — do NOT use, switch to mxbai-embed-large |
+| upsertObject error: expected 768 not 1024 | Tables created with wrong dims — drop all tables, restart bridge |
+| find-table returns empty | Query not enriched — check findTableByQuery enrichedQuery format |
+| Colima won't start | colima start --runtime docker (not default k3s) |
+| docker compose: unknown flag -d | Use docker-compose (hyphenated) not docker compose |
+| Docker pull TLS error | Corporate SSL interception — pull via crane on home network |
+| postgres won't start | colima start first, then docker-compose up -d postgres |
+| pgvector index fails | Need at least 100 rows before ivfflat index works |
 | start.sh permission denied | chmod +x start.sh stop.sh |
-| ngrok blocked by McLane SSL | Use phone hotspot for ngrok, or use 10.98.215.99 directly |
-| Power Automate folder shows "No items" | SharePoint API permissions — use recurrence trigger |
+| ngrok blocked | Use phone hotspot or 10.98.215.99 directly |
+| PDFs fail bulk upload | brew install poppler (provides pdftotext) |
+| "076 rows selected." as object_type | SQLcl footer leaking — parseMCPResult() footer filter |
 
 ---
 
@@ -968,48 +923,59 @@ goes live on Manhattan in September 2026.
 ```
 knowledgeBase/
 ├── .github/
-│   └── copilot-instructions.md   ← this file (v18)
+│   └── copilot-instructions.md   ← this file (v20)
 ├── bridge.js                     ← thin entry point + HTTP server
-├── lib/                          ← modular route handlers
-│   ├── mcp-pool.js               ← MCP pool + queryDB()
-│   ├── db-routes.js              ← /db/* handlers
-│   ├── docs-routes.js            ← /docs/* + preprocessDocText + chunking
-│   ├── knowledge-routes.js       ← /knowledge/* handlers
+├── lib/
+│   ├── mcp-pool.js               ← MCP pool + queryDB() [NEVER CHANGE]
+│   ├── db-routes.js              ← /db/* + scan/find graph endpoints
+│   ├── docs-routes.js            ← /docs/* + hybrid search + migrate-to-graph
+│   ├── knowledge-routes.js       ← /knowledge/*
 │   ├── jira-routes.js            ← /jira/* + JQL builder + stop words
-│   ├── ollama-routes.js          ← /ollama/* + Claude API (PROMPT 35)
+│   ├── ollama-routes.js          ← /ollama/*
 │   ├── semantic-routes.js        ← /semantic/* proxy to Python worker
-│   ├── sql-catalog.js            ← ALL SQL queries (PROMPT 32) ← CREATE THIS
-│   └── vector-store.js           ← pgvector client (PROMPT 33) ← CREATE THIS
+│   └── graph-store.js            ← PostgreSQL + pgvector + AGE (PROMPT 35)
+├── src/                          ← React + TypeScript [PROMPT 36]
+│   ├── main.tsx
+│   ├── App.tsx
+│   ├── types/
+│   ├── api/
+│   ├── hooks/
+│   └── components/
 ├── public/
-│   └── index.html                ← WMS·IQ single-file frontend
+│   ├── index.html                ← Legacy frontend (kept until React verified)
+│   └── dist/                    ← React build output [PROMPT 36]
 ├── semantic-worker/
 │   ├── app.py                    ← Python Flask semantic engine
-│   └── .venv/                    ← Python virtualenv (auto-created)
+│   └── .venv/                    ← Python virtualenv
 ├── OP/                           ← Oracle PL/SQL source code
+├── Dockerfile.postgres           ← pgvector + AGE image [PROMPT 35]
+├── docker-compose.yml            ← PostgreSQL container
 ├── config.json                   ← ⚠️ in .gitignore — never commit
 ├── config.example.json           ← Safe template — commit this
-├── docker-compose.yml            ← PostgreSQL (PROMPT 33) ← CREATE THIS
-├── .gitignore                    ← node_modules, config.json, docs-index etc
-├── debug-mcp.js                  ← MCP handshake tester
-├── test-bridge.js                ← 46/46 passing (A–K)
-├── bulk_upload_docs.py           ← Python bulk upload script
-├── start.sh / stop.sh            ← startup/shutdown (chmod +x required)
-├── SETUP.md                      ← setup + Power Automate + JIRA + Semantic
-├── docs-index/                   ← 226 documents (in .gitignore)
+├── .gitignore                    ← node_modules, config.json, pgdata/, docs-index/ etc
+├── debug-mcp.js
+├── test-bridge.js                ← 50/50 passing (A–L), M1–M3 added by prompt 35
+├── bulk_upload_docs.py           ← Python bulk upload (needs poppler for PDFs)
+├── start.sh / stop.sh            ← chmod +x required
+├── SETUP.md
+├── docs-index/                   ← 222 docs (in .gitignore)
 ├── knowledge-index/              ← institutional knowledge (in .gitignore)
-└── semantic-index/               ← 118+ intents (in .gitignore)
-    └── intents.json
+├── semantic-index/               ← 76+ confirmed intents (in .gitignore)
+│   └── intents.json
+└── pgdata/                       ← PostgreSQL data (in .gitignore)
 ```
 
 ---
 
 ## 📊 POC vs Production Roadmap
 
-### Current Phase — POC (MacBook, single user ASRAJAG)
+### Current Phase — POC (MacBook, single user)
 ```
-✅ PROMPTS 1–31   Complete — demo ready
-🔜 PROMPT 32     SQL abstraction + hard-coding cleanup ← DO NEXT
-🔜 PROMPT 33     PostgreSQL + pgvector ← major quality improvement
+✅ PROMPTS 1–31   Complete and demo-ready
+✅ PROMPT 32/33  Oracle Knowledge Graph + pgvector ✅
+✅ PROMPT 35     Apache AGE graph ← COMPLETED
+─────────────────────────────────────────────────────
+🔜 PROMPT 36     React + TypeScript + Conversational UI ← DO NEXT
 ─────────────────────────────────────────────────────
 SHOW TO McLane IT / Management
 ─────────────────────────────────────────────────────
@@ -1017,24 +983,20 @@ SHOW TO McLane IT / Management
 
 ### Post-Approval Phase
 ```
-PROMPT 34   Oracle change detection (LAST_DDL_TIME polling)
-PROMPT 35   Claude API for Q&A (better answers)
-PROMPT 36   LDAP authentication (multi-user)
-PROMPT 37   Docker Compose (full production deployment)
+PROMPT 34   Oracle change detection (LAST_DDL_TIME)
+PROMPT 37   LDAP authentication (multi-user)
+PROMPT 38   Docker Compose (full production)
 ```
 
-### Technology Decisions
-| Layer | POC (now) | Production (later) |
+### Technology Stack
+| Layer | POC (now) | Production |
 |---|---|---|
-| Bridge | Node.js vanilla JS | TypeScript |
-| Frontend | Single HTML file | React + TypeScript |
-| Semantic engine | Python Flask | Python + pgvector |
-| Storage | JSON files + PostgreSQL | PostgreSQL only |
-| Container | Docker (postgres only) | Full Docker Compose |
-| Auth | None (local only) | LDAP → Azure AD |
-| LLM local | Ollama llama3 8B | Ollama (GPU server) |
-| LLM cloud | Claude API (optional) | Claude API (primary) |
-
-### Rust consideration
-Not in POC phase. Revisit post-production for SQLcl MCP process manager.
-Bottleneck is Oracle VPN latency and Ollama inference, not CPU/memory.
+| Oracle connection | SQLcl MCP (keep forever) | SQLcl MCP |
+| Active WM | Not yet — replicas pending | PostgreSQL replica group |
+| Knowledge graph | PostgreSQL + pgvector (Docker/Colima) | PostgreSQL (IT-managed) |
+| Graph traversal | Apache AGE + Cypher (PROMPT 35) | Apache AGE |
+| Frontend | Single HTML → React + TypeScript (PROMPT 36) | React + TypeScript |
+| Auth | None | LDAP |
+| LLM local | Ollama qwen2.5:14b | Ollama (GPU) |
+| LLM cloud | Claude API (future) | Claude API |
+| Embedding | mxbai-embed-large 1024d | mxbai-embed-large |

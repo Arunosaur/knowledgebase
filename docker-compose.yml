@@ -1,11 +1,13 @@
-version: '3.8'
 services:
   postgres:
-    image: ankane/pgvector:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.postgres
     environment:
       POSTGRES_DB: wmsiq
       POSTGRES_USER: wmsiq
       POSTGRES_PASSWORD: wmsiq
+      PGPASSWORD: wmsiq
     ports:
       - "5432:5432"
     volumes:

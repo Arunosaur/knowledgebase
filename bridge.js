@@ -1766,7 +1766,10 @@ const server = http.createServer(async (req, res) => {
         groups: config.groups.length,
         postgres: false,
         graphObjects: 0,
-        graphReady: false
+        graphReady: false,
+        age: false,
+        ageGraph: null,
+        ageVertices: 0
       };
       if (config.bridge && config.bridge.poolEnabled) {
         health.pool = modularPool.getPoolSnapshot();
@@ -1777,6 +1780,12 @@ const server = http.createServer(async (req, res) => {
         health.postgres = graphInfo.postgres;
         health.graphObjects = graphInfo.graphObjects;
         health.graphReady = graphInfo.graphReady;
+        // Add AGE status from graphStore
+        if (graphInfo.age !== undefined) {
+          health.age = graphInfo.age;
+          health.ageGraph = graphInfo.ageGraph || null;
+          health.ageVertices = graphInfo.ageVertices || 0;
+        }
       }
       res.end(JSON.stringify(health));
 
