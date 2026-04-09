@@ -258,35 +258,126 @@ function preprocessDocText(text) {
     if (!trimmed) return false;
     const digitSpaceRatio = ((trimmed.match(/[\d\s]/g) || []).length) / Math.max(trimmed.length, 1);
     const alphaTokens = trimmed.match(/[A-Za-z][A-Za-z\-]{1,}/g) || [];
-    const sectionTitleish = alphaTokens.length > 0 && alphaTokens.every(token => /^[A-Z][a-z]+(?:-[A-Za-z]+)?$/.test(token) || /^(EX\d+|EX)$/i.test(token) || /^(Contents|Overview|Summary|History|Revision|Introduction|Enhancement|Conversion|Configuration|Guide)$/i.test(token));
-    return digitSpaceRatio > 0.6 && sectionTitleish;
+    const numberTokens = trimmed.match(/\b\d+(?:\.\d+)*\b/g) || [];
+    const sectionTitleish = alphaTokens.length > 0 && alphaTokens.every(token => /^[A-Z][a-z]+(?:-[A-Za-z]+)?$/.test(token) || /^(EX\d+|EX)$/i.test(token) || /^(Contents|Overview|Summary|History|Revision|Introduction|Enhancement|Conversion|Configuration|Guide|Scope|Purpose|Requirements|Assumptions)$/i.test(token));
+    const looksLikeContentsBody = /^contents\b/i.test(trimmed) && numberTokens.length >= 2;
+    const hasVerb = /\b(is|are|was|were|provides?|enables?)\b/i.test(trimmed);
+    const repeatingSectionPattern = numberTokens.length >= 3 && !/[.!?]/.test(trimmed) && !hasVerb;
+    const longIndexLine = numberTokens.length >= 5 && alphaTokens.length >= 5 && !hasVerb;
+    return looksLikeContentsBody || repeatingSectionPattern || longIndexLine || (digitSpaceRatio > 0.6 && sectionTitleish);
+  };
+
+  const stripInlineTocBlob = value => {
+    const source = String(value || '');
+    const stripped = source
+      .replace(/\bContents\b(?:\s+\d+(?:\.\d+)*\s+[A-Za-z][A-Za-z0-9–\-()/:, ]{0,120}){4,}/i, ' ')
+      .replace(/\s{2,}/g, ' ')
+      .trim();
+    return stripped || source.trim();
+  };
+
+  const trimToNarrativeStart = value => {
+    const source = String(value || '').trim();
+    if (!source) return source;
+    const verbRe = /\b(is|are|was|were|provides?|enables?)\b/gi;
+    let m;
+    let chosenIndex = -1;
+    while ((m = verbRe.exec(source))) {
+      const idx = m.index;
+      if (idx < 180) continue;
+      const prev = source.slice(Math.max(0, idx - 200), idx);
+      const around = source.slice(Math.max(0, idx - 240), idx + 120);
+      const nums = (prev.match(/\b\d+(?:\.\d+)*\b/g) || []).length;
+      const letters = (prev.match(/[A-Za-z]/g) || []).length;
+      const bad = /\b(contents|toc|pageref)\b/i.test(around);
+      if (!bad && nums <= 1 && letters >= 80) {
+        chosenIndex = idx;
+        break;
+      }
+    }
+    if (chosenIndex > 500) {
+      const sentenceStart = source.lastIndexOf('. ', chosenIndex);
+      const start = sentenceStart >= 0 ? sentenceStart + 2 : Math.max(0, chosenIndex - 120);
+      return source.slice(start).trim();
+    }
+    return source;
   };
 
   const lines = cleanedText.split('\n');
+  const rawFallback = trimToNarrativeStart(stripInlineTocBlob(cleanedText
+    .replace(/[ \t]+\n/g, '\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim()));
   const filteredLines = lines.filter(line => {
     const trimmed = line.trim();
     if (!trimmed) return true;
     if ((trimmed.match(/PAGEREF/gi) || []).length * 'PAGEREF'.length / Math.max(trimmed.length, 1) > 0.5) return false;
     if (/^[\d\s]{10,}$/.test(trimmed)) return false;
     if (looksLikeTocEntry(trimmed)) return false;
+    if (/\bcontents\b/i.test(trimmed) && (trimmed.match(/\b\d+(?:\.\d+)*\b/g) || []).length >= 2) return false;
     return true;
   });
-
-  const isMeaningfulStart = line => {
-    const trimmed = String(line || '').trim();
-    return trimmed.length > 100
-      && !/^\d/.test(trimmed)
-      && /\b(is|are|was|were|provides?|enables?)\b/i.test(trimmed);
-  };
-
-  const startIndex = filteredLines.findIndex(isMeaningfulStart);
-  const startTrimmed = startIndex > 0 ? filteredLines.slice(startIndex) : filteredLines;
-
-  return startTrimmed
+  const fallbackText = filteredLines
     .join('\n')
     .replace(/[ \t]+\n/g, '\n')
     .replace(/\n{3,}/g, '\n\n')
     .trim();
+  const safeFallback = fallbackText || rawFallback;
+
+  const buildParagraphs = linesList => {
+    const paragraphs = [];
+    let bucket = [];
+    for (const line of linesList) {
+      const trimmed = String(line || '').trim();
+      if (!trimmed) {
+        if (bucket.length) {
+          paragraphs.push(bucket.join(' ').replace(/\s+/g, ' ').trim());
+          bucket = [];
+        }
+        continue;
+      }
+      bucket.push(trimmed);
+    }
+    if (bucket.length) {
+      paragraphs.push(bucket.join(' ').replace(/\s+/g, ' ').trim());
+    }
+    return paragraphs.filter(Boolean);
+  };
+
+  const paragraphs = buildParagraphs(filteredLines);
+  const isMeaningfulStart = paragraph => {
+    const p = String(paragraph || '').trim();
+    return p.length > 100
+      && !/^\d/.test(p)
+      && /\b(is|are|was|were|provides?|enables?)\b/i.test(p);
+  };
+  let startIndex = paragraphs.findIndex(isMeaningfulStart);
+
+  if (startIndex < 0) {
+    const lineStartIndex = filteredLines.findIndex((_, i) => {
+      const first = String(filteredLines[i] || '').trim();
+      if (!first || /^\d/.test(first) || looksLikeTocEntry(first)) return false;
+      const window = filteredLines.slice(i, i + 6).join(' ').replace(/\s+/g, ' ').trim();
+      return window.length > 100 && /\b(is|are|was|were|provides?|enables?)\b/i.test(window);
+    });
+    if (lineStartIndex >= 0) {
+      const lineParagraphs = buildParagraphs(filteredLines.slice(lineStartIndex));
+      const lineBased = lineParagraphs
+        .join('\n\n')
+        .replace(/[ \t]+\n/g, '\n')
+        .replace(/\n{3,}/g, '\n\n')
+        .trim();
+      return lineBased || safeFallback;
+    }
+  }
+
+  const startTrimmed = startIndex > 0 ? paragraphs.slice(startIndex) : paragraphs;
+  const finalText = startTrimmed
+    .join('\n\n')
+    .replace(/[ \t]+\n/g, '\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+  return trimToNarrativeStart(stripInlineTocBlob(finalText || safeFallback));
 }
 
 function getChunkParams(extension, wordCount) {
