@@ -1,0 +1,14 @@
+node_modules/
+__pycache__/
+.DS_Store
+.venv/
+config.json
+docs-index/
+knowledge-index/
+semantic-index/
+.bulk-upload-state.json
+.fix_*.py
+.add_*.py
+.update_*.py
+.tmp-*.js
+*.pyc
