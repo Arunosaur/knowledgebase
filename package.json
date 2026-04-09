@@ -1,0 +1,21 @@
+{
+  "name": "knowledgebase",
+  "version": "1.0.0",
+  "description": "A simple, file-based knowledgebase application",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "node --test tests/*.test.js"
+  },
+  "keywords": [
+    "knowledgebase",
+    "wiki",
+    "articles"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "express": "^5.2.1",
+    "marked": "^18.0.0"
+  }
+}
