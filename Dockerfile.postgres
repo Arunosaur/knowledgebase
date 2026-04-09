@@ -1,11 +1,20 @@
 FROM pgvector/pgvector:pg16
 
+COPY age-PG16.zip /tmp/age.zip
+
 RUN apt-get update && apt-get install -y \
-    build-essential postgresql-server-dev-16 \
-    libreadline-dev zlib1g-dev \
-  && git clone https://github.com/apache/age.git /tmp/age \
-  && cd /tmp/age && git checkout PG16 \
+    build-essential \
+    postgresql-server-dev-16 \
+    libreadline-dev \
+    zlib1g-dev \
+    unzip \
+    flex \
+    bison \
+  && unzip /tmp/age.zip -d /tmp/ \
+  && cd /tmp/age-PG16 \
   && make && make install \
-  && rm -rf /tmp/age \
+  && rm -rf /tmp/age* \
   && apt-get remove -y build-essential postgresql-server-dev-16 \
-  && apt-get autoclean
+  && apt-get autoremove -y \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/*

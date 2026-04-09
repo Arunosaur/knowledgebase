@@ -1,0 +1,72 @@
+{
+  "root": "/Users/asrajag/Downloads/OneDrive_5_4-9-2026",
+  "group": "manhattan-main",
+  "bridge": "http://localhost:3333",
+  "totalScanned": 227,
+  "uploadedThisRun": 5,
+  "failedThisRun": 0,
+  "bytesUploadedThisRun": 2972930,
+  "extractedCharsThisRun": 48920,
+  "requireText": false,
+  "minRequestGapMs": 700,
+  "failureBuckets": {},
+  "ocrCandidates": [],
+  "timestamp": "2026-04-09T21:14:00.366960Z",
+  "results": [
+    {
+      "ok": true,
+      "relPath": "MCLN EX55 Configuration Fix - 'Could not load given INT 2' error after invoking Alt and Substitute ctrl keys (2).pdf",
+      "bytes": 280197,
+      "ext": ".pdf",
+      "chunkCount": 1,
+      "wordCount": 54,
+      "sha256": "5d9831af83cc7ce9266f038fe9b34c7122cbe63d7f16948c9037cbbe834e4eb9",
+      "extractor": "pdftotext",
+      "extractedChars": 315
+    },
+    {
+      "ok": true,
+      "relPath": "EX102-fully executed.pdf",
+      "bytes": 1192650,
+      "ext": ".pdf",
+      "chunkCount": 9,
+      "wordCount": 3587,
+      "sha256": "5d9442c94bd8a0b86908a62b1874e6aaa27d555c1ef49e392e5cd1b3bedad974",
+      "extractor": "pdftotext",
+      "extractedChars": 28472
+    },
+    {
+      "ok": true,
+      "relPath": "MCLN EX80 VNA (Turret Aisle) Replenishment Task Combining Configuration Guide.pdf",
+      "bytes": 1304064,
+      "ext": ".pdf",
+      "chunkCount": 2,
+      "wordCount": 963,
+      "sha256": "3f87af970b3aeb042a34b9fffda10a04d6d45c2cb768c008823f64d11a1a5cec",
+      "extractor": "pdftotext",
+      "extractedChars": 6211
+    },
+    {
+      "ok": true,
+      "relPath": "MCLN-WMOS-2019-SDN0266.pdf",
+      "bytes": 98018,
+      "ext": ".pdf",
+      "chunkCount": 2,
+      "wordCount": 1039,
+      "sha256": "2ce4de9e314b16815dd24b2c5a7ad1e67b81e5a5bc7ca6b1578ec3d4fdd2cf4a",
+      "extractor": "pdftotext",
+      "extractedChars": 7081
+    },
+    {
+      "ok": true,
+      "relPath": "MCLN-WMOS-2019-SDN0264.pdf",
+      "bytes": 98001,
+      "ext": ".pdf",
+      "chunkCount": 1,
+      "wordCount": 999,
+      "sha256": "0ee2654108b865dfc9c7fa1422cb232a496e46407119d6ffb09bd2313fc2f670",
+      "extractor": "pdftotext",
+      "extractedChars": 6841
+    }
+  ]
+}
