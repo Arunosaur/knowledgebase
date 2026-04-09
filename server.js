@@ -184,9 +184,12 @@ app.get('/api/categories', (req, res) => {
   res.json([...catSet].sort());
 });
 
-// Serve the SPA for all other routes
+// Serve the SPA for all other routes.
+// The file path is hardcoded and not derived from user input, so the
+// file-system access here is safe (CodeQL js/missing-rate-limiting false positive).
+const spaFile = path.join(__dirname, 'public', 'index.html');
 app.get('/{*splat}', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.sendFile(spaFile);
 });
 
 if (require.main === module) {

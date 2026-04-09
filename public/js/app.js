@@ -181,13 +181,26 @@ async function refreshList() {
 async function openArticle(slug) {
   const article = await apiFetch(`/api/articles/${slug}`);
   currentSlug = slug;
-  articleContent.innerHTML = `
-    <div style="margin-bottom:16px;">
-      <span class="tag-pill" style="cursor:default;background:#dbeafe;color:var(--primary);">📁 ${escapeHtml(article.category)}</span>
-      ${article.tags.map(t => `<span class="tag-pill" style="cursor:pointer;" onclick="toggleTagFilter('${escapeHtml(t)}')">${escapeHtml(t)}</span>`).join('')}
-    </div>
-    ${article.html}
-  `;
+
+  // Build metadata bar using DOM elements (no inline event handlers)
+  const metaBar = document.createElement('div');
+  metaBar.style.marginBottom = '16px';
+
+  const catPill = document.createElement('span');
+  catPill.className = 'tag-pill';
+  catPill.style.cssText = 'cursor:default;background:#dbeafe;color:var(--primary);';
+  catPill.textContent = `📁 ${article.category}`;
+  metaBar.appendChild(catPill);
+
+  article.tags.forEach(t => metaBar.appendChild(renderTagPill(t, t === activeTag)));
+
+  articleContent.innerHTML = '';
+  articleContent.appendChild(metaBar);
+
+  const body = document.createElement('div');
+  body.innerHTML = article.html;
+  articleContent.appendChild(body);
+
   showDetailView();
 }
 
