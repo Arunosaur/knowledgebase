@@ -1,6 +1,7 @@
 {
   "bridge": {
     "port": 3333,
+    "semanticWorkerPort": 3334,
     "ollamaUrl": "http://localhost:11434",
     "defaultModel": "llama3",
     "sqlclCommand": "sql",
@@ -15,6 +16,8 @@
     "poolIdleTimeoutMs": 300000,
     "poolMaxQueueDepth": 20,
     "toolCallTimeoutMs": 15000,
+    "impactMaxNodes": 200,
+    "queryMaxRows": 50,
     "maxConcurrentConnectionsPerDC": 5,
     "maxConcurrentConnectionsCigWMS": 5,
     "maxConcurrentConnectionsWMSHub": 5,
@@ -31,14 +34,54 @@
     "docsIndexDir": "./docs-index",
     "docsChunkSize": 2500,
     "docsChunkOverlap": 300,
+    "defaultChunkSize": 800,
+    "defaultChunkOverlap": 100,
+    "docsMaxResults": 10,
+    "answerWordCap": 200,
+    "qaContextCharLimit": 12000,
     "whisperModel": "base",
     "docsSyncConcurrency": 2,
+    "jiraMaxResults": 10,
+    "jiraMaxTerms": 4,
+    "jiraStopWords": [
+      "are", "there", "any", "is", "the", "a", "an", "in", "on",
+      "at", "to", "for", "of", "and", "or", "what", "how", "why",
+      "when", "where", "who", "which", "be", "been", "being",
+      "have", "has", "had", "do", "does", "did", "will", "would",
+      "could", "should", "may", "might", "can", "with", "about",
+      "issues", "issue", "related", "problem", "problems",
+      "error", "errors", "please", "help", "find", "show", "me",
+      "tell", "give", "list", "get", "check", "look",
+      "solving", "solve", "solution", "fixing", "fix", "fixed",
+      "addressing", "address", "handling", "handle", "handled",
+      "finding", "searching", "search", "looking",
+      "need", "needs", "needed", "using", "use", "used", "making",
+      "make", "getting", "trying", "try", "working", "work",
+      "many", "were", "assigned", "assignment", "assignee", "owner",
+      "owned", "group", "last", "latest", "top", "hour", "hours", "hr", "hrs"
+    ],
+    "semanticConfidenceHigh": 0.8,
+    "semanticConfidenceMedium": 0.5,
+    "semanticScanParallelLimit": 4,
     "atlassianEnabled": true,
     "atlassianDomain": "mclane.atlassian.net",
     "atlassianEmail": "<set>",
     "atlassianToken": "<set>",
     "atlassianProjectKeys": [],
-    "uploadToken": ""
+    "uploadToken": "",
+    "postgresEnabled": false,
+    "postgresUrl": "postgresql://wmsiq:wmsiq@localhost:5432/wmsiq",
+    "graphScanEnabled": true,
+    "graphScanIncludeSource": true,
+    "graphScanIncludeColumns": true
+  },
+
+  "graphScanSchemas": {
+    "manhattan-main": ["MANH_CODE", "MANH", "SE_DM"],
+    "manhattan-ck": ["MANH_CODE", "MANH", "C1_DM"],
+    "manhattan-wk": ["MANH_CODE", "MANH", "MAN490_DM"],
+    "cigwms-prod": ["FRAMEWORK", "OP", "MCLANE", "CIGWMS"],
+    "wmshub-prod": ["WMSHUB_CODE", "EM_CODE"]
   },
   "distributionCenters": [
     {

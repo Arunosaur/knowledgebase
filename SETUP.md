@@ -275,3 +275,60 @@ chmod +x start.sh stop.sh   # first time only
 ```
 
 This script sequence streamlines development and testing by automating service management.
+
+## PostgreSQL Knowledge Graph Setup
+
+The knowledge graph stores Oracle schema metadata with pgvector embeddings,
+enabling semantic search across tables, columns, and source code.
+
+### Prerequisites
+- Docker Desktop installed and running
+
+### Steps
+
+1. Start PostgreSQL:
+  ```bash
+  docker compose up -d postgres
+  ```
+
+2. Enable in config.json:
+  ```json
+  "postgresEnabled": true
+  ```
+
+3. Restart the bridge:
+  ```bash
+  ./stop.sh && ./start.sh
+  ```
+
+4. Migrate existing data (run once):
+  ```bash
+  curl -X POST http://localhost:3333/docs/migrate-to-graph
+  curl -X POST http://localhost:3333/knowledge/migrate-to-graph
+  curl -X POST http://localhost:3333/semantic/migrate-to-graph
+  ```
+  Note: Document migration (~226 files) takes ~17 minutes. Runs in background.
+
+5. Scan Oracle schemas (takes 10-30 minutes per group):
+  ```bash
+  curl -X POST http://localhost:3333/db/scan-schema \
+    -H "Content-Type: application/json" \
+    -d '{"group":"manhattan-main","schemas":["MANH_CODE","SE_DM"]}'
+  ```
+
+6. Check status:
+  ```bash
+  curl http://localhost:3333/db/scan-status
+  curl http://localhost:3333/health
+  ```
+
+### Fallback
+All existing JSON-based search (docs, knowledge, semantic) remains fully active
+if PostgreSQL is down or `postgresEnabled: false`. The graph enhances; it does not replace.
+
+### Resetting the graph
+```bash
+docker compose down -v   # removes pgdata/ volume
+docker compose up -d postgres
+```
+Then re-run migration and scan steps above.

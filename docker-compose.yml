@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+  postgres:
+    image: ankane/pgvector:latest
+    environment:
+      POSTGRES_DB: wmsiq
+      POSTGRES_USER: wmsiq
+      POSTGRES_PASSWORD: wmsiq
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U wmsiq"]
+      interval: 5s
+      timeout: 5s
+      retries: 10

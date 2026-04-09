@@ -4,7 +4,20 @@
 <meta charset="utf-8">
 <title>McLane WMS·IQ</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&family=IBM+Plex+Sans&display=swap" rel="stylesheet">
-<script src="http://localhost:3333/msal-browser.min.js"></script>
+<script>
+(function initBridgeRuntime(){
+  const metaBridge = document.querySelector('meta[name="bridge-url"]')?.content;
+  const fromMeta = String(metaBridge || '').trim();
+  const fromLocation = window.location.protocol === 'http:' || window.location.protocol === 'https:'
+    ? window.location.origin
+    : '';
+  const bridge = fromMeta || fromLocation || 'http://localhost:3333';
+  window.__BRIDGE_URL__ = bridge.replace(/\/$/, '');
+  const msalScript = document.createElement('script');
+  msalScript.src = `${window.__BRIDGE_URL__}/msal-browser.min.js`;
+  document.head.appendChild(msalScript);
+})();
+</script>
 <style>
 :root{
   --bg:#0d1117;--bg2:#161b22;--bg3:#1c2333;
@@ -335,12 +348,18 @@ body.compact-sidebar #sidebar .tree li{padding:3px 0;}
 
 <script>
 // ═══ CONFIG & CONSTANTS ═══
-const BRIDGE = 'http://localhost:3333'; // may be overridden by settings
+let BRIDGE = (window.__BRIDGE_URL__ || 'http://localhost:3333').replace(/\/$/, '');
 let groups=[],activeGroup=null,schemasCache={},schemasData={},objectsCache={},history=[];
 let groupsLoadPromise = null;
 let schemaSourceCache = {}; // Cache pre-loaded source code: { 'schema': { 'OBJECT_NAME': sourceText } }
 let shipmentStatusLabelCache = null; // { statusCode: 'Description' } — loaded once from MANH.SHIPMENT_STATUS
 let config = { groups: [], distributionCenters: [] };
+let runtimeBridgeConfig = {
+  docsMaxResults: 10,
+  answerWordCap: 200,
+  qaContextCharLimit: 12000,
+  jiraMaxResults: 10
+};
 let offlineData=null;
 const DOCS_TOKEN_KEY = 'oracle-kb-msal-token';
 let msalInstance = null;
@@ -1103,6 +1122,11 @@ async function loadGroups(){
     } catch {}
 
     const cfgGroups = Array.isArray(cfg?.groups) ? cfg.groups : [];
+    runtimeBridgeConfig = {
+      ...runtimeBridgeConfig,
+      ...(cfg?.bridge || {})
+    };
+
     const finalGroups = Array.isArray(liveGroups) && liveGroups.length ? liveGroups : cfgGroups;
     groups = finalGroups.map(g => ({ ...g, env: g?.env || 'prod' }));
     config = {
@@ -2065,6 +2089,60 @@ async function findLearnedShipmentMapping(route){
   }
 }
 
+function readGraphDiscoveryCache(key){
+  try {
+    const raw = sessionStorage.getItem(key);
+    if(!raw) return null;
+    const parsed = JSON.parse(raw);
+    if(!parsed || Number(parsed.expiresAt || 0) < Date.now()){
+      sessionStorage.removeItem(key);
+      return null;
+    }
+    return parsed.value || null;
+  } catch(_e) {
+    return null;
+  }
+}
+
+function writeGraphDiscoveryCache(key, value){
+  try {
+    sessionStorage.setItem(key, JSON.stringify({ value, expiresAt: Date.now() + 300000 }));
+  } catch(_e) {}
+}
+
+async function discoverGraphObject(groupId, schema, conceptQuery, columnQueries = {}){
+  const normalizedSchema = String(schema || '').toUpperCase();
+  const cacheKey = `graph:${groupId}:${normalizedSchema}:${conceptQuery}:${Object.keys(columnQueries).sort().join(',')}`;
+  const cached = readGraphDiscoveryCache(cacheKey);
+  if(cached) return cached;
+
+  try {
+    const tableRes = await fetch(`${BRIDGE}/db/find-table?q=${encodeURIComponent(conceptQuery)}&group=${encodeURIComponent(groupId)}&schema=${encodeURIComponent(normalizedSchema)}`);
+    const tables = await tableRes.json().catch(()=>[]);
+    const table = Array.isArray(tables) && tables.length ? tables[0] : null;
+    if(!table?.object_name || !table?.id) return null;
+
+    const discovered = {
+      objectId: table.id,
+      tableName: String(table.object_name || '').toUpperCase(),
+      schemaName: String(table.schema_name || normalizedSchema).toUpperCase()
+    };
+
+    for(const [key, phrase] of Object.entries(columnQueries || {})){
+      if(!phrase) continue;
+      const colRes = await fetch(`${BRIDGE}/db/find-columns?q=${encodeURIComponent(phrase)}&objectId=${encodeURIComponent(table.id)}`);
+      const cols = await colRes.json().catch(()=>[]);
+      const top = Array.isArray(cols) && cols.length ? cols[0] : null;
+      if(top?.column_name) discovered[key] = String(top.column_name || '').toUpperCase();
+    }
+
+    writeGraphDiscoveryCache(cacheKey, discovered);
+    return discovered;
+  } catch(_e) {
+    return null;
+  }
+}
+
 function buildRelativeDatePredicate(dateColumn, windowKey, relativeWindow = null){
   if(!dateColumn || !windowKey) return '';
   if(windowKey === 'all') return '';
@@ -2763,6 +2841,51 @@ async function fetchLatestDcWaveTime(route){
   const datePredicate = requestedWindowKey
     ? buildRelativeDatePredicate('wp.CREATE_DATE_TIME', requestedWindowKey, relativeWindow)
     : '';
+
+  const graphWave = await discoverGraphObject(groupId, schema, 'wave', {
+    dateColumn: 'date created',
+    idColumn: 'wave number',
+    statusColumn: 'status',
+    descriptionColumn: 'description'
+  });
+  if(graphWave?.tableName && graphWave?.idColumn && graphWave?.dateColumn){
+    try {
+      const graphSql = `
+        SELECT ${graphWave.idColumn} AS WAVE_NBR,
+               ${graphWave.descriptionColumn || graphWave.idColumn} AS WPD,
+               ${graphWave.dateColumn} AS CREATE_DATE_TIME,
+               ${graphWave.statusColumn || graphWave.idColumn} AS STAT_CODE
+        FROM ${schema}.${graphWave.tableName}
+        WHERE ${graphWave.idColumn} IS NOT NULL
+          ${requestedWindowKey ? `AND ${buildRelativeDatePredicate(graphWave.dateColumn, requestedWindowKey, relativeWindow)}` : ''}
+        ORDER BY ${graphWave.dateColumn} DESC NULLS LAST
+        FETCH FIRST ${Math.max(1, Math.min(rowLimit, 25))} ROWS ONLY
+      `;
+      const graphResponse = await fetch(`${BRIDGE}/db/query`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ group: groupId, sql: graphSql, maxRows: rowLimit })
+      });
+      const graphData = await graphResponse.json().catch(()=>({}));
+      const graphRows = Array.isArray(graphData.rows) ? graphData.rows.filter(r => !rowContainsSqlError(r)) : [];
+      if(graphResponse.ok && graphRows.length){
+        return {
+          schema,
+          tableName: graphWave.tableName,
+          dateCol: graphWave.dateColumn,
+          idCol: graphWave.idColumn,
+          statusCol: graphWave.statusColumn || '',
+          descCol: graphWave.descriptionColumn || '',
+          rows: graphRows
+        };
+      }
+    } catch(_e) {
+      console.warn('[graph] wave discovery lookup failed, falling back to legacy wave query');
+    }
+  } else {
+    console.warn('[graph] wave discovery unavailable, falling back to legacy wave query');
+  }
+
   const sql = `
     SELECT wp.WAVE_NBR,
            wp.WAVE_DESC AS WPD,
@@ -2954,6 +3077,79 @@ async function fetchLatestOpDcShipment(route){
         }
       }
     } catch(_e) {}
+  }
+
+  for(const schema of schemaCandidates){
+    const graphShipment = waveConstrained ? null : await discoverGraphObject(groupId, schema, 'shipment', {
+      dateCol: 'date created',
+      idCol: 'shipment id number',
+      statusCol: 'status',
+      divisionCol: 'division id',
+      tcIdCol: 'tc shipment id'
+    });
+    if(!graphShipment?.tableName || !graphShipment?.idCol || !graphShipment?.divisionCol) continue;
+    const tableName = String(graphShipment.tableName || '').toUpperCase();
+    const idCol = String(graphShipment.idCol || '').toUpperCase();
+    const tcIdCol = String(graphShipment.tcIdCol || '').toUpperCase();
+    const dateCol = String(graphShipment.dateCol || '').toUpperCase();
+    const statusCol = String(graphShipment.statusCol || '').toUpperCase();
+    const divisionCol = String(graphShipment.divisionCol || '').toUpperCase();
+    if((recencyRequested || relativeWindow) && !dateCol) continue;
+    for(const windowKey of windowSequence){
+      const predicates = [`${divisionCol} = '${escapeSqlLiteral(dc.code)}'`];
+      if(recencyRequested && dateCol) predicates.push(`${dateCol} IS NOT NULL`);
+      if(dateCol){
+        const datePredicate = buildRelativeDatePredicate(dateCol, windowKey, relativeWindow);
+        if(datePredicate) predicates.push(datePredicate);
+      }
+      if(statusCol){
+        const statusPredicate = buildShipmentOutcomePredicate(statusCol, outcomeIntent, '');
+        if(statusPredicate) predicates.push(statusPredicate);
+      }
+      const whereClause = predicates.length ? ` WHERE ${predicates.join(' AND ')}` : '';
+      const rowLimit = shipmentWindowRowLimit(windowKey);
+      const tcSelect = (!countRequested && tcIdCol && tcIdCol !== idCol) ? `, ${tcIdCol} AS TC_SHIPMENT_ID` : '';
+      const sql = countRequested
+        ? `SELECT COUNT(*) AS SHIPMENT_COUNT FROM ${schema}.${tableName}${whereClause}`
+        : (dateCol
+          ? `SELECT ${idCol} AS SHIPMENT_ID${tcSelect}, ${dateCol} AS SHIPMENT_DATE FROM ${schema}.${tableName}${whereClause} ORDER BY ${dateCol} DESC NULLS LAST FETCH FIRST ${rowLimit} ROWS ONLY`
+          : `SELECT ${idCol} AS SHIPMENT_ID${tcSelect} FROM ${schema}.${tableName}${whereClause} FETCH FIRST ${rowLimit} ROWS ONLY`);
+      try {
+        if(trace) trace.stats.shipmentQueriesTried += 1;
+        const rawRows = (await postQuery(sql, rowLimit, 'shipment-query-graph')).rows || [];
+        const rows = countRequested ? rawRows : rawRows
+          .filter(r => !rowContainsSqlError(r))
+          .filter(r => isLikelyShipmentIdValue(r?.SHIPMENT_ID ?? Object.values(r || {})[0]));
+        if(rows.length){
+          const countValue = Number(rows[0]?.SHIPMENT_COUNT);
+          if(countRequested && !Number.isFinite(countValue)) continue;
+          return {
+            schema,
+            tableName,
+            idCol,
+            tcIdCol,
+            dateCol,
+            statusCol,
+            statusDataType: '',
+            outcomeIntent,
+            countRequested,
+            shipmentCount: countRequested ? countValue : rows.length,
+            divisionCol,
+            relativeWindow,
+            finalWindowKey: windowKey,
+            finalWindowLabel: shipmentWindowLabel(windowKey),
+            fallbackUsed: requestedWindowKey !== windowKey,
+            fallbackFromLabel: shipmentWindowLabel(requestedWindowKey),
+            fallbackToLabel: shipmentWindowLabel(windowKey),
+            missingDateForWindow: !!(!dateCol && relativeWindow),
+            graphDiscovery: true,
+            rows
+          };
+        }
+      } catch(_e) {
+        console.warn('[graph] shipment discovery query failed, falling back to DBA_* discovery');
+      }
+    }
   }
 
   for(const schema of schemaCandidates){
@@ -5398,8 +5594,9 @@ function setBusinessAnswer(text){
   }
   const hasStructuredDcBreakdown = /Manhattan DCs \(OP \| Manhattan\):|Non-Manhattan DCs \(OP only\):/.test(cleaned);
   const words = cleaned.split(/\s+/).filter(Boolean);
-  const shortText = words.slice(0, 200).join(' ');
-  const truncated = !hasStructuredDcBreakdown && words.length > 200;
+  const answerWordCap = Math.max(1, Number(runtimeBridgeConfig?.answerWordCap) || 200);
+  const shortText = words.slice(0, answerWordCap).join(' ');
+  const truncated = !hasStructuredDcBreakdown && words.length > answerWordCap;
   const displayText = truncated ? shortText : cleaned;
   const bodyHtml = hasStructuredDcBreakdown
     ? escapeHtml(displayText || 'Not enough info found. Try rephrasing.')
@@ -6219,7 +6416,7 @@ async function answerBusinessQuestion(route){
     jiraSearchEnabled ? jiraSearchFetch(route.question, jiraMaxResults) : Promise.resolve({ issues: [] }),
     dbIssueEnabled ? runIssueDbQueries(route.question, route).catch(()=>({ enabled:false, findings:[], summaryLines:[], resultCount:0 })) : Promise.resolve({ enabled:false, findings:[], summaryLines:[], resultCount:0 }),
     docsSearchEnabled
-      ? Promise.all(docsSearchQueries.map(item => docsFetch(`/docs/search?q=${encodeURIComponent(item.query)}&limit=5`, {}, false)
+        ? Promise.all(docsSearchQueries.map(item => docsFetch(`/docs/search?q=${encodeURIComponent(item.query)}&limit=${Math.max(1, Number(runtimeBridgeConfig?.docsMaxResults) || 10)}`, {}, false)
           .then(response => ({ response, query: item.query, boost: item.boost }))
           .catch(() => null)))
       : Promise.resolve([]),
@@ -6906,6 +7103,7 @@ async function semanticFetch(pathname, opts = {}){
   let json;
   try { json = txt ? JSON.parse(txt) : {}; } catch(_e){ json = {}; }
   if(!r.ok) throw new Error(json?.error || `Semantic API ${r.status}`);
+  if(Array.isArray(json)) return { intents: json };
   return json;
 }
 
@@ -9507,7 +9705,7 @@ async function sendQA(){
   const atlassianEnabled = !!config?.bridge?.atlassianEnabled;
   const [knowledgeResult, docsResult, jiraResult, dbSettled] = await Promise.allSettled([
     knowledgeFetch(`/knowledge/search?q=${encodeURIComponent(text)}&limit=5`),
-    docsFetch(`/docs/search?q=${encodeURIComponent(text)}&limit=10`, {}, false),
+    docsFetch(`/docs/search?q=${encodeURIComponent(text)}&limit=${Math.max(1, Number(runtimeBridgeConfig?.docsMaxResults) || 10)}`, {}, false),
     jiraSearchEnabled
       ? jiraSearchFetch(text, 5)
       : Promise.resolve(null),
@@ -9595,11 +9793,12 @@ async function sendQA(){
   let knowledgeBlockFinal = knowledgeBlock;
   let docBlockFinal = docBlock;
   const jiraCombined = `${jiraBlock}${jiraContext ? `\n\n${jiraContext}` : ''}${jiraDescriptionBlock}`;
+  const contextCap = Math.max(1000, Number(runtimeBridgeConfig?.qaContextCharLimit) || 12000);
   const contextTotal = semanticBlock.length + schemaContext.length + knowledgeBlock.length + docBlock.length + jiraCombined.length + dbBlock.length;
-  if(contextTotal > 12000){
+  if(contextTotal > contextCap){
     const keepJiraLen = jiraCombined.length;
     const keepDbLen = dbBlock.length;
-    const budgetForOther = Math.max(0, 12000 - keepJiraLen - keepDbLen);
+    const budgetForOther = Math.max(0, contextCap - keepJiraLen - keepDbLen);
     const docBudget = Math.max(0, budgetForOther - schemaContext.length - knowledgeBlock.length);
     if(docHits.length){
       const completeDocHits = [];

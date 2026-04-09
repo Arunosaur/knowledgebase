@@ -18,6 +18,7 @@ const createKnowledgeRoutes = require('./lib/knowledge-routes');
 const createJiraRoutes = require('./lib/jira-routes');
 const createOllamaRoutes = require('./lib/ollama-routes');
 const createSemanticRoutes = require('./lib/semantic-routes');
+const graphStore = require('./lib/graph-store');
 
 // load config.json from same directory
 const cfgPath = path.join(__dirname, 'config.json');
@@ -40,6 +41,11 @@ const MCP_MODEL  = (config.bridge && config.bridge.mcpModelName) || 'bridge';
 const debug = process.argv.includes('--debug');
 let lastRequest = null;
 
+graphStore.setConfig({
+  postgresUrl: config.bridge && config.bridge.postgresUrl,
+  ollamaUrl: OLLAMA
+});
+
 // security settings from config
 const ALLOWED_ORIGINS = (config.bridge && config.bridge.allowedOrigins) || [];
 const AUTH_TOKEN = (config.bridge && config.bridge.authToken) || '';
@@ -54,8 +60,14 @@ const KNOWLEDGE_INDEX_DIR = (config.bridge && config.bridge.knowledgeIndexDir) |
 const WHISPER_MODEL = (config.bridge && config.bridge.whisperModel) || 'base';
 const DOCS_SYNC_CONCURRENCY = (config.bridge && config.bridge.docsSyncConcurrency) || 2;
 const UPLOAD_TOKEN = (config.bridge && config.bridge.uploadToken) || '';
-const SEMANTIC_WORKER_URL = (config.bridge && config.bridge.semanticWorkerUrl) || 'http://127.0.0.1:3334';
+const SEMANTIC_WORKER_PORT = Number((config.bridge && config.bridge.semanticWorkerPort) || process.env.SEMANTIC_PORT || 3334);
+const SEMANTIC_WORKER_HOST = (config.bridge && config.bridge.semanticWorkerHost) || '127.0.0.1';
+const SEMANTIC_WORKER_URL = (config.bridge && config.bridge.semanticWorkerUrl) || `http://${SEMANTIC_WORKER_HOST}:${SEMANTIC_WORKER_PORT}`;
 const SEMANTIC_INDEX_DIR = (config.bridge && config.bridge.semanticIndexDir) || './semantic-index';
+const DEFAULT_CHUNK_SIZE = Number((config.bridge && config.bridge.defaultChunkSize) || 800);
+const DEFAULT_CHUNK_OVERLAP = Number((config.bridge && config.bridge.defaultChunkOverlap) || 100);
+const DOCS_CHUNK_SIZE = Number((config.bridge && config.bridge.docsChunkSize) || 2500);
+const DOCS_CHUNK_OVERLAP = Number((config.bridge && config.bridge.docsChunkOverlap) || 300);
 
 function listNonLoopbackIPv4() {
   const out = [];
@@ -383,12 +395,12 @@ function preprocessDocText(text) {
 function getChunkParams(extension, wordCount) {
   const ext = (extension || '').toLowerCase().replace(/^\./, '');
   if (ext === 'pdf' || ext === 'docx') {
-    return { size: 2500, overlap: 300 };
+    return { size: DOCS_CHUNK_SIZE, overlap: DOCS_CHUNK_OVERLAP };
   }
   if (ext === 'txt' || ext === 'md') {
     return { size: 1000, overlap: 150 };
   }
-  return { size: 800, overlap: 100 };
+  return { size: DEFAULT_CHUNK_SIZE, overlap: DEFAULT_CHUNK_OVERLAP };
 }
 
 function chunkTextSentenceAware(text, maxChunkSize = 2000, overlap = 250) {
@@ -1214,7 +1226,7 @@ async function runSQL(group, sql, route, params) {
 }
 
 // error handling wrapper with 15s timeout
-async function withTimeout(promise, ms = 15000) {
+async function withTimeout(promise, ms = TOOL_CALL_TIMEOUT) {
   let timer;
   const timeout = new Promise((_, rej) => timer = setTimeout(() => rej(new Error('timeout')), ms));
   try {
@@ -1532,8 +1544,10 @@ const handleSemanticRoute = createSemanticRoutes({
   workerBaseUrl: SEMANTIC_WORKER_URL,
   ensureSemanticWorker: startSemanticWorkerIfNeeded,
   localIndexPath: path.join(SEMANTIC_INDEX_DIR, 'intents.json'),
-  triggerSemanticScan: async (payload = {}) => runSemanticScan({ manual: true, ...payload })
-});
+  triggerSemanticScan: async (payload = {}) => runSemanticScan({ manual: true, ...payload }),
+  config,
+  graphStore
+  });
 const handleJiraRoute = createJiraRoutes({
   atlassianConfigured,
   atlassianSearchIssuesDetailed,
@@ -1549,6 +1563,7 @@ const handleJiraRoute = createJiraRoutes({
 });
 const handleOllamaRoute = createOllamaRoutes({ OLLAMA, fetch });
 const handleKnowledgeRoute = createKnowledgeRoutes({
+  config,
   fs,
   readKnowledgeEntries,
   applyKnowledgeFilters,
@@ -1556,7 +1571,8 @@ const handleKnowledgeRoute = createKnowledgeRoutes({
   generateKnowledgeId,
   knowledgeSearch,
   knowledgeStats,
-  boolQuery
+  boolQuery,
+  graphStore
 });
 const handleDocsRoute = createDocsRoutes({
   config,
@@ -1578,7 +1594,8 @@ const handleDocsRoute = createDocsRoutes({
   docsSearch,
   deleteIndex,
   sleep,
-  fetch
+  fetch,
+  graphStore
 });
 const handleDbRoute = createDbRoutes({
   config,
@@ -1588,7 +1605,8 @@ const handleDbRoute = createDbRoutes({
   validGroup,
   validIdentifier,
   validType,
-  sanitizeKeyword
+  sanitizeKeyword,
+  graphStore
 });
 
 // http server
@@ -1739,9 +1757,26 @@ const server = http.createServer(async (req, res) => {
         }
       } catch {}
       const atlassian = await checkAtlassianHealth(false);
-      const health = { bridge: true, ollama: ollamaStatus, atlassian, ollamaUrl: config.bridge.ollamaUrl, model: DEFAULT_MODEL, groups: config.groups.length };
+      const health = {
+        bridge: true,
+        ollama: ollamaStatus,
+        atlassian,
+        ollamaUrl: config.bridge.ollamaUrl,
+        model: DEFAULT_MODEL,
+        groups: config.groups.length,
+        postgres: false,
+        graphObjects: 0,
+        graphReady: false
+      };
       if (config.bridge && config.bridge.poolEnabled) {
         health.pool = modularPool.getPoolSnapshot();
+      }
+      // Add postgres graph connectivity info
+      if (postgresEnabled && postgresUrl) {
+        const graphInfo = await graphStore.getConnectivityInfo(postgresUrl);
+        health.postgres = graphInfo.postgres;
+        health.graphObjects = graphInfo.graphObjects;
+        health.graphReady = graphInfo.graphReady;
       }
       res.end(JSON.stringify(health));
 
@@ -1786,8 +1821,16 @@ const server = http.createServer(async (req, res) => {
       res.end(JSON.stringify({
         bridge: {
           port: PORT,
+          semanticWorkerPort: SEMANTIC_WORKER_PORT,
           ollamaUrl: OLLAMA,
           defaultModel: DEFAULT_MODEL,
+          docsChunkSize: DOCS_CHUNK_SIZE,
+          docsChunkOverlap: DOCS_CHUNK_OVERLAP,
+          docsMaxResults: Number((config.bridge && config.bridge.docsMaxResults) || 10),
+          answerWordCap: Number((config.bridge && config.bridge.answerWordCap) || 200),
+          qaContextCharLimit: Number((config.bridge && config.bridge.qaContextCharLimit) || 12000),
+          jiraMaxResults: Number((config.bridge && config.bridge.jiraMaxResults) || 10),
+          jiraMaxTerms: Number((config.bridge && config.bridge.jiraMaxTerms) || 4),
           atlassianEnabled: ATLASSIAN_ENABLED,
           atlassianDomain: ATLASSIAN_DOMAIN,
           atlassianEmail: ATLASSIAN_EMAIL,
@@ -1886,6 +1929,20 @@ const server = http.createServer(async (req, res) => {
     res.end(JSON.stringify({ error: err.message }));
   }
 });
+
+// ===== Initialize PostgreSQL Knowledge Graph (PROMPT 32/33) =====
+const postgresEnabled = config.bridge && config.bridge.postgresEnabled;
+const postgresUrl = config.bridge && config.bridge.postgresUrl;
+
+if (postgresEnabled && postgresUrl) {
+  (async () => {
+    try {
+      await graphStore.initSchema(postgresUrl);
+    } catch (err) {
+      console.error('[GRAPH] Schema init failed:', err.message);
+    }
+  })();
+}
 
 server.listen(PORT, () => {
   const docsCount = countJsonFiles(DOCS_INDEX_DIR);

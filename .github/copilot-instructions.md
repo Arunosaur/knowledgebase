@@ -1,4 +1,4 @@
-# McLane WMS·IQ — GitHub Copilot Instructions (v17)
+# McLane WMS·IQ — GitHub Copilot Instructions (v18)
 
 > Place this file at `.github/copilot-instructions.md` in your project root.
 > Copilot will use it automatically as workspace context in VS Code.
@@ -9,9 +9,9 @@
 
 | Prompt | Feature | Status | Tests |
 |--------|---------|--------|-------|
-| 1 | `config.json` — real groups (MANP, OPCIGP, OMSP) | ✅ Done | — |
+| 1 | `config.json` — 5 groups (MANP, MAN002P, MAN001P, OMSP, OPCIGP) | ✅ Done | — |
 | 2 | `bridge.js` — MCP JSON-RPC client, all `/db/*` endpoints | ✅ Done | A1–A5 |
-| 3 | `knowledge-base.html` — group picker + main app | ✅ Done | — |
+| 3 | `public/index.html` — group picker + main app | ✅ Done | — |
 | 4 | Connection health check UI on group picker cards | ✅ Done | — |
 | 5 | Offline snapshot export (throttled, cancellable) | ✅ Done | — |
 | 6 | ERD diagram view (SVG, spring layout, pan/zoom) | ✅ Done | — |
@@ -41,14 +41,25 @@
 | 29 | Self-building semantic layer — background AI discovery | ✅ Done | K1–K4 |
 | 30 | Power Automate JIRA→Knowledge pipeline | ✅ Done | — |
 | 31 | Demo polish — dashboard, sample questions, answer quality, demo mode | ✅ Done | UI1–UI3 |
+| 32 | SQL abstraction layer + remove all hard-coding | 🔜 Next | — |
+| 33 | PostgreSQL + pgvector semantic search | 🔜 Next | — |
+| 34 | Auto-detect Oracle code changes via LAST_DDL_TIME polling | 🔜 Future | — |
+| 35 | Claude API for Q&A answers | 🔜 Future | — |
+| 36 | LDAP authentication (multi-user) | 🔜 Future | — |
+| 37 | Docker Compose multi-container deployment | 🔜 Future | — |
 
-**Test suite:** `node test-bridge.js` → **42/42 passing** (A1–A6, B1–B8, C1–C3, D1–D2, E1–E4, F1–F4, G1–G4, H1–H2, I1–I5, J1–J3)
-> ✅ E1 now passes consistently — was using SYS.DUAL (infinite BFS) now uses DOCK_PK depth=1 (deterministic)
+**Test suite:** `node test-bridge.js` → **46/46 passing** (A1–A6, B1–B8, C1–C3, D1–D2, E1–E4, F1–F4, G1–G4, H1–H2, I1–I5, J1–J3, K1–K4)
+> ✅ 46/46 zero failures
+> ✅ E1 uses SYS.DUAL with depth=1 — DUAL guaranteed forever, depth=1 prevents infinite BFS
 > ℹ️ App served at `http://localhost:3333`. `file://` still works as fallback.
-> ℹ️ JIRA search uses `textfields ~ "term*"` JQL with stop word filtering — max 4 meaningful terms, AND-joined.
+> ℹ️ JIRA search uses `textfields ~ "term*"` JQL with stop word filtering.
+> ℹ️ Semantic worker runs on port 3334 (Python Flask). Bridge launches it on startup via .venv.
 
 **Live DBs:** All 5 groups confirmed connected over VPN as ASRAJAG
-**Atlassian:** Connected as arun.rajagopalan@mclaneco.com @ mclane.atlassian.net ✅
+**Atlassian:** Connected as arun.rajagopalan@mclaneco.com @ mclane.atlassian.net
+**Documents:** 226 documents indexed, reindexed with improved chunking (2500/300)
+**Semantic:** 118+ intents auto-discovered from MANH_CODE + FRAMEWORK
+**Knowledge:** 4+ entries, gold standard quality
 
 ---
 
@@ -59,9 +70,11 @@
 | SQLCL command | `sql` | On `$PATH` on macOS |
 | MCP args | `["-R", "2", "-mcp"]` | Restrict level 2, MCP mode |
 | Bridge port | `3333` | Default, no conflicts |
+| Semantic worker port | `3334` | Python Flask, launched by bridge |
 | Ollama URL | `http://localhost:11434` | Local, default port |
-| Ollama model | `llama3:latest` (8B Q4_0) | Confirmed working |
-| Other models | `mistral`, `phi`, `tinyllama` | Selectable in Q&A model dropdown |
+| Ollama model | `llama3:latest` (8B) | Confirmed working |
+| Embedding model | `nomic-embed-text:latest` | 274MB, needed for pgvector |
+| Other models | `mistral`, `phi`, `tinyllama` | Can be removed to free RAM |
 | Ollama health check | Uses `/api/tags` not `/api/models` | `/api/models` does not exist |
 | Ollama response format | NDJSON streaming by default | Must use `stream: false` in ALL /ollama/chat calls |
 | Ollama timeout | 60s AbortController | Prevents Q&A hang on large prompts |
@@ -77,39 +90,53 @@
 | Sleep: after initialize | `400ms` | Do not reduce — VPN latency sensitive |
 | Sleep: after notification | `400ms` | Do not reduce |
 | Sleep: after each tool call | `600ms` | Critical: connect must finish before run-sql |
-| Test suite | test-bridge.js | 41/41 passing |
 | Pool shape | queue-based FIFO, not busy-flag | Concurrent requests serialise per group |
-| OS | macOS | `start.sh` uses `open` to launch browser |
+| OS | macOS | 32GB RAM |
 | MSAL | Blocked by McLane Azure AD (AADSTS65002) | Use Power Automate POST /docs/upload instead |
 | Oracle views | Use `DBA_*` not `ALL_*` | ASRAJAG has DBA privileges in all databases |
 | LAST_DDL_TIME | Removed from /db/objects | Caused CSV parse failures — do NOT add back |
 | SQLcl footer filter | Strip "N rows selected." variants | parseMCPResult() must filter these |
 | JSON encoding | UTF-8 | `Content-Type: application/json; charset=utf-8` on all responses |
 | POST /db/query | SELECT-only, max 50 rows | Rejects all DDL/DML |
-| /db/source | Use queryDB(), fetch PACKAGE BODY | Raw runMCP() returns [] |
-| /db/whoami | Returns dbUser + dbName | queryDB() with SYS_CONTEXT |
-| POST /docs/upload | Verified working end-to-end | base64→text→chunk→docs-index JSON |
-| /docs/search | Verified working | Returns chunks with score, fileId, text |
-| /docs/status | Public endpoint (no auth) | Power Automate mode — returns 200 |
-| /docs/list | Public endpoint (no auth) | Power Automate mode — returns 200 |
-| GET /db/search-all | Verified working | Fans out to all 5 groups, dedupes |
-| Group env field | All 5 current groups: "env": "prod" | Future UAT/test: "env": "uat" or "env": "test" |
-| Production guardrail | Q&A + data queries: prod only | Compare modal is the ONLY exempt feature |
+| /db/impact depth | Optional, default 3, max 5 | depth=1 for E1/E2 tests (fast path) |
+| E1 test object | SYS.DUAL depth=1 | DUAL in SYS is guaranteed forever |
 | Atlassian domain | mclane.atlassian.net | Confirmed working |
 | Atlassian email | arun.rajagopalan@mclaneco.com | Confirmed working |
 | Atlassian auth | Basic auth (email:apiToken) | NOT MCP OAuth — REST API only |
-| Atlassian health | GET /rest/api/3/myself → 200 | Returns atlassian:true in /health |
-| JIRA projects | Manhattan, Help Desk Support, Change Management + more | atlassianProjectKeys:[] = all |
-| JIRA JQL pattern | `textfields ~ "term*" AND textfields ~ "term2*"` | Stop words filtered, max 4 terms, wildcards added |
-| JIRA stop words | are,there,any,is,the,a,to,for,issues,related... | Full list in lib/jira-routes.js STOP_WORDS set |
-| JIRA prompt cap | 12,000 chars total context | Schema+docs+knowledge+JIRA truncated proportionally |
+| JIRA JQL | `textfields ~ "term*" AND textfields ~ "term2*"` | Stop words filtered, max 4 terms |
+| JIRA stop words | Full list in lib/jira-routes.js STOP_WORDS | Includes solving, fixing, handling etc |
+| Doc chunk size | 2500 chars, 300 overlap | Upgraded from 800/100 — better for technical docs |
+| Doc search results | 10 results | Upgraded from 5 |
+| Doc preprocessing | preprocessDocText() strips TOC/PAGEREF noise | Word field codes, layout numbers removed |
+| Doc context prefix | `[Document: {title}]` prepended to each chunk | AI knows which document it is reading |
+| Doc reindex | POST /docs/reindex | Re-processes all existing docs without re-upload |
+| Semantic auto-pause | After full scan: paused=true | User must manually Rescan |
+| Semantic bulk confirm | ✓ Confirm all ≥ N% | Threshold: 70/80/90/95/100% |
+| JIRA upload | POST /jira/upload | Resolved/Closed only → docs-index |
 | User personas | Business (Ask mode) vs Technical (Explore Ask AI) | Different AI prompt rules per persona |
+| Demo mode | Settings toggle, yellow banner, write guards | All reads work, writes blocked |
+| Auto DC routing | No user choice dialogs ever | System decides Manhattan vs CIG automatically |
+| Date fallback | today→week→month→all | Shows fallback note when widening window |
+| Shipment query | Live Oracle via POST /db/query | Real shipment IDs confirmed from SE_DM, MD_DM, NE_DM |
+| App entry point | `http://localhost:3333` | Static server added in 28b |
+| Group env field | All 5 current groups: "env": "prod" | Future UAT/test: "env": "uat" or "env": "test" |
+| Production guardrail | Q&A + data queries: prod only | Compare modal is the ONLY exempt feature |
+| SQLcl MCP connection | connectionName field in groups | e.g. "connectionName": "MANP" — do NOT rename |
+| Groups readOnly | All 5 groups have "readOnly": true | WMS·IQ never writes to Oracle |
+| Total DCs | 32 active + 1 pending (UT) | UT active:false, goLive: 2026-09 |
+| WMSHUB schemas | WMSHUB WMSHUB_CODE EM EM_CODE | EM not EMS — verified from config.json |
+| MANH_CODE location | All 3 Manhattan DBs | MANP + MAN002P + MAN001P each have own instance |
+| CIG-only DCs | 19 DCs with manhattanGroup: null | Route to cigwms-prod only, no Manhattan schema |
+| config jiraStopWords | Full list in config.json | Moved from code to config ✅ |
+| config semanticConfidence | High: 0.8, Medium: 0.5 | In config.json ✅ |
+| config docsChunkSize | 2500 chars, 300 overlap | In config.json ✅ |
 
 ---
 
 ## 🏢 Project Overview
 
 **McLane WMS·IQ** is a unified knowledge and intelligence platform for the McLane WMS ecosystem.
+Currently migrating from **Manhattan WMOS 2019** to **Manhattan Active WM**.
 
 - **Product name:** McLane WMS·IQ
 - **Short form:** WMS·IQ
@@ -127,34 +154,72 @@
 | DB results | Business impact only, no schema names | Raw data, row counts, schema names |
 | INVALID objects | Never shown | Shown with full detail |
 | Schema names | Never mentioned | Full technical context |
-| Ticket keys | Hidden — "a known issue was reported" | Shown e.g. SDHD-2562205 |
-| Answer tone | Plain business English | Technical detail |
+| System names | Never (no "Manhattan", "WMSHUB") | Full detail |
+| Answer tone | Plain business English, max 200 words | Technical detail |
 
 ---
 
 ## 🗄️ Database Connections & Groups (5 Groups)
 
+All connections use **SQLcl MCP via queryDB()** — never change this.
+Connection names match SQLcl named connections on macOS.
+
 ```
-MANP      → Manhattan (Main)      — FE MD MK MN MY MZ NE SE FS06 + MANH/MANH_CODE  [env: prod]
-MAN002P   → Manhattan (CK)        — C1 C2 C3 + MANH/MANH_CODE                       [env: prod]
-MAN001P   → Manhattan (Bluegrass) — MAN490 + MANH/MANH_CODE                          [env: prod]
-OMSP      → WMSHUB                — WMSHUB WMSHUB_CODE EMS EMS_CODE                  [env: prod]
-OPCIGP    → CIG WMS / OP          — CIGWMS CIGWMS_CODE OP OP_CODE MCLANE MCLANE_CODE FRAMEWORK [env: prod]
+manhattan-main  connectionName: MANP      env: prod  color: #3fb950
+  Per-DC:  FS06_DM FS06_MDA  FE_DM FE_MDA  MD_DM MD_MDA
+           MK_DM MK_MDA  MN_DM MN_MDA  MY_DM MY_MDA
+           MZ_DM MZ_MDA  NE_DM NE_MDA  SE_DM SE_MDA
+  Shared:  MANH  MANH_CODE
+  DCs:     06(FS06) FE MD MK MN MY MZ NE SE
+  UT_DM/UT_MDA: defined but active:false until Sept 2026
+
+manhattan-ck    connectionName: MAN002P   env: prod  color: #58a6ff
+  Per-DC:  C1_DM C1_MDA  C2_DM C2_MDA  C3_DM C3_MDA
+  Shared:  MANH  MANH_CODE
+  DCs:     C1(Otsego) C2(St Louis) C3(Columbus)
+
+manhattan-wk    connectionName: MAN001P   env: prod  color: #bc8cff
+  Per-DC:  MAN490_DM  MAN490_MDA
+  Shared:  MANH  MANH_CODE
+  DCs:     WK(Bluegrass DC490)
+
+wmshub-prod     connectionName: OMSP      env: prod  color: #39d0d8
+  Schemas: WMSHUB  WMSHUB_CODE  EM  EM_CODE
+  ⚠️ EM and EM_CODE — NOT EMS/EMS_CODE
+
+cigwms-prod     connectionName: OPCIGP    env: prod  color: #d29922
+  Schemas: CIGWMS  CIGWMS_CODE  OP  OP_CODE  MCLANE  MCLANE_CODE  FRAMEWORK
+  DCs:     GA GM HP ME MG MI MO MP MS MW NC NT NW PA SO SW SZ WJ
+           (CIG WMS only — manhattanGroup: null for these DCs)
 ```
 
-All connections: **ASRAJAG** as Oracle session user.
+> ⚠️ MANH and MANH_CODE exist in ALL THREE Manhattan databases independently.
+> Always specify group when querying MANH_CODE — it is not unique to manhattan-main.
 
-### Group config shape
-```json
-{
-  "id": "manhattan-main",
-  "name": "Manhattan (Main)",
-  "db": "MANP",
-  "env": "prod",
-  "color": "#3fb950",
-  "schemas": ["FE_DM", "FE_MDA", "...", "MANH", "MANH_CODE"]
-}
-```
+> ⚠️ Groups use `connectionName` field (not `db`) — e.g. "connectionName": "MANP"
+> This matches the SQLcl named connection. Do NOT rename this field.
+
+> ℹ️ All groups have `"readOnly": true` — no DDL/DML via WMS·IQ
+> ℹ️ Total DCs: 32 active + 1 pending (UT, active:false, goLive: 2026-09)
+> ℹ️ 19 CIG-only DCs have manhattanGroup: null — route to cigwms-prod only
+
+### Key Source Code Schemas
+- `MANH_CODE` — in ALL 3 Manhattan DBs (MANP, MAN002P, MAN001P)
+  Contains: DOCK_PK, DC_SCHEMA_PK, LOG_PK, LOCATION_PK, TIMER, DOCK_WRAPPER_PK
+- `FRAMEWORK` (cigwms-prod) — LOGS (874 spec + 1231 body lines)
+- `OP` (cigwms-prod) — CIG WMS operational packages
+- `MCLANE` (cigwms-prod) — McLane-specific packages
+- `WMSHUB_CODE` (wmshub-prod) — WMSHUB packages
+- `EM_CODE` (wmshub-prod) — EM packages
+
+### Active WM — Future Architecture (do not implement yet)
+Manhattan Active WM will provide read-only PostgreSQL replicated tables.
+The existing SQLcl MCP Oracle connections are NOT affected.
+When Active WM replicas are available, add a NEW group:
+  { "id": "active-wm-prod", "engine": "postgres",
+    "connectionString": "...", "replicaOnly": true, "env": "prod" }
+This requires a separate PostgreSQL adapter — future work.
+Until then: all 5 groups connect via SQLcl MCP as today.
 
 ---
 
@@ -164,7 +229,7 @@ All connections: **ASRAJAG** as Oracle session user.
 
 | DC_ID | Code | Name | Type | DB | DM Schema | MDA Schema |
 |-------|------|------|------|----|-----------|------------|
-| 606 | 06 | Lakeland 606 | **food-service** | MANP | FS06_DM | FS06_MDA |
+| 606 | 06 | Lakeland 606 | food-service | MANP | FS06_DM | FS06_MDA |
 | 290 | FE | McLane Ocala | grocery | MANP | FE_DM | FE_MDA |
 | 160 | MD | Dothan | grocery | MANP | MD_DM | MD_MDA |
 | 360 | MK | Cumberland | grocery | MANP | MK_DM | MK_MDA |
@@ -222,182 +287,146 @@ const response = await fetch(BRIDGE + '/ollama/chat', {
 clearTimeout(timeoutId);
 ```
 
-### #4 — Ollama health uses /api/tags
-`ollama: true` = reachable, not model-specific.
-
-### #5 — verifyOllamaReady()
-```javascript
-async function verifyOllamaReady() {
-  try {
-    const r = await fetch(BRIDGE + '/health');
-    const h = await r.json();
-    return h.ollama === true;
-  } catch(e) { return false; }
-}
-```
-
-### #6 — JSON UTF-8 encoding
-```javascript
-res.setHeader('Content-Type', 'application/json; charset=utf-8');
-```
-
-### #7 — Source context injection
-- Fetch PACKAGE BODY (not PACKAGE) for implementation
-- enrichQAContext() auto-fetches objects via queryDB() if empty
-- Shape B assembly: `data.map(r => Object.values(r)[0] || '').join('')`
-- Inject 80,000+ chars into system prompt with anti-hallucination rules
-
-### #8 — autoTag() DC false positive prevention
-```javascript
-if (textRaw.includes(' ' + dc.code + ' ') ||
-    textRaw.includes(' ' + dc.code + ',') ||
-    text.includes(dc.name.toLowerCase())) {
-  detectedDCs.push(dc.code);
-}
-```
-
-### #9 — AI hallucination prevention
+### #4 — AI hallucination prevention
 - Always inject /db/source (PACKAGE BODY) into system prompt
 - Always inject only real JIRA issues from jiraResults.issues array
 - Never render ticket keys not present in jiraResults
 - Explicit prompt rule: "Only reference JIRA ticket keys that appear in the above list. Do NOT invent ticket numbers."
-- When context is empty (0 JIRA + 0 knowledge hits): respond with "I don't have enough information" — never invent
+- When context is empty (0 JIRA + 0 knowledge hits): "I don't have enough information" — never invent
 
-### #10 — Knowledge index data model
-```json
-{
-  "id": "ke-{timestamp}-{random}",
-  "type": "qa|process|integration|dc-specific|troubleshooting",
-  "question": "...", "answer": "...",
-  "context": {
-    "group": "manhattan-main", "schemas": ["MANH_CODE"],
-    "dcCodes": [], "systems": ["manhattan"], "objects": ["DOCK_PK"],
-    "jiraIssues": ["MANH-2284", "SDHD-2562205"]
-  },
-  "tags": ["dock_pk", "shipment", "manhattan"],
-  "quality": 3, "source": "ai-verified",
-  "capturedBy": "asrajag", "approved": true
-}
-```
-Quality: 1=needs review, 2=good, 3=gold standard
-jiraIssues: optional — auto-populated from JIRA results when saving Q&A answer
-
-### #11 — Cross-group search (PROMPT 21)
-```javascript
-// GET /db/search-all?keyword=<k>
-// Fans out to all 5 groups in parallel, 30s timeout
-// Dedupes by group+name+type
-// Returns: { results, queryMs, groupsSearched, totalResults, timedOut }
-```
-
-### #12 — Production guardrail ⚠️ CRITICAL
+### #5 — Production guardrail ⚠️ CRITICAL
 Every group has `"env"` field. Bridge exposes it in `GET /groups`.
 - Q&A, DC resolver, POST /db/query: **ONLY** `env === "prod"` groups
-- Compare modal: exempt — may use any group
-- Non-prod selected in Compare: show "⚠ includes non-production databases"
-- Ask mode bootstrap: shows "⏳ Connecting to WMS·IQ..." while groups load
+- Compare modal: exempt — may use any group, shows ⚠ warning for non-prod
 ```javascript
 const prodGroups = config.groups.filter(g => g.env === 'prod');
 ```
 
-### #13 — JIRA integration (PROMPT 28)
-- Uses Atlassian REST API with Basic auth (NOT MCP OAuth)
-- Auth: `Buffer.from(email + ":" + token).toString("base64")`
-- Health check: GET /rest/api/3/myself → 200 = atlassian:true
-- Search: GET /rest/api/3/issue/search with JQL
-- Max 5 issues injected into prompt, summary+key+status only
-- Full description NOT injected unless user asks about specific ticket key
-- Total prompt cap: 12,000 chars (schema+docs+knowledge+JIRA proportional)
-- JIRA results verified before rendering — never show keys not in jiraResults
+### #6 — SQL abstraction (PROMPT 32 — in progress)
+All SQL queries must live in `lib/sql-catalog.js`.
+No SQL strings anywhere else in the codebase.
+Table names must reference `config.tableAliases` for Active WM migration safety.
 
-### #14 — User persona rules (PROMPT 28)
-Two personas based on entry mode:
-- **Business** (Ask a Question): plain English, no schema names, no ticket keys, no INVALID objects, translate everything to business impact
-- **Technical** (Explore → Ask AI): full technical detail, schema names, ticket keys, INVALID status, raw data
-Inject persona into every system prompt before context.
+### #7 — Document pipeline
+```
+Upload → extract text (mammoth/.docx, pdftotext/.pdf)
+       → preprocessDocText() strips TOC/PAGEREF/Word noise
+       → find content start (skip TOC, start at first narrative paragraph)
+       → chunkTextSentenceAware(text, 2500, 300)  ← paragraph boundary splits
+       → prepend [Document: {title}] to each chunk
+       → write to docs-index/{group}-{filename}.json (atomic write)
+```
+Re-index without re-upload: `POST /docs/reindex` → `{"reindexed":226}`
 
-### #15 — Q&A context assembly order
-For every Q&A question, run ALL of these in parallel:
-1. GET /knowledge/search → knowledge hits (🧠)
-2. GET /docs/search → document chunks (📄)
-3. GET /jira/search → JIRA tickets (🎫) — only if atlassianEnabled
-4. POST /db/query → live DB findings (🗄️) — only if issue/problem keywords + prod group resolved
-Then assemble system prompt with all results, capped at 12,000 chars.
-Show pills: 🧠 N knowledge · 📄 N docs · 🎫 N tickets · 🗄️ N DB results
+### #8 — JIRA JQL pattern
+```javascript
+// Extract meaningful terms, strip stop words, max 4 terms
+// Build: textfields ~ "MZIC6101*" AND textfields ~ "VARIANCE*"
+// Never strip extension codes: EX01, EX33, SDN-215 etc
+if (/^[A-Z]{1,4}[-_]?\d+$/i.test(term)) keepAlways = true;
+```
 
-### #16 — Classifier rules (PROMPT 28 fix)
-classifyQuery() intent detection:
-- Issue/problem guard: "issues", "problem", "error", "failing", "what happened", "why is", "how does" → always route to Q&A, never Explore
-- Schema routing ONLY on explicit technical terms: "table", "column", "package", "procedure", "index", "view", "constraint", "trigger", "synonym"
-- Cross-DC phrases: "across all DCs", "all distribution centers", "every DC" → cigwms-prod then wmshub-prod
-- Default fallback: Q&A mode (never Explore)
-- Ask mode NEVER navigates to Explore mode — safety hardened
+### #9 — Q&A context assembly (parallel, every question)
+```
+1. GET /semantic/search?q=  → semantic intent match (first — highest priority)
+2. GET /knowledge/search?q= → knowledge hits (🧠)
+3. GET /docs/search?q=      → document chunks (📄) — 10 results
+4. GET /jira/search?q=      → JIRA tickets (🎫) — if atlassianEnabled
+5. POST /db/query           → live DB findings (🗄️) — if issue keywords + prod group
+Total context capped at 12,000 chars (complete chunks, never truncated mid-chunk)
+```
+
+### #10 — Classifier rules (Ask mode never navigates to Explore)
+- Issue/problem guard: "issues", "problem", "error", "failing" → always Q&A
+- Schema routing ONLY on: "table", "column", "package", "procedure", "index", "view"
+- Cross-DC phrases → cigwms-prod then wmshub-prod
+- Default fallback: Q&A mode
+- Extension codes (EX01, EX33) are NEVER stop words
+
+### #11 — Hard-coding policy ⚠️
+**NO hard-coded values anywhere in lib/*.js or public/index.html.**
+All configurable values must be in config.json and loaded at startup.
+This includes: chunk sizes, thresholds, row limits, table names, model names,
+port numbers, stop words, schema names, SQL queries.
+See PROMPT 32 for the complete list.
+
+### #12 — Manhattan Active WM migration safety
+All SQL table names reference `config.tableAliases`:
+```javascript
+const t = config.tableAliases;
+// Use: `FROM ${schema}.${t.SHIPMENT_HDR}`
+// Not: `FROM ${schema}.SHIPMENT_HDR`
+```
+When Active WM renames tables, only config.json changes — zero code changes.
 
 ---
 
 ## 🗺️ Architecture
 
 ```
-knowledge-base.html  (file:// in browser)
+public/index.html  (served at http://localhost:3333)
         │
         ▼
   Mode Selector
   ├── 💬 Ask a Question  [BUSINESS PERSONA]
-  │     ⏳ Connecting... while groups load
+  │     ⏳ Connecting... while groups load (groupsLoadPromise)
   │     → DC resolver → classifier → routing
   │     → ONLY env="prod" groups ← GUARDRAIL
-  │     → Parallel context fetch:
-  │         /knowledge/search  → 🧠 pill
-  │         /docs/search       → 📄 pill
-  │         /jira/search       → 🎫 pill (if enabled)
-  │         /db/query (issues) → 🗄️ pill (if issue keywords)
-  │     → enrichQAContext() → PACKAGE BODY source
-  │     → System prompt: BUSINESS persona rules
-  │       + 12,000 char cap on all context
-  │     → Ollama (stream:false, 60s timeout)
-  │     → Answer in plain English
-  │     → Related tickets section (plain English, no keys)
-  │     → Live data section (business impact language)
+  │     → Parallel context: semantic + knowledge + docs + JIRA + DB
+  │     → System prompt: BUSINESS persona rules + 12,000 char cap
+  │     → Ollama (stream:false, 60s timeout) → plain English answer
+  │     → Pills: 🧠 🎫 📄 🗄️
+  │     → Related JIRA tickets (plain English, no ticket keys shown)
+  │     → Date-aware shipment queries: today→week→month→all fallback
   │     → [💾 Save] → knowledge entry + jiraIssues captured
   │
   └── 🔧 Explore Systems → Group Picker
         → Main App [TECHNICAL PERSONA]
-        Tabs: ⚡Impact | Home | 💬Ask AI | 📚Docs | 🧠Knowledge
+        Tabs: ⚡Impact | Home | 💬Ask AI | 📚Docs | 🧠Knowledge | 🔬Semantic
+                    │
+        Home tab: WMS Intelligence Overview dashboard
+          Stats: groups, DCs, schemas, objects, packages,
+                 source units, docs, knowledge, intents, JIRA
+          🏛️ Governance: INVALID objects, Compare, Impact, Export docs
                     │
         Global search: [🔍 This group] [🔍 All systems]
-        ⟷ Compare → background diff job
-          Source/Target: Group + Schema + Type
-          Status bar: stage + % + cancel
+        ⟷ Compare → background diff job (Blob URL download, no browser prompt)
+          Source/Target: Group + Schema + Type (Live DB | Snapshot)
+          Status bar: stage + % + cancel ✕ + auto-pause after scan
           History: 🕐 session-only, download/retry/delete
                     │
+        🔬 Semantic tab:
+          Left: intent list with 🟢🟡🔴 confidence dots
+          Right: detail editor + SQL template test + ✓ Confirm / ✗ Reject
+          Bulk confirm: ✓ Confirm all ≥ N% (70/80/90/95/100%)
+          Scan status: auto-pauses after full scan
+                    │
                     ▼
-bridge.js  (http://localhost:3333)
+bridge.js  (http://localhost:3333) — thin entry point
         │
-        ├── GET /groups          → includes env field
-        ├── GET /db/whoami       → SYS_CONTEXT user
-        ├── GET /db/search       → single group search
-        ├── GET /db/search-all   → fan-out all 5 groups
-        ├── POST /db/query       → SELECT-only safety gate
-        ├── GET /jira/search     → Atlassian REST API + Basic auth
-        ├── GET /jira/issue/:key → full issue detail
-        ├── GET /jira/projects   → project list for settings
-        ├── POST /docs/upload    → Power Automate ingestion
-        │   docs-index/          → document chunks
-        ├── /knowledge/*         → CRUD + export
-        │   knowledge-index/     → training data + jiraIssues
-        └── POST /ollama/*       → stream:false
+        ├── lib/mcp-pool.js       → MCP pool + queryDB()
+        ├── lib/db-routes.js      → /db/* handlers
+        ├── lib/docs-routes.js    → /docs/* handlers
+        ├── lib/knowledge-routes.js → /knowledge/* handlers
+        ├── lib/jira-routes.js    → /jira/* + JQL builder + /jira/upload
+        ├── lib/ollama-routes.js  → /ollama/* handlers
+        ├── lib/semantic-routes.js → /semantic/* proxy to Python worker
+        └── lib/sql-catalog.js    → ALL SQL queries (PROMPT 32)
                 │
                 ▼
-          Oracle (5 DBs — all ASRAJAG, all env:prod)
-          MANP / MAN002P / MAN001P / OMSP / OPCIGP
-          +
-          Atlassian REST API (mclane.atlassian.net)
-          Basic auth: arun.rajagopalan@mclaneco.com
+        Oracle (5 DBs — all ASRAJAG, all env:prod)
+        MANP / MAN002P / MAN001P / OMSP / OPCIGP
+        +
+        Atlassian REST API (mclane.atlassian.net)
+        +
+        semantic-worker/app.py (port 3334, Python Flask)
+        +
+        PostgreSQL + pgvector (port 5432, Docker) ← PROMPT 33
 ```
 
 ---
 
-## 📋 Current config.json
+## 📋 Current config.json structure
 
 ```json
 {
@@ -407,8 +436,6 @@ bridge.js  (http://localhost:3333)
     "defaultModel": "llama3",
     "sqlclCommand": "sql",
     "sqlclArgs": ["-R", "2", "-mcp"],
-    "mcpClientName": "oracle-kb-bridge",
-    "mcpModelName": "bridge",
     "poolEnabled": true,
     "poolIdleTimeoutMs": 300000,
     "poolMaxQueueDepth": 20,
@@ -422,449 +449,486 @@ bridge.js  (http://localhost:3333)
     "atlassianEnabled": true,
     "atlassianDomain": "mclane.atlassian.net",
     "atlassianEmail": "arun.rajagopalan@mclaneco.com",
-    "atlassianToken": "<set>",
+    "atlassianToken": "<set — do not commit>",
     "atlassianProjectKeys": [],
     "docsIndexDir": "./docs-index",
-    "uploadToken": ""
+    "docsChunkSize": 2500,
+    "docsChunkOverlap": 300,
+    "docsMaxSearchResults": 10,
+    "docsContextBudget": 12000,
+    "uploadToken": "",
+    "postgresEnabled": false,
+    "postgresUrl": "postgresql://wmsiq:wmsiq@localhost:5432/wmsiq",
+    "oracleChangePollingEnabled": false,
+    "oracleChangePollingIntervalMinutes": 15,
+    "oracleChangePollingSchemas": ["MANH_CODE", "FRAMEWORK"],
+    "claudeApiEnabled": false,
+    "claudeApiModel": "claude-sonnet-4-6",
+    "claudeApiForQA": false
+  },
+  "queryLimits": {
+    "defaultRowLimit": 50,
+    "impactAnalysisNodeCap": 200,
+    "impactAnalysisDefaultDepth": 3,
+    "impactAnalysisMaxDepth": 5,
+    "shipmentQueryLimit": 5,
+    "jiraSearchLimit": 10,
+    "semanticSearchLimit": 5
+  },
+  "schemaDefaults": {
+    "codeSchemas": ["MANH_CODE", "FRAMEWORK"],
+    "sharedSchemas": ["MANH", "WMSHUB", "WMSHUB_CODE"],
+    "excludedObjectTypes": ["INDEX","SYNONYM","GRANT","JAVA CLASS","SCHEDULE","TRIGGER"],
+    "excludedNamePatterns": ["%$%"]
+  },
+  "shipmentTables": {
+    "headerTable": "SHIPMENT_HDR",
+    "detailTable": "SHIPMENT_DTL",
+    "dateColumns": ["CREATION_DATE","CREATE_DATE","CREATED_DATE","INSERT_DATE","INSR_DATE","SHIP_DATE"],
+    "idColumns": ["TC_SHIPMENT_ID","SHIPMENT_ID","SHIPMENT_NBR"]
+  },
+  "tableAliases": {
+    "SHIPMENT_HDR": "SHIPMENT_HDR",
+    "SHIPMENT_DTL": "SHIPMENT_DTL",
+    "TASK_HDR": "TASK_HDR",
+    "TASK_DTL": "TASK_DTL",
+    "LPN": "LPN",
+    "LOCN_HDR": "LOCN_HDR",
+    "ITEM_CBO": "ITEM_CBO",
+    "WAVE_HDR": "WAVE_HDR",
+    "WAVE_DTL": "WAVE_DTL"
+  },
+  "semantic": {
+    "workerUrl": "http://localhost:3334",
+    "confirmedThreshold": 0.8,
+    "unconfirmedThreshold": 0.5,
+    "scanIntervalMinutes": 60,
+    "maxParallelScans": 2
+  },
+  "qa": {
+    "ollamaTimeoutMs": 60000,
+    "maxContextChars": 12000,
+    "businessMaxWords": 200
   },
   "distributionCenters": [ "... 33 entries ..." ],
   "groups": [
-    { "id": "manhattan-main", "env": "prod", ... },
-    { "id": "manhattan-ck",   "env": "prod", ... },
-    { "id": "manhattan-wk",   "env": "prod", ... },
-    { "id": "wmshub-prod",    "env": "prod", ... },
-    { "id": "cigwms-prod",    "env": "prod", ... }
+    { "id": "manhattan-main", "env": "prod", "db": "MANP", ... },
+    { "id": "manhattan-ck",   "env": "prod", "db": "MAN002P", ... },
+    { "id": "manhattan-wk",   "env": "prod", "db": "MAN001P", ... },
+    { "id": "wmshub-prod",    "env": "prod", "db": "OMSP", ... },
+    { "id": "cigwms-prod",    "env": "prod", "db": "OPCIGP", ... }
   ]
 }
 ```
 
-## 🗺️ POC vs Production Roadmap
+---
 
-### Current Phase — POC (MacBook, single user)
-Goal: demonstrate value to McLane stakeholders.
-Keep changes minimal and safe. Do NOT introduce
-TypeScript, React, PostgreSQL, or Docker until
-after stakeholder approval.
-
-```
-✅ PROMPTS 1–28   Core features complete
-🔜 PROMPT 28b    Modularization + static server (lightweight)
-🔜 PROMPT 29     Self-building semantic layer (Python + JSON)
-🔜 PROMPT 30     Power Automate JIRA pipeline
-🔜 PROMPT 31     Demo polish — one-command start, sample questions
-─────────────────────────────────────────────
-SHOW TO McLane IT / Management
-─────────────────────────────────────────────
-```
-
-### Post-Approval Phase — Production (on-prem VM or cloud)
-Only after stakeholder sign-off. IT involvement required.
-
-```
-PROMPT 32   TypeScript migration (bridge.js → lib/*.ts)
-PROMPT 33   PostgreSQL + pgvector (replaces all JSON files)
-PROMPT 34   Docker Compose (frontend + bridge + worker + postgres + ollama)
-PROMPT 35   React + TypeScript frontend
-PROMPT 36   LDAP authentication (multi-user, McLane AD)
-            Note: Azure AD SSO requires IT approval (AADSTS65002 blocks direct)
-            LDAP is the proven fallback — already used in another McLane POC
-PROMPT 37   Production hardening (rate limits, audit log, backup)
-```
-
-### Deployment Architecture (post-approval target)
-```
-┌─────────────────────────────────────────────────────┐
-│                   Docker Compose                     │
-│  ┌─────────────┐  ┌──────────────┐  ┌────────────┐ │
-│  │  frontend   │  │ bridge (API) │  │  semantic  │ │
-│  │  Nginx      │  │ TypeScript   │  │  worker    │ │
-│  │  React app  │──│ Node.js      │  │  Python    │ │
-│  │  port 80    │  │ port 3333    │  │  port 3334 │ │
-│  └─────────────┘  └──────┬───────┘  └─────┬──────┘ │
-│                          │                │         │
-│  ┌───────────────────────▼────────────────▼──────┐  │
-│  │  PostgreSQL + pgvector  (port 5432)           │  │
-│  │  Replaces: docs-index/ knowledge-index/       │  │
-│  │            semantic-index/ JSON files         │  │
-│  └───────────────────────────────────────────────┘  │
-│  ┌─────────────────────────────────────────────┐    │
-│  │  Ollama (port 11434) — GPU preferred        │    │
-│  └─────────────────────────────────────────────┘    │
-└─────────────────────────────────────────────────────┘
-         │ VPN / McLane Network
-         ▼
-   Oracle on-prem (5 DBs) + mclane.atlassian.net
-```
-
-### Technology Decisions (locked)
-| Layer | POC (now) | Production (later) |
-|---|---|---|
-| Bridge | Node.js vanilla JS | TypeScript |
-| Frontend | Single HTML file | React + TypeScript |
-| Semantic engine | Python Flask | Python + pgvector |
-| Storage | JSON files on disk | PostgreSQL |
-| Container | None | Docker Compose |
-| Auth | None (local only) | LDAP → Azure AD |
-| LLM local | Ollama llama3 8B | Ollama (GPU server) |
-| LLM cloud | Claude API | Claude API |
-| Process mgr | None | PM2 → Rust (future) |
-
-### Rust consideration
-Rust is NOT introduced in POC phase. Revisit for:
-- SQLcl MCP process manager (child process management)
-- High-throughput semantic diff engine
-Only after production architecture is stable.
+## 🚀 Pending Prompts
 
 ---
 
----
-
-### PROMPT 29 — Self-Building Semantic Layer 🔜 NEXT
+### PROMPT 32 — SQL Abstraction Layer + Remove All Hard-Coding 🔜 NEXT
 
 ```
 Read .github/copilot-instructions.md in full before writing anything.
 
-Build a background AI discovery process that automatically learns 
-business intent → table/procedure mappings from existing sources
-and refines them through usage and technical user confirmation.
+The codebase has hard-coded SQL, thresholds, table names, and
+configuration values scattered throughout lib/*.js and public/index.html.
+This is a critical fix before Active WM migration.
 
-━━━ SEMANTIC INDEX ━━━
-New file: semantic-index/intents.json
-Shape per entry:
-{
-  "id": "si-{timestamp}-{random}",
-  "intent": "check if load is waved",
-  "keywords": ["waved", "wave status", "load waved"],
-  "package": "WAVE_PK",
-  "procedure": "check_wave_status",
-  "tables": ["WAVE_HDR", "WAVE_DTL"],
-  "columns": ["WAVE_STATUS", "LOAD_NBR"],
-  "schemas": ["SE_DM", "FE_DM"],
-  "dcSpecific": false,
-  "confidence": 0.87,
-  "source": "package-analysis|sharepoint|jira|usage|confirmed",
-  "confirmed": false,
-  "confirmedBy": null,
-  "usageCount": 0,
-  "lastUsed": null,
-  "sqlTemplate": "SELECT WAVE_STATUS FROM {schema}.WAVE_HDR WHERE LOAD_NBR = {input}"
-}
+PART 1 — Create lib/sql-catalog.js:
+All SQL queries must move here. No SQL string anywhere else.
+Use config.tableAliases for all table names.
 
-━━━ BRIDGE ENDPOINTS ━━━
-GET  /semantic/list          → all intents
-GET  /semantic/search?q=     → match by keyword
-POST /semantic/entry         → create/update entry
-DELETE /semantic/entry/:id   → remove entry
-GET  /semantic/stats         → counts by source/confidence/confirmed
-POST /semantic/confirm/:id   → mark confirmed, set confirmedBy
+module.exports = function(config) {
+  const t = config.tableAliases || {};
+  const lim = config.queryLimits || {};
+  return {
+    listObjects: (schema) => `
+      SELECT OBJECT_NAME, OBJECT_TYPE, STATUS
+      FROM DBA_OBJECTS
+      WHERE OWNER = '${schema}'
+      AND OBJECT_TYPE NOT IN (${
+        (config.schemaDefaults?.excludedObjectTypes || [])
+          .map(t => `'${t}'`).join(',')
+      })
+      AND OBJECT_NAME NOT LIKE '%$%'
+      ORDER BY OBJECT_TYPE, OBJECT_NAME`,
 
-━━━ BACKGROUND DISCOVERY ENGINE ━━━
-Runs in bridge.js as a background worker (non-blocking).
+    listColumns: (schema, table) => `
+      SELECT COLUMN_NAME, DATA_TYPE, NULLABLE,
+             DATA_LENGTH, COLUMN_ID
+      FROM DBA_TAB_COLUMNS
+      WHERE OWNER = '${schema}'
+      AND TABLE_NAME = '${table}'
+      ORDER BY COLUMN_ID`,
 
-Sources scanned in order:
-1. Oracle packages/procedures (all prod groups, MANH_CODE + FRAMEWORK first)
-   - Read PACKAGE BODY source via queryDB()
-   - Send to Ollama: extract business intent, tables, columns, procedures
-   - Ollama prompt: "Given this PL/SQL source, list all business operations
-     this code performs. For each: intent in plain English, tables read/written,
-     key columns, input parameters. Return JSON only."
-2. docs-index/ — SharePoint documents as they are added
-3. knowledge-index/ — existing confirmed Q&A entries
-4. JIRA resolved tickets — via GET /jira/search?status=resolved
+    getSource: (schema, name, type) => `
+      SELECT TEXT FROM DBA_SOURCE
+      WHERE OWNER = '${schema}'
+      AND NAME = '${name}'
+      AND TYPE = '${type}'
+      ORDER BY LINE`,
 
-Scheduling:
-- Runs on bridge startup (low priority, after pool init)
-- Runs when CPU is idle (check every 5 minutes, skip if active queries)
-- Manual trigger: POST /semantic/scan
-- User can PAUSE via POST /semantic/pause and RESUME via POST /semantic/resume
-- Scans run in parallel: max 2 concurrent group scans
-- VPN-aware: if a group times out, skip and retry next cycle
+    getDependencies: (schema, name) => `
+      SELECT OWNER, NAME, TYPE,
+             REFERENCED_OWNER, REFERENCED_NAME, REFERENCED_TYPE
+      FROM DBA_DEPENDENCIES
+      WHERE (OWNER = '${schema}' AND NAME = '${name}')
+      OR (REFERENCED_OWNER = '${schema}'
+          AND REFERENCED_NAME = '${name}')`,
 
-Progress tracking:
-- GET /semantic/scan-status → { running, paused, progress, lastScan,
-    scanned: {groups, docs, tickets}, pending: N, confirmed: N }
+    getInvalidObjects: (schema) => `
+      SELECT OBJECT_NAME, OBJECT_TYPE, STATUS
+      FROM DBA_OBJECTS
+      WHERE OWNER = '${schema}'
+      AND STATUS = 'INVALID'
+      ORDER BY OBJECT_TYPE, OBJECT_NAME`,
 
-━━━ Q&A INTEGRATION ━━━
-Before routing any Q&A question:
-1. GET /semantic/search?q=<question>
-2. If confirmed match (confidence > 0.8, confirmed:true):
-   - Run sqlTemplate via POST /db/query
-   - Inject result as primary context
-   - Business user: plain English answer from real data
-   - Technical user: show SQL + raw result
-3. If unconfirmed match (confidence > 0.5, confirmed:false):
-   - Use it but prepend caveat:
-     Business: "Based on my best understanding of the system..."
-     Technical: "⚠ Unconfirmed mapping (confidence: 87%)"
-4. If no match: fall through to existing JIRA+knowledge+schema flow
+    getChangedObjects: (schema, since) => `
+      SELECT OBJECT_NAME, OBJECT_TYPE, LAST_DDL_TIME
+      FROM DBA_OBJECTS
+      WHERE OWNER = '${schema}'
+      AND LAST_DDL_TIME > TIMESTAMP '${since}'
+      AND OBJECT_TYPE IN ('PACKAGE','PACKAGE BODY',
+        'PROCEDURE','FUNCTION')
+      ORDER BY LAST_DDL_TIME DESC`,
 
-━━━ NEW TAB — 🔬 Semantic (Explore Systems only) ━━━
-Tab shows:
-  Left panel: list of all semantic intents
-    - Filter: all | confirmed | unconfirmed | by source
-    - Each entry: intent text + confidence dot + confirmed badge
-    - 🟢 confirmed  🟡 unconfirmed  🔴 low confidence
-  Right panel: intent detail editor
-    - Intent text, keywords, package, procedure, tables, columns
-    - SQL template with test button (runs live query)
-    - [✓ Confirm] [✗ Reject] [✏ Edit] buttons
-    - Usage count + last used
+    getRecentShipments: (schema, dateCol, limit) => `
+      SELECT * FROM ${schema}.${t.SHIPMENT_HDR || 'SHIPMENT_HDR'}
+      WHERE TRUNC(${dateCol}) >= TRUNC(SYSDATE) - 7
+      ORDER BY ${dateCol} DESC
+      FETCH FIRST ${limit || lim.shipmentQueryLimit || 5} ROWS ONLY`,
 
-Confirmation UX:
-  - Badge on 🔬 Semantic tab when unconfirmed items exist: 🔬 12
-  - Periodic notification (once per session, not more):
-    "12 semantic mappings await your review"
-  - Technical user can confirm/reject/edit in the tab
-  - Confirmed mappings immediately used for business Q&A
+    getShipmentColumns: (schema) => `
+      SELECT COLUMN_NAME, DATA_TYPE
+      FROM DBA_TAB_COLUMNS
+      WHERE OWNER = '${schema}'
+      AND TABLE_NAME = '${t.SHIPMENT_HDR || 'SHIPMENT_HDR'}'
+      AND COLUMN_NAME IN (${
+        (config.shipmentTables?.dateColumns || [])
+          .concat(config.shipmentTables?.idColumns || [])
+          .map(c => `'${c}'`).join(',')
+      })
+      ORDER BY COLUMN_ID`,
 
-Scan status panel (top of Semantic tab):
-  [● Scanning...  MANH_CODE 47%  ⏸ Pause]
-  or
-  [⏸ Paused  Resume ▶]
-  Last scan: 13 Mar 2026 18:30 · 247 intents discovered · 34 confirmed
+    getWhoami: () => `
+      SELECT SYS_CONTEXT('USERENV','SESSION_USER') AS DB_USER,
+             SYS_CONTEXT('USERENV','DB_NAME') AS DB_NAME
+      FROM DUAL`,
+  };
+};
 
-━━━ USAGE REFINEMENT ━━━
-After every Q&A answer that used a semantic mapping:
-  - Increment usageCount on the matched intent
-  - If user clicks 👍: boost confidence += 0.05 (max 1.0)
-  - If user clicks 👎: reduce confidence -= 0.1, flag for review
-  - After 5 👍 on unconfirmed: auto-promote to confirmed
+PART 2 — Add to config.json all missing values:
+  queryLimits, schemaDefaults, shipmentTables, tableAliases,
+  semantic, qa sections (see config.json structure above).
+  Move every hard-coded value from code to config.
 
-━━━ SETUP.md ━━━
-Add section: Semantic Layer
-  - What it does
-  - How to pause/resume scan
-  - How to confirm mappings in the 🔬 Semantic tab
-  - How confidence scores work
+PART 3 — Update all lib/*.js to use sql-catalog.js:
+  const sqlCatalog = require('./sql-catalog')(config);
+  Replace every inline SQL string with sqlCatalog.methodName()
 
-━━━ test-bridge.js section K ━━━
-K1: GET /semantic/list → 200, has intents array
-K2: POST /semantic/confirm/:id → 200, confirmed:true
-K3: GET /semantic/scan-status → 200, has running + paused fields
-K4: POST /semantic/pause → 200; POST /semantic/resume → 200
+PART 4 — Update public/index.html:
+  Replace const BRIDGE = 'http://localhost:3333'
+  with: fetch /config on startup, use config.bridge.appUrl
+        or default to window.location.origin
+  Move all hard-coded thresholds to read from /config response
 
-Do not change test sections A–J.
+PART 5 — Verify:
+  node test-bridge.js → still 46/46 passing
+  grep -r "FETCH FIRST\|DBA_OBJECTS\|SHIPMENT_HDR" lib/
+  → zero results (all in sql-catalog.js only)
+  grep -r "localhost:3333\|localhost:3334" public/
+  → zero results (loaded from config)
+
+Do NOT change test-bridge.js test logic.
 ```
 
 ---
 
-### PROMPT 30 — Power Automate JIRA→Knowledge Pipeline ✅
+### PROMPT 33 — PostgreSQL + pgvector Semantic Search 🔜 NEXT (after 32)
+
 ```
-POST /jira/upload endpoint in lib/jira-routes.js
-GET /jira/upload-token → { token: "" } (empty = no auth)
+Read .github/copilot-instructions.md in full before writing anything.
 
-Upload behavior:
-  Resolved or Closed → ingest into docs-index as chunks
-    source: "jira-power-automate"
-    fileId: "jira-{key}"
-    Returns: { ok, ingested:true, key, chunkCount, wordCount }
-  Non-resolved → skip
-    Returns: { ok, ingested:false, reason:"status-not-resolved-or-closed" }
+POC phase — Docker PostgreSQL on MacBook.
+nomic-embed-text already installed in Ollama.
+Goal: replace keyword /docs/search with semantic similarity search.
 
-Docs tab UI additions:
-  🎫 JIRA Power Automate Sync card alongside Power Automate card
-    Last ingested: filename — date
-    Total JIRA docs: N files in docs-index
-    Upload token: ● Set / ○ Not set
-    [↗ View in Docs] → filters library to jira-power-automate source
-    Clear filter button to return to all docs
+PART 1 — docker-compose.yml in project root:
+  version: '3.8'
+  services:
+    postgres:
+      image: ankane/pgvector:latest
+      environment:
+        POSTGRES_DB: wmsiq
+        POSTGRES_USER: wmsiq
+        POSTGRES_PASSWORD: wmsiq
+      ports:
+        - "5432:5432"
+      volumes:
+        - ./pgdata:/var/lib/postgresql/data
+      healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U wmsiq"]
+        interval: 5s
+        timeout: 5s
+        retries: 10
 
-Power Automate flow (PROMPT 30):
-  Trigger: JIRA issue status → Resolved/Done
-  Action: POST http://[mac-ip]:3333/jira/upload
-  Body: { key, summary, status, description, resolution,
-          project, assignee, updated, url }
+PART 2 — lib/vector-store.js:
+  Uses 'pg' npm package (add to package.json)
+  
+  initSchema() — creates tables:
+    CREATE EXTENSION IF NOT EXISTS vector;
+    CREATE TABLE IF NOT EXISTS doc_chunks (
+      id SERIAL PRIMARY KEY,
+      file_id TEXT NOT NULL,
+      file_name TEXT,
+      title TEXT,
+      group_id TEXT,
+      site TEXT,
+      source TEXT,
+      chunk_index INTEGER,
+      chunk_text TEXT,
+      embedding vector(768),
+      last_modified TIMESTAMPTZ,
+      synced_at TIMESTAMPTZ DEFAULT NOW(),
+      UNIQUE(file_id, chunk_index)
+    );
+    CREATE INDEX IF NOT EXISTS doc_chunks_embedding_idx
+      ON doc_chunks USING ivfflat (embedding vector_cosine_ops)
+      WITH (lists = 100);
 
-Verified: SDHD-2624364 ingested, shows in Docs library ✅
+  generateEmbedding(text):
+    POST http://localhost:11434/api/embeddings
+    { model: "nomic-embed-text", prompt: text }
+    Returns float[] (768 dimensions)
+    Cache embeddings in memory for duplicate chunks
 
-Semantic scanner improvements (added alongside PROMPT 30):
-  Auto-pause after full scan:
-    paused=True, pauseReason="auto-paused after full scan"
-    Status bar: "⏸ Auto-paused after full scan [▶ Rescan]"
-    Distinct amber styling vs manual pause
-    resume clears pauseReason
-  Bulk confirm in Semantic tab:
-    [✓ Confirm all ≥] [90% ▾] toolbar button
-    Threshold options: 70%, 80%, 90%, 95%, 100%
-    Dialog: "Confirm N intents with confidence ≥ X%?"
-    Live progress: "Confirming N intents... i/N"
-    Toast: "✅ N intents confirmed"
-    Badge updates immediately
+  upsertChunk(chunk):
+    INSERT ... ON CONFLICT (file_id, chunk_index) DO UPDATE
 
-Verified: 118 intents discovered, bulk confirm at 90%
-  reduced unconfirmed badge to 40 ✅
-  CIG WMS / OP FRAMEWORK schema scanned ✅
-```
+  semanticSearch(queryText, groupId, limit=10):
+    embedding = await generateEmbedding(queryText)
+    SELECT chunk_text, file_name, title, group_id,
+      1 - (embedding <=> $1::vector) AS similarity
+    FROM doc_chunks
+    WHERE ($2::text IS NULL OR group_id = $2)
+    ORDER BY embedding <=> $1::vector
+    LIMIT $3
 
----
+  deleteByFileId(fileId):
+    DELETE FROM doc_chunks WHERE file_id = $1
 
-### PROMPT 31 — Demo Polish ✅
-```
-Target audience: McLane IT Management
-Goal: impress with breadth across all 33 DCs + 5 groups
+PART 3 — POST /docs/migrate-to-vector endpoint:
+  Reads all docs-index/*.json files
+  For each chunk: generateEmbedding(chunk.text)
+  Upserts into PostgreSQL
+  Returns { migrated: N, chunks: N, errors: [] }
+  Progress: console.log every 10 files
+  Note: 226 files × avg 10 chunks × embedding time ~0.5s = ~18 minutes
 
-start.sh improvements:
-  - Prerequisite checks: node, python3, sql, ollama, VPN
-  - Starts semantic worker (.venv) + bridge
-  - Waits for /health → bridge:true
-  - Prints clean startup summary with all service status
-  - chmod +x fix: always set execute permissions
+PART 4 — Hybrid search in lib/docs-routes.js:
+  GET /docs/search:
+    if (config.bridge.postgresEnabled && vectorStore.isConnected()):
+      return await vectorStore.semanticSearch(q, group, limit)
+    else:
+      return existingKeywordSearch(q, group, limit)  ← zero regression risk
 
-Home tab dashboard (WMS Intelligence Overview):
-  - Live stats: 5 groups, 32 DCs, 43 schemas, 204,500 objects
-    856 packages, 23,705 source units, docs, knowledge, intents
-  - Recent activity: last 3 knowledge entries + last 3 JIRA tickets
-  - 🏛️ Governance quick actions:
-    [Find INVALID objects] [Compare schema drift]
-    [Run impact analysis] [Export full documentation]
-  - [🔄 Refresh] button with spinner
+PART 5 — Also migrate knowledge-index to vector:
+  CREATE TABLE IF NOT EXISTS knowledge_entries (
+    id TEXT PRIMARY KEY,
+    question TEXT,
+    answer TEXT,
+    tags TEXT[],
+    quality INTEGER,
+    embedding vector(768),
+    created_at TIMESTAMPTZ DEFAULT NOW()
+  );
+  GET /knowledge/search → semantic search if postgres enabled
 
-Sample questions — randomized 4 from pool each load:
-  Business: wave processing, variance tickets, dock assignment,
-    receiving process, WMSHUB integration, load sequence,
-    shipment delays, dock scheduling
-  Technical (Explore Ask AI): package dependencies, INVALID
-    objects, cross-group schemas, impact analysis
+PART 6 — Health + startup:
+  GET /health → add "postgres": true/false
+  start.sh: if postgresEnabled and docker installed:
+    docker compose up -d postgres
+    Wait for healthcheck to pass
+    Print: ✓ PostgreSQL + pgvector running (port 5432)
 
-Answer quality improvements:
-  - Filler phrase stripping: removes "I'm happy to help",
-    "Great question", "Certainly", "As an AI" etc
-  - 200 word cap + [Read more] toggle
-  - Source attribution: "Answer based on: 🎫 N · 🧠 N · 📄 N"
-  - Direct one-sentence opening for business answers
-  - DC list formatting for multi-DC answers
+PART 7 — SETUP.md — add PostgreSQL section:
+  ## PostgreSQL + pgvector Setup
+  Requires Docker Desktop.
+  1. docker compose up -d postgres
+  2. curl -X POST http://localhost:3333/docs/migrate-to-vector
+  Takes ~20 minutes for 226 documents.
+  After migration, set postgresEnabled: true in config.json.
 
-Friendly error messages:
-  "fetch failed" → "Cannot reach database. Check VPN."
-  "No response generated" → "Not enough info found. Try rephrasing."
-  "401" → "Session expired. Please refresh."
-  "503" → "System busy. Try again shortly."
-
-Demo mode (Settings toggle):
-  - Page title: "WMS·IQ (Demo)"
-  - Yellow banner: "🎭 Demo mode active — changes will not be saved"
-  - Disables: knowledge save, semantic confirm/reject,
-    POST /db/query writes
-  - All read operations work normally
-  - Settings X button works regardless of demo mode state
-  - Banner appears immediately on toggle
-
-Auto-routing for DC data queries (NO user choice dialogs):
-  Business user asks about a DC → system decides automatically:
-    Manhattan DCs → dc.dmSchema in dc.manhattanGroup
-    CIG DCs → cigwms-prod with LEG_DIV_ID filter
-    No DC → manhattan-main MANH default
-  Internal system names (Manhattan, WMSHUB, SE_DM) 
-  NEVER shown to business users
-
-Date-aware shipment queries with automatic fallback:
-  "today" → "this week" → "this month" → all recent
-  Shows fallback note when widening window
-  ORDER BY date DESC, FETCH FIRST 5 ROWS ONLY
-
-Verified UI smoke tests (live Oracle data):
-  UI1: "Show me today's shipments for SE DC"
-    → Fallback to this week: Shipments 68787-68792 ✅
-  UI2: "What was the last shipment for MD this week?"
-    → Shipments 67954-67958, March 14 2026 ✅
-  UI3: "How many shipments did NE DC have this month?"
-    → Shipments 125126-125130, March 13-14 2026 ✅
-  No internal system names exposed in any response ✅
+Do NOT change test-bridge.js.
+Do NOT break existing keyword search fallback.
 ```
 
 ---
 
+### PROMPT 34 — Auto-Detect Oracle Code Changes 🔜 FUTURE
+
+```
+Read .github/copilot-instructions.md before writing anything.
+
+When PL/SQL packages change in production Oracle, WMS·IQ should
+automatically detect the change and update its semantic intent mappings.
+
+Config fields (already in config.json):
+  oracleChangePollingEnabled: false
+  oracleChangePollingIntervalMinutes: 15
+  oracleChangePollingSchemas: ["MANH_CODE", "FRAMEWORK"]
+
+In bridge.js startup:
+  If oracleChangePollingEnabled:
+    setInterval(pollForChanges, intervalMs)
+
+pollForChanges():
+  lastCheckTime stored in memory (initialized to startup time)
+  For each schema in oracleChangePollingSchemas:
+    rows = await queryDB(group, sqlCatalog.getChangedObjects(schema, lastCheckTime))
+    For each changed object:
+      Log: "[ORACLE CHANGE] DOCK_PK (PACKAGE BODY) modified at ..."
+      POST http://localhost:3334/discover-object
+        { schema, objectName, objectType, group }
+  lastCheckTime = new Date().toISOString()
+
+New bridge endpoint:
+  GET /db/changes?since=<ISO8601>&group=<id>
+  Returns objects changed since given timestamp
+  Uses sqlCatalog.getChangedObjects()
+
+GET /health → add:
+  "oracleChangePolling": {
+    "enabled": bool,
+    "lastCheck": ISO8601,
+    "changesDetected": N
+  }
+
+In semantic-worker/app.py — add POST /discover-object:
+  Receives { schema, objectName, objectType, group }
+  Fetches source via Oracle MCP (calls bridge /db/source)
+  Runs Ollama intent extraction on just that object
+  Updates existing intent if found, adds new if not
+  Returns { updated: N, added: N }
+
+Do NOT change test-bridge.js.
+```
+
 ---
 
-## 📜 Prompt History (v1–v28)
+### PROMPT 35 — Claude API for Q&A Answers 🔜 FUTURE
 
-> Preserved as rebuild kit. Do NOT re-run unless regenerating from scratch.
-
-### PROMPT 1–26 — See v12 instructions for full history ✅
-
-### PROMPT 27 — Production Guardrail + env Classification + Compare UX ✅
 ```
-- "env": "prod" on all 5 groups in config.json
-- Bridge exposes env in GET /groups (bridge.js:952-959)
-- Q&A, DC resolver, POST /db/query: only env="prod" groups
-- Compare modal exempt — shows ⚠ warning for non-prod
-- Background diff job: modal closes immediately, status bar at bottom
-  Stages: 0–25% fetch source → 25–50% fetch target →
-          50–75% compare → 75–99% build report
-- Large object hint: shows count if 8000+ objects
-- Success: green bar + toast + 60s auto-dismiss
-- Failure: red bar + Retry (reopens modal with prior selections)
-- One job at a time guard
-- Download: Blob URL + hidden <a> — no browser permission prompt
-- Diff History: 🕐 button, session-only, download/retry/delete
-  "History is cleared on page reload. Download reports to save them."
-- Filename: diff-{source-group}-vs-{target-group}-{YYYYMMDD}.html
-- Verified: MANH_CODE manhattan-main vs manhattan-ck → 24 dropped objects ✅
+Read .github/copilot-instructions.md before writing anything.
+
+Switch Q&A answers from Ollama to Claude API for better quality.
+Claude API already used for PDF export (claude-sonnet-4-6).
+
+Config fields (already in config.json):
+  claudeApiEnabled: false
+  claudeApiModel: "claude-sonnet-4-6"
+  claudeApiForQA: false
+  claudeApiFallbackToOllama: true
+
+In lib/ollama-routes.js:
+  POST /ollama/chat:
+    If request body has useClaudeApi:true AND config.claudeApiEnabled
+       AND config.claudeApiForQA:
+      Call Claude API:
+        POST https://api.anthropic.com/v1/messages
+        Headers:
+          x-api-key: process.env.ANTHROPIC_API_KEY or config.claudeApiKey
+          anthropic-version: 2023-06-01
+          anthropic-dangerous-direct-browser-access: true
+        Body: { model: config.claudeApiModel, max_tokens: 2048, messages }
+      Return same shape: { response: text }
+    Else: existing Ollama path unchanged
+
+In public/index.html sendQA():
+  If claudeApiEnabled AND claudeApiForQA:
+    Add useClaudeApi: true to POST /ollama/chat body
+
+Settings panel — add AI Provider section:
+  AI Provider: [Ollama ●] [Claude API ○]
+  (Claude API option only shown if ANTHROPIC_API_KEY detected in /health)
+
+GET /health → add "claudeApi": true/false
+  true if ANTHROPIC_API_KEY set and reachable
+
+Cost: ~$0.003 per Q&A question (negligible for internal use)
+Quality improvement: dramatic on complex multi-document WMS questions
+
+Do NOT change test-bridge.js.
 ```
 
-### PROMPT 28 — Atlassian JIRA Integration ✅
+---
+
+### PROMPT 36 — LDAP Authentication (Multi-User) 🔜 FUTURE (post-demo)
+
 ```
-Atlassian REST API with Basic auth (NOT MCP OAuth — blocked).
-Auth: Buffer.from(email + ":" + token).toString("base64")
-Domain: mclane.atlassian.net
-Email: arun.rajagopalan@mclaneco.com
-Token: stored in config.json as atlassianToken
+After stakeholder approval and server deployment.
+Use LDAP/Active Directory — already proven in another McLane POC.
+Azure AD SSO requires IT approval (AADSTS65002 blocks direct access).
 
-Bridge endpoints added:
-  GET /jira/search?q=&maxResults=5 — JQL text search
-  GET /jira/issue/:key — full issue detail
-  GET /jira/projects — project list (uses /rest/api/3/project/search)
-  GET /health — now includes atlassian:true/false
-  GET/POST /config — exposes atlassianDomain, atlassianEmail, atlassianToken
+Add to config.json:
+  "ldapEnabled": false,
+  "ldapUrl": "ldap://mclaneco.com",
+  "ldapBaseDn": "DC=mclaneco,DC=com",
+  "ldapBindDn": "",
+  "ldapBindPassword": "",
+  "sessionSecret": "",
+  "sessionTimeoutMinutes": 480
 
-JIRA projects accessible: Manhattan, Help Desk Support, 
-  Change Management + many more (atlassianProjectKeys:[] = all)
+POST /auth/login → LDAP bind with user credentials
+GET /auth/logout → clear session
+All /db/*, /docs/*, /knowledge/* → require valid session
+Knowledge entries → capturedBy: real username from LDAP
+Semantic confirmations → confirmedBy: real username
 
-Q&A integration:
-  - Runs in parallel with /docs/search and /knowledge/search
-  - Max 5 issues, key+summary+status+type injected into prompt
-  - Full description NOT injected (prevents prompt bloat/hangs)
-  - Total context cap: 12,000 chars proportional truncation
-  - Ollama 60s AbortController timeout added
-  - Anti-hallucination: only render ticket keys in jiraResults.issues
-  - 🎫 pill: "🎫 N tickets found"
-  - Related tickets section below answer with ↗ Open in JIRA links
+Do NOT implement until server deployment is planned.
+```
 
-User persona rules:
-  Business (Ask mode): plain English, no ticket keys shown,
-    "a known issue was reported" not "SDHD-2562205"
-  Technical (Explore Ask AI): full keys, summaries, raw detail
+---
 
-Knowledge capture:
-  - jiraIssues array saved in knowledge entry context
-  - 🎫 N badge in Knowledge list for entries with JIRA links
-  - Editable JIRA field in Knowledge editor with clickable links
-  - Export includes jiraIssues; Alpaca adds "Related JIRA issues: ..."
-  - 🎫 JIRA filter in export panel: Any / Has JIRA links / No JIRA links
+### PROMPT 37 — Docker Compose Multi-Container 🔜 FUTURE (post-demo)
 
-Settings panel Atlassian section:
-  - Domain, Email, API Token (masked), Project keys multi-select
-  - Test Connection button → checks /health
-  - Token:● Set indicator
+```
+After stakeholder approval.
+Full production-ready Docker Compose setup.
 
-Classifier fixes (Ask mode never navigates to Explore):
-  - "sequence", "issues", "problem", "error" → Q&A not schema
-  - Schema routing only on explicit technical terms
-  - Cross-DC phrases → cigwms-prod/wmshub-prod
-  - Default fallback: Q&A mode
+Services:
+  frontend  — Nginx serving public/ (port 80/443)
+  bridge    — Node.js TypeScript (port 3333, internal)
+  worker    — Python semantic worker (port 3334, internal)
+  postgres  — PostgreSQL + pgvector (port 5432, internal)
+  ollama    — Ollama LLM (port 11434, internal, GPU preferred)
 
-DB enrichment for issue queries:
-  - When issue/problem keywords detected + prod group resolved:
-    runs INVALID object probe + shipment/load indicator query
-  - Results shown as 🗄️ pill + Live data section
-  - Business user: business impact language only
-  - Technical user: raw data + schema names
-  - runIssueDbQueries() self-gates internally
+Network:
+  All services on internal Docker network
+  Only frontend exposed externally
+  Bridge connects to on-prem Oracle via VPN/McLane network
 
-SETUP.md updated with:
-  - Atlassian JIRA Integration section
-  - Domain/Email/Token setup instructions
-  - Power Automate JIRA→Knowledge note (PROMPT 30, future)
+Environment variables (not config.json) for secrets:
+  ATLASSIAN_TOKEN, ANTHROPIC_API_KEY, LDAP_BIND_PASSWORD,
+  POSTGRES_PASSWORD, SESSION_SECRET
+
+Do NOT implement until server is provisioned by IT.
+```
+
+---
+
+### PROMPT 23 — UT DC Activation (September 2026) 🔜 FUTURE
+
+```
+Config-only change when McLane Salt Lake City (UT, DC 210)
+goes live on Manhattan in September 2026.
+1. config.json distributionCenters: set "active": true for UT
+2. config.json manhattan-main schemas: add "UT_DM", "UT_MDA"
+3. Verify schemas exist via DBA_OBJECTS
+4. Restart bridge.js — zero code changes needed
+5. Update this file: UT row → "✅ Live"
 ```
 
 ---
@@ -875,23 +939,27 @@ SETUP.md updated with:
 |---------|-----|
 | "Bridge offline" | Run `node bridge.js`; check `/health` |
 | "Ollama offline" | verifyOllamaReady() checks h.ollama === true |
-| Ollama called wrong endpoint | Must use `/api/tags` not `/api/models` |
-| Ollama hangs on large prompt | 60s AbortController timeout — check context cap |
-| AI hallucinated ticket numbers | jiraResults not injected — check sendQA() parallel fetch |
-| 🎫 pill not showing | Check jiraHits in scope at pill render time |
+| Ollama hangs | 60s AbortController timeout — check context cap |
+| AI hallucinated ticket numbers | jiraResults not injected — check sendQA() |
+| 🎫 pill not showing | Check jiraHits in scope at pill render |
 | atlassian:false in health | Check domain/email/token all set in config.json |
-| JIRA search returns empty | Check JQL syntax — use text~"keyword" with spaces |
-| JIRA projects returns empty | Endpoint must be /rest/api/3/project/search not /project |
-| Ask mode shows "No production groups" | groups bootstrap timing — loadGroups() must complete first |
-| Ask mode switches to Explore | Classifier bug — check classifyQuery() issue guard terms |
-| AI gives hallucinated answers | Source not injected — check enrichQAContext() |
-| Any /db/* returns [] | Using raw runMCP() — use queryDB() |
+| JIRA search returns empty | textfields~ JQL — check stop word filtering |
+| JIRA extension code stripped | EX01/EX33 must never be stop words |
+| Ask mode shows "No prod groups" | groupsLoadPromise timing — loadGroups() must complete |
+| Ask mode switches to Explore | Classifier bug — check issue guard terms |
+| Doc chunks still TOC garbage | preprocessDocText() — run POST /docs/reindex |
+| chunkCount: 1 for large doc | extractionMode check — mammoth must run for .docx |
+| JSON truncated in docs-index | Atomic write fix — write to .tmp then rename |
+| Any /db/* returns [] | Using raw runMCP() — always use queryDB() |
 | Schema shows (0) objects | Must use DBA_OBJECTS not ALL_OBJECTS |
-| Emoji garbled | Missing charset: Content-Type: application/json; charset=utf-8 |
-| SharePoint AADSTS65002 | Use Power Automate instead |
-| POST /docs/upload error | Check base64 encoding and file extension |
-| E1 troubleshooting | E1 fixed — SYS.DUAL with depth=1. Never remove depth param or E1 hangs forever |
+| E1 hangs forever | depth=1 parameter missing — never remove it |
+| E1 fails intermittently | Was SYS.DUAL infinite BFS — now fixed with depth=1 |
 | Q&A hits wrong database | Check env field — all prod groups must have "env":"prod" |
+| Shipment query returns empty | Date fallback chain — today→week→month→all |
+| Hard-coded SQL breaks Active WM | Must use sql-catalog.js + tableAliases — see PROMPT 32 |
+| start.sh permission denied | chmod +x start.sh stop.sh |
+| ngrok blocked by McLane SSL | Use phone hotspot for ngrok, or use 10.98.215.99 directly |
+| Power Automate folder shows "No items" | SharePoint API permissions — use recurrence trigger |
 
 ---
 
@@ -900,30 +968,73 @@ SETUP.md updated with:
 ```
 knowledgeBase/
 ├── .github/
-│   └── copilot-instructions.md   ← this file (v16)
+│   └── copilot-instructions.md   ← this file (v18)
 ├── bridge.js                     ← thin entry point + HTTP server
-├── lib/                          ← ✅ created by PROMPT 28b
+├── lib/                          ← modular route handlers
 │   ├── mcp-pool.js               ← MCP pool + queryDB()
 │   ├── db-routes.js              ← /db/* handlers
-│   ├── docs-routes.js            ← /docs/* handlers
+│   ├── docs-routes.js            ← /docs/* + preprocessDocText + chunking
 │   ├── knowledge-routes.js       ← /knowledge/* handlers
-│   ├── jira-routes.js            ← /jira/* + JQL builder
-│   ├── ollama-routes.js          ← /ollama/* handlers
-│   └── semantic-routes.js        ← /semantic/* proxy to worker
-├── public/                       ← ✅ created by PROMPT 28b
-│   └── index.html                ← frontend (sections labelled)
-├── semantic-worker/              ← ✅ created by PROMPT 29
+│   ├── jira-routes.js            ← /jira/* + JQL builder + stop words
+│   ├── ollama-routes.js          ← /ollama/* + Claude API (PROMPT 35)
+│   ├── semantic-routes.js        ← /semantic/* proxy to Python worker
+│   ├── sql-catalog.js            ← ALL SQL queries (PROMPT 32) ← CREATE THIS
+│   └── vector-store.js           ← pgvector client (PROMPT 33) ← CREATE THIS
+├── public/
+│   └── index.html                ← WMS·IQ single-file frontend
+├── semantic-worker/
 │   ├── app.py                    ← Python Flask semantic engine
 │   └── .venv/                    ← Python virtualenv (auto-created)
-├── config.json                   ← 5 groups + Atlassian config
+├── OP/                           ← Oracle PL/SQL source code
+├── config.json                   ← ⚠️ in .gitignore — never commit
+├── config.example.json           ← Safe template — commit this
+├── docker-compose.yml            ← PostgreSQL (PROMPT 33) ← CREATE THIS
+├── .gitignore                    ← node_modules, config.json, docs-index etc
 ├── debug-mcp.js                  ← MCP handshake tester
 ├── test-bridge.js                ← 46/46 passing (A–K)
-├── msal-browser.min.js           ← MSAL local (CDN blocked)
-├── start.sh / stop.sh            ← startup/shutdown scripts
-├── SETUP.md                      ← setup + Power Automate + JIRA
-│                                   + Semantic Layer section
-├── docs-index/                   ← document chunks
-├── knowledge-index/              ← institutional knowledge
-└── semantic-index/               ← ✅ created by PROMPT 29
-    └── intents.json              ← 66+ auto-discovered intents
+├── bulk_upload_docs.py           ← Python bulk upload script
+├── start.sh / stop.sh            ← startup/shutdown (chmod +x required)
+├── SETUP.md                      ← setup + Power Automate + JIRA + Semantic
+├── docs-index/                   ← 226 documents (in .gitignore)
+├── knowledge-index/              ← institutional knowledge (in .gitignore)
+└── semantic-index/               ← 118+ intents (in .gitignore)
+    └── intents.json
 ```
+
+---
+
+## 📊 POC vs Production Roadmap
+
+### Current Phase — POC (MacBook, single user ASRAJAG)
+```
+✅ PROMPTS 1–31   Complete — demo ready
+🔜 PROMPT 32     SQL abstraction + hard-coding cleanup ← DO NEXT
+🔜 PROMPT 33     PostgreSQL + pgvector ← major quality improvement
+─────────────────────────────────────────────────────
+SHOW TO McLane IT / Management
+─────────────────────────────────────────────────────
+```
+
+### Post-Approval Phase
+```
+PROMPT 34   Oracle change detection (LAST_DDL_TIME polling)
+PROMPT 35   Claude API for Q&A (better answers)
+PROMPT 36   LDAP authentication (multi-user)
+PROMPT 37   Docker Compose (full production deployment)
+```
+
+### Technology Decisions
+| Layer | POC (now) | Production (later) |
+|---|---|---|
+| Bridge | Node.js vanilla JS | TypeScript |
+| Frontend | Single HTML file | React + TypeScript |
+| Semantic engine | Python Flask | Python + pgvector |
+| Storage | JSON files + PostgreSQL | PostgreSQL only |
+| Container | Docker (postgres only) | Full Docker Compose |
+| Auth | None (local only) | LDAP → Azure AD |
+| LLM local | Ollama llama3 8B | Ollama (GPU server) |
+| LLM cloud | Claude API (optional) | Claude API (primary) |
+
+### Rust consideration
+Not in POC phase. Revisit post-production for SQLcl MCP process manager.
+Bottleneck is Oracle VPN latency and Ollama inference, not CPU/memory.

@@ -16,8 +16,38 @@ app = Flask(__name__)
 ROOT_DIR = Path(__file__).resolve().parent.parent
 SEMANTIC_INDEX_DIR = ROOT_DIR / 'semantic-index'
 SEMANTIC_INDEX_PATH = SEMANTIC_INDEX_DIR / 'intents.json'
-OLLAMA_URL = os.environ.get('OLLAMA_URL', 'http://localhost:11434')
+CONFIG_PATH = ROOT_DIR / 'config.json'
+
+
+def _load_bridge_config():
+    try:
+        raw = CONFIG_PATH.read_text(encoding='utf-8')
+        cfg = json.loads(raw or '{}')
+        bridge_cfg = cfg.get('bridge') if isinstance(cfg, dict) else {}
+        return bridge_cfg if isinstance(bridge_cfg, dict) else {}
+    except Exception:
+        return {}
+
+
+BRIDGE_CONFIG = _load_bridge_config()
+
+
+def _env_or_config(name, config_key, default):
+    env_val = os.environ.get(name)
+    if env_val is not None and str(env_val).strip() != '':
+        return env_val
+    cfg_val = BRIDGE_CONFIG.get(config_key)
+    if cfg_val is not None and str(cfg_val).strip() != '':
+        return cfg_val
+    return default
+
+
+OLLAMA_URL = str(_env_or_config('OLLAMA_URL', 'ollamaUrl', 'http://localhost:11434')).strip()
 OLLAMA_MODEL = os.environ.get('OLLAMA_MODEL', 'llama3')
+SEMANTIC_PORT = int(float(_env_or_config('SEMANTIC_PORT', 'semanticWorkerPort', 3334)))
+SEMANTIC_CONFIDENCE_HIGH = float(_env_or_config('SEMANTIC_CONFIDENCE_HIGH', 'semanticConfidenceHigh', 0.8))
+SEMANTIC_CONFIDENCE_MEDIUM = float(_env_or_config('SEMANTIC_CONFIDENCE_MEDIUM', 'semanticConfidenceMedium', 0.5))
+SEMANTIC_SCAN_PARALLEL_LIMIT = int(float(_env_or_config('SEMANTIC_SCAN_PARALLEL_LIMIT', 'semanticScanParallelLimit', 4)))
 
 SEMANTIC_INDEX_DIR.mkdir(parents=True, exist_ok=True)
 if not SEMANTIC_INDEX_PATH.exists():
@@ -283,9 +313,9 @@ def _stats(items):
         src = str(item.get('source', 'unknown'))
         by_source[src] = by_source.get(src, 0) + 1
         conf = _to_float(item.get('confidence', 0), 0)
-        if conf >= 0.8:
+        if conf >= SEMANTIC_CONFIDENCE_HIGH:
             by_conf['high'] += 1
-        elif conf >= 0.5:
+        elif conf >= SEMANTIC_CONFIDENCE_MEDIUM:
             by_conf['medium'] += 1
         else:
             by_conf['low'] += 1
@@ -385,6 +415,7 @@ def get_status():
     with state_lock:
         snapshot = dict(state)
     snapshot['confirmed'] = sum(1 for x in items if x.get('confirmed'))
+    snapshot['scanParallelLimit'] = SEMANTIC_SCAN_PARALLEL_LIMIT
     return jsonify(snapshot)
 
 
@@ -452,8 +483,8 @@ def confirm_entry(item_id):
             item['source'] = 'confirmed'
             item['confirmedBy'] = who
             item['updatedAt'] = _now_iso()
-            if _to_float(item.get('confidence', 0), 0) < 0.8:
-                item['confidence'] = 0.8
+            if _to_float(item.get('confidence', 0), 0) < SEMANTIC_CONFIDENCE_HIGH:
+                item['confidence'] = SEMANTIC_CONFIDENCE_HIGH
             found = item
             break
     if not found:
@@ -922,4 +953,4 @@ def auto_probe_status():
 
 if __name__ == '__main__':
     _ensure_seed_translation_intents()
-    app.run(host='127.0.0.1', port=3334)
+    app.run(host='127.0.0.1', port=SEMANTIC_PORT)

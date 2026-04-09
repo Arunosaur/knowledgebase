@@ -414,6 +414,31 @@ function fail(msg) { console.error('✗', msg); failed++; }
     }
   } catch(_e) {}
 
+  // SECTION L — Knowledge Graph (PROMPT 32/33)
+  try {
+    const r = await request('/db/find-table?q=shipment&group=manhattan-main&schema=SE_DM');
+    if (r.status === 200 && Array.isArray(r.json)) pass('L1 GET /db/find-table returns array');
+    else fail('L1 unexpected '+JSON.stringify(r.json));
+  } catch(e){ fail('L1 threw '+e.message); }
+
+  try {
+    const r = await request('/db/scan-status');
+    if (r.status === 200 && r.json && 'running' in r.json && 'lastScan' in r.json) pass('L2 GET /db/scan-status has running+lastScan');
+    else fail('L2 unexpected '+JSON.stringify(r.json));
+  } catch(e){ fail('L2 threw '+e.message); }
+
+  try {
+    const r = await request('/docs/migrate-to-graph', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({}) });
+    if (r.status === 200 || r.status === 202 || r.status === 503) pass('L3 POST /docs/migrate-to-graph → 200/202/503');
+    else fail('L3 unexpected '+r.status);
+  } catch(e){ fail('L3 threw '+e.message); }
+
+  try {
+    const r = await request('/health');
+    if (r.status === 200 && r.json && 'postgres' in r.json && 'graphReady' in r.json) pass('L4 GET /health has postgres+graphReady');
+    else fail('L4 missing postgres/graphReady in '+JSON.stringify(r.json));
+  } catch(e){ fail('L4 threw '+e.message); }
+
   console.log(`\nSummary: ✓ ${passed} passed  ✗ ${failed} failed`);
   process.exit(failed?1:0);
 })();

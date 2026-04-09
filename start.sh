@@ -182,6 +182,34 @@ if [ "$BRIDGE_STARTED_BY_SCRIPT" = "true" ]; then
   BRIDGE_PID=$!
 fi
 
+# optional PostgreSQL + pgvector startup
+POSTGRES_ENABLED=$(node - <<'JS'
+const fs=require('fs');
+const cfg=JSON.parse(fs.readFileSync('config.json'));
+console.log(Boolean(cfg.bridge && cfg.bridge.postgresEnabled) ? 'true' : 'false');
+JS
+)
+
+if [ "$POSTGRES_ENABLED" = "true" ] && command -v docker >/dev/null 2>&1; then
+  echo "🐘 Starting PostgreSQL + pgvector..."
+  docker compose up -d postgres >/dev/null 2>&1 || true
+  for i in {1..6}; do
+    if docker compose exec -T postgres pg_isready -U wmsiq >/dev/null 2>&1; then
+      echo "✓ PostgreSQL + pgvector running (port 5432)"
+      break
+    fi
+    echo "  Waiting for PostgreSQL... ($((i*5))s)"
+    sleep 5
+  done
+
+  if [ "$GRAPH_SCAN_ON_START" = "true" ]; then
+    echo "⏳ Schema graph building in background..."
+    curl -s -X POST "http://localhost:$PORT/db/scan-schema" \
+      -H "Content-Type: application/json" \
+      -d '{"group":"manhattan-main","schemas":["MANH_CODE","SE_DM"]}' >/dev/null 2>&1 &
+  fi
+fi
+
 # wait for health
 for _ in {1..10}; do
   if curl -s http://localhost:$PORT/health >/dev/null 2>&1; then
