@@ -1,0 +1,28 @@
+create table OP_DMN_TYP
+(
+  dmn_typ     VARCHAR2(6),
+  descr       VARCHAR2(40),
+  user_id     VARCHAR2(8),
+  last_chg_ts TIMESTAMP(6)
+)
+;
+comment on column OP_DMN_TYP.dmn_typ
+  is 'Domain Type';
+comment on column OP_DMN_TYP.descr
+  is 'Description';
+comment on column OP_DMN_TYP.user_id
+  is 'User Id';
+comment on column OP_DMN_TYP.last_chg_ts
+  is 'Last change timestamp';
+alter table OP_DMN_TYP
+  add constraint PK_OP_DMN_TYP primary key (DMN_TYP);
+alter table OP_DMN_TYP
+  add constraint MCL_CHK_01_OCT_16_225615442
+  check ("DMN_TYP" IS NOT NULL);
+alter table OP_DMN_TYP
+  add constraint MCL_CHK_01_OCT_16_225615450
+  check ("USER_ID" IS NOT NULL);
+alter table OP_DMN_TYP
+  add constraint MCL_CHK_01_OCT_16_225615451
+  check ("LAST_CHG_TS" IS NOT NULL);
+

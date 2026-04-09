@@ -1,0 +1,24 @@
+create table TEST_ORD_SRC_CRP_CD
+(
+  ord_src     VARCHAR2(8),
+  crp_cd      NUMBER(3),
+  enable_sw   VARCHAR2(1) default 'Y' not null,
+  user_id     VARCHAR2(8) default substr(user,1,8) not null,
+  last_chg_ts DATE default sysdate
+)
+;
+comment on column TEST_ORD_SRC_CRP_CD.ord_src
+  is 'Order Source';
+comment on column TEST_ORD_SRC_CRP_CD.crp_cd
+  is 'Corporate Account Number';
+alter table TEST_ORD_SRC_CRP_CD
+  add constraint PK_TEST_ORD_SRC_CRP_CD primary key (ORD_SRC, CRP_CD);
+alter table TEST_ORD_SRC_CRP_CD
+  add constraint MCL_CHK_01_OCT_16_22561555
+  check ("ORD_SRC" IS NOT NULL);
+alter table TEST_ORD_SRC_CRP_CD
+  add constraint MCL_CHK_01_OCT_16_22561562
+  check ("CRP_CD" IS NOT NULL);
+alter table TEST_ORD_SRC_CRP_CD
+  add check (enable_sw in ('Y','N'));
+

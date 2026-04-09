@@ -1,0 +1,9 @@
+create global temporary table TEMP_SET_RELEASE_OP1T
+(
+  typ VARCHAR2(4) not null,
+  val VARCHAR2(10) not null
+)
+on commit preserve rows;
+alter table TEMP_SET_RELEASE_OP1T
+  add constraint PK_OP1T primary key (TYP, VAL);
+

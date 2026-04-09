@@ -1,0 +1,12 @@
+create table ITEM_GRP_OP2E
+(
+  div_part    NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part') not null,
+  cls_id      VARCHAR2(10) not null,
+  cls_typ     VARCHAR2(6) not null,
+  catlg_num   NUMBER not null,
+  last_chg_ts DATE
+)
+;
+alter table ITEM_GRP_OP2E
+  add constraint PK_OP2E primary key (DIV_PART, CLS_ID, CLS_TYP, CATLG_NUM);
+

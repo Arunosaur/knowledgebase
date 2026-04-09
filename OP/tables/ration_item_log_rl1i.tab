@@ -1,0 +1,25 @@
+create table RATION_ITEM_LOG_RL1I
+(
+  release_ts DATE,
+  item_num   NUMBER(6) not null,
+  qty_avail  NUMBER(15),
+  qty_dmd    NUMBER(15),
+  cust_cnt   NUMBER(7),
+  div_part   NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+;
+alter table RATION_ITEM_LOG_RL1I
+  add constraint PK_RL1I primary key (DIV_PART, RELEASE_TS, ITEM_NUM);
+alter table RATION_ITEM_LOG_RL1I
+  add constraint MCL_CHK_01_OCT_16_22561563
+  check ("RELEASE_TS" IS NOT NULL);
+alter table RATION_ITEM_LOG_RL1I
+  add constraint MCL_CHK_01_OCT_16_22561580
+  check ("QTY_AVAIL" IS NOT NULL);
+alter table RATION_ITEM_LOG_RL1I
+  add constraint MCL_CHK_01_OCT_16_22561582
+  check ("CUST_CNT" IS NOT NULL);
+alter table RATION_ITEM_LOG_RL1I
+  add constraint MCL_CHK_01_OCT_16_22561583
+  check ("DIV_PART" IS NOT NULL);
+

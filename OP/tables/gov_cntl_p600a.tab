@@ -1,0 +1,32 @@
+create table GOV_CNTL_P600A
+(
+  gov_cntl_id       NUMBER(9),
+  descr             VARCHAR2(40),
+  gov_cntl_amt      NUMBER(15,4),
+  gov_cntl_prd      NUMBER(3),
+  gov_cntl_hier_seq NUMBER(3),
+  div_part          NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part') not null
+)
+;
+comment on column GOV_CNTL_P600A.gov_cntl_id
+  is 'Government Control Identifier';
+comment on column GOV_CNTL_P600A.descr
+  is 'Description';
+comment on column GOV_CNTL_P600A.gov_cntl_amt
+  is 'Control Threshold Amount';
+comment on column GOV_CNTL_P600A.gov_cntl_prd
+  is 'Control Period in Days hte Threshold Amount Covers';
+comment on column GOV_CNTL_P600A.gov_cntl_hier_seq
+  is 'Hierarcy Sequence (jurisdiction level) - Greater value indicates more finite level';
+alter table GOV_CNTL_P600A
+  add constraint PK_GOV_CNTL_P600A primary key (DIV_PART, GOV_CNTL_ID);
+alter table GOV_CNTL_P600A
+  add constraint MCL_CHK_01_OCT_16_225615443
+  check ("GOV_CNTL_ID" IS NOT NULL);
+alter table GOV_CNTL_P600A
+  add constraint MCL_CHK_01_OCT_16_225615444
+  check ("DESCR" IS NOT NULL);
+alter table GOV_CNTL_P600A
+  add constraint MCL_CHK_01_OCT_16_225615446
+  check ("GOV_CNTL_PRD" IS NOT NULL);
+

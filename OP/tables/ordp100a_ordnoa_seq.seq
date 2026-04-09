@@ -1,0 +1,8 @@
+create sequence ORDP100A_ORDNOA_SEQ
+minvalue 1
+maxvalue 99999999999
+start with 930360709
+increment by 1
+cache 100
+cycle;
+

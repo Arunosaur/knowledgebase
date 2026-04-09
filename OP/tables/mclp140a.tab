@@ -1,0 +1,41 @@
+create table MCLP140A
+(
+  rsncda         VARCHAR2(15) not null,
+  desca          VARCHAR2(50),
+  dtchga         NUMBER(6),
+  tmchga         NUMBER(6),
+  uschga         VARCHAR2(20),
+  rsntpa         NUMBER(2),
+  exlvla         NUMBER(2),
+  info_sw        VARCHAR2(1) default 'N',
+  ord_stat_ovrrd VARCHAR2(1) default 'O',
+  atmpt_subs     VARCHAR2(1) default 'N'
+)
+;
+comment on table MCLP140A
+  is '** TYPEA in McLane 2.0 Schema.txt but not in Oracle worksheet
+** For RSNCDA the Att is 8a in McLane 1.0 Schema.txt
+';
+comment on column MCLP140A.desca
+  is 'A brief description of the REASON CODE specified.';
+alter table MCLP140A
+  add constraint PK_MCLP140A primary key (RSNCDA);
+alter table MCLP140A
+  add constraint MCLP140A_CHK_1
+  check (info_sw in ('Y', 'N'));
+alter table MCLP140A
+  add constraint MCLP140A_CHK_2
+  check (ord_stat_ovrrd in ('S', 'C', 'O', 'A'));
+alter table MCLP140A
+  add constraint MCL_CHK_01_OCT_16_22561586
+  check ("INFO_SW" IS NOT NULL);
+alter table MCLP140A
+  add constraint MCL_CHK_01_OCT_16_22561587
+  check ("ORD_STAT_OVRRD" IS NOT NULL);
+alter table MCLP140A
+  add constraint MCL_CHK_01_OCT_16_22561588
+  check ("ATMPT_SUBS" IS NOT NULL);
+alter table MCLP140A
+  add constraint MCL_CHK_01_OCT_16_22561589
+  check (atmpt_subs IN ('Y', 'N'));
+

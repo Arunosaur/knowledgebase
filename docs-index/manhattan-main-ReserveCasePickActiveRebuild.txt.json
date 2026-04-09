@@ -1,0 +1,35 @@
+{
+  "fileId": "manhattan-main-ReserveCasePickActiveRebuild.txt",
+  "fileName": "ReserveCasePickActiveRebuild.txt",
+  "webUrl": "ReserveCasePickActiveRebuild.txt",
+  "mimeType": "text/plain",
+  "extension": ".txt",
+  "group": "manhattan-main",
+  "site": "local-bulk-upload",
+  "lastModified": "2026-03-19T09:38:00Z",
+  "syncedAt": "2026-03-19T05:08:35.775Z",
+  "title": "ReserveCasePickActiveRebuild",
+  "fullText": "#===============================================================================================================\n# Location Rebuild For Reserve, Case Pick, and Active Location Inventory\n# Revision History/Notes:\n#\n#===============================================================================================================\n\ncd /apps/scope/products/WM/cbs\n. ./pkms.env\nif [[ $# -ne 3 ]]; then\n echo \"\" \n echo \"--> DBuserid, DBpassword, oracleSid are required.\"\n echo \" Usage: []$ . LocationRebuildForReserve.sh <username> <password> <oracle_sid>\"\n echo \"\" \n\nelse\n v_username=$1\n v_userpass=$2\n v_orasid=$3\n \n archrsltR=`sqlplus -L -s $v_username/$v_userpass@${v_orasid}<<EOF\nset serveroutput on feedback off heading off verify off\ndeclare\nMinMax Varchar2(100);\nbegin\n select './PkRebuildCommandC -w '||MIN(WHSE)||' -u WMADMIN -l R -f ' ||min(LOCN_BRCD)||' -t '|| max(LOCN_BRCD) into MinMax from locn_hdr where locn_class='R';\n\n dbms_output.put_line(MinMax);\nend;\n/\nquit;\nEOF`\narchrsltC=`sqlplus -L -s $v_username/$v_userpass@${v_orasid}<<EOF\nset serveroutput on feedback off heading off verify off\ndeclare\nMinMax Varchar2(100);\nbegin\n select './PkRebuildCommandC -w '||MIN(WHSE)||' -u WMADMIN -l C -f ' ||min(LOCN_BRCD)||' -t '|| max(LOCN_BRCD) into MinMax from locn_hdr where locn_class='R';\n\n dbms_output.put_line(MinMax);\nend;\n/\nquit;\nEOF`\narchrsltA=`sqlplus -L -s $v_username/$v_userpass@${v_orasid}<<EOF\nset serveroutput on feedback off heading off verify off\ndeclare\nMinMax Varchar2(100);\nbegin\n select './PkRebuildCommandC -w '||MIN(WHSE)||' -u WMADMIN -l A -f ' ||min(LOCN_BRCD)||' -t '|| max(LOCN_BRCD) into MinMax from locn_hdr where locn_class='R';\n\n dbms_output.put_line(MinMax);\nend;\n/\nquit;\nEOF`\necho \"${archrsltR}\"\necho \"${archrsltC}\"\necho \"${archrsltA}\"\ncd /apps/scope/products/WM/cbs\n. ./pkms.env\ncd /apps/scope/products/WM/cbs/bin\n${archrsltR}\n${archrsltC}\n${archrsltA}\nretcode=$?\nif (($retcode > 1)); then\n echo \"LocationRebuildForReserve.sh exit code is:$retcode\"\n exit 1\nfi\n#Normal exit\necho \"Exit with code: $retcode\"\n echo \"Done.\" \nfi",
+  "extractionMode": "provided-text",
+  "chunks": [
+    {
+      "chunkIndex": 0,
+      "startChar": 0,
+      "text": "[Document: ReserveCasePickActiveRebuild]\n\n#===============================================================================================================\n# Location Rebuild For Reserve, Case Pick, and Active Location Inventory\n# Revision History/Notes:\n#\n#===============================================================================================================\n\ncd /apps/scope/products/WM/cbs\n. ./pkms.env\nif [[ $# -ne 3 ]]; then\n echo \"\"\n echo \"--> DBuserid, DBpassword, oracleSid are required.\"\n echo \" Usage: []$ . LocationRebuildForReserve.sh <username> <password> <oracle_sid>\"\n echo \"\"\n\nelse\n v_username=$1\n v_userpass=$2\n v_orasid=$3\n\narchrsltR=`sqlplus -L -s $v_username/$v_userpass@${v_orasid}<<EOF\nset serveroutput on feedback off heading off verify off\ndeclare\nMinMax Varchar2(100);\nbegin\n select './PkRebuildCommandC -w '||MIN(WHSE)||' -u WMADMIN -l R -f ' ||min(LOCN_BRCD)||' -t '|| max(LOCN_BRCD) into MinMax from locn_hdr where locn_class='R';"
+    },
+    {
+      "chunkIndex": 1,
+      "startChar": 776,
+      "text": "[Document: ReserveCasePickActiveRebuild]\n\n/PkRebuildCommandC -w '||MIN(WHSE)||' -u WMADMIN -l R -f ' ||min(LOCN_BRCD)||' -t '|| max(LOCN_BRCD) into MinMax from locn_hdr where locn_class='R';\n\ndbms_output.put_line(MinMax);\nend;\n/\nquit;\nEOF`\narchrsltC=`sqlplus -L -s $v_username/$v_userpass@${v_orasid}<<EOF\nset serveroutput on feedback off heading off verify off\ndeclare\nMinMax Varchar2(100);\nbegin\n select './PkRebuildCommandC -w '||MIN(WHSE)||' -u WMADMIN -l C -f ' ||min(LOCN_BRCD)||' -t '|| max(LOCN_BRCD) into MinMax from locn_hdr where locn_class='R';\n\ndbms_output.put_line(MinMax);\nend;\n/\nquit;\nEOF`\narchrsltA=`sqlplus -L -s $v_username/$v_userpass@${v_orasid}<<EOF\nset serveroutput on feedback off heading off verify off\ndeclare\nMinMax Varchar2(100);\nbegin\n select './PkRebuildCommandC -w '||MIN(WHSE)||' -u WMADMIN -l A -f ' ||min(LOCN_BRCD)||' -t '|| max(LOCN_BRCD) into MinMax from locn_hdr where locn_class='R';"
+    },
+    {
+      "chunkIndex": 2,
+      "startChar": 1508,
+      "text": "[Document: ReserveCasePickActiveRebuild]\n\n/PkRebuildCommandC -w '||MIN(WHSE)||' -u WMADMIN -l A -f ' ||min(LOCN_BRCD)||' -t '|| max(LOCN_BRCD) into MinMax from locn_hdr where locn_class='R';\n\ndbms_output.put_line(MinMax);\nend;\n/\nquit;\nEOF`\necho \"${archrsltR}\"\necho \"${archrsltC}\"\necho \"${archrsltA}\"\ncd /apps/scope/products/WM/cbs\n. ./pkms.env\ncd /apps/scope/products/WM/cbs/bin\n${archrsltR}\n${archrsltC}\n${archrsltA}\nretcode=$?\nif (($retcode > 1)); then\n echo \"LocationRebuildForReserve.sh exit code is:$retcode\"\n exit 1\nfi\n#Normal exit\necho \"Exit with code: $retcode\"\n echo \"Done.\"\nfi"
+    }
+  ],
+  "chunkCount": 3,
+  "wordCount": 217,
+  "byteSize": 2204,
+  "reindexedAt": "2026-04-09T01:02:11.223Z"
+}

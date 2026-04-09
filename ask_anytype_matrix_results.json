@@ -1,0 +1,67 @@
+{
+  "ok": true,
+  "passed": 6,
+  "total": 6,
+  "results": [
+    {
+      "type": "operational-no-dc",
+      "question": "how many shipments were closed in the last 4 hours?",
+      "pass": true,
+      "hasAnswer": true,
+      "hardStopDcPrompt": false,
+      "hasError": false,
+      "routing": "No DC specified; attempting best-effort answer using default production context. Add a DC code for precise live data.",
+      "answerPreview": "No shipments found for the selected DC in the selected time period. Try a wider time range.\n\n⏱ Timing breakdown:\n- Total: 9.0s\n- Data lookup: 9.0s\n- DB calls: 2 (7.3s total, avg 3.6s)\n- discover-tables: 3.8s\n- shipment-query: 3.5s\n- Shipment queries tried: 1\nPhase: Complete • Elapsed: 9.0s"
+    },
+    {
+      "type": "operational-with-dc",
+      "question": "how many shipments were closed in the last 4 hours for SE DC?",
+      "pass": true,
+      "hasAnswer": true,
+      "hardStopDcPrompt": false,
+      "hasError": false,
+      "routing": "We found Southeast. Running a live data lookup now.",
+      "answerPreview": "There are 15 closed/delivered shipments for SE DC in last 4 hours.\n\n⏱ Timing breakdown:\n- Total: 29.8s\n- Data lookup: 29.8s\n- DB calls: 6 (25.6s total, avg 4.3s)\n- discover-tables: 4.9s\n- discover-columns: 12.7s\n- shipment-query: 7.9s\n- Tables scanned: 40\n- Column sets scanned: 3\n- Shipment queries tried: 2\nPhase: Complete • Elapsed: 29.8s • Data source: live discovery"
+    },
+    {
+      "type": "issue",
+      "question": "are there any issues related to MZIC6101 variance?",
+      "pass": true,
+      "hasAnswer": true,
+      "hardStopDcPrompt": false,
+      "hasError": false,
+      "routing": "Searching knowledge + related JIRA items in Ask mode.",
+      "answerPreview": "Yes, there are issues related to MZIC6101 variance: SDHD-2624364, SDHD-2623230, SDHD-2619766, SDHD-2619366, and SDHD-2618075, all of which are Resolved.\n\n⏱ total 6.8s · context 4.8s · AI 2.0s\nPhase: Complete • Elapsed: 6.8s\nAnswer based on: 🎫 10 items • 🧠 0 knowledge entries • 📄 0 documents"
+    },
+    {
+      "type": "jira-ownership",
+      "question": "what was last issue assigned to wmshub group?",
+      "pass": true,
+      "hasAnswer": true,
+      "hardStopDcPrompt": false,
+      "hasError": false,
+      "routing": "Searching related JIRA items in Ask mode.",
+      "answerPreview": "The most recent matching issue is SDHD-2631592: \"MY - Load 2601 shows in OP but is not showing in Manhattan. \" — Status: Resolved, last updated March 20, 2026.\n\n⏱ total 2.5s · context 2.5s · direct lookup\nPhase: Complete • Elapsed: 2.5s\nAnswer based on: 🎫 10 items • 🧠 4 knowledge entries • 📄 2 documents"
+    },
+    {
+      "type": "process",
+      "question": "how does receiving process work in WMS?",
+      "pass": true,
+      "hasAnswer": true,
+      "hardStopDcPrompt": false,
+      "hasError": false,
+      "routing": "We’ll map the process flow using Impact Analysis.",
+      "answerPreview": "Here's the information on how receiving process works in WMS: **Business Purpose** The receiving process in WMS is used to manage and track shipments, doors, and stops in a warehouse management system. It provides a set of procedures for managing shipments, doors, and stops, and for performing updates and modifications to these entities. **Process Impact** The receiving process"
+    },
+    {
+      "type": "concept",
+      "question": "why is Manhattan needed for retail grocery?",
+      "pass": true,
+      "hasAnswer": true,
+      "hardStopDcPrompt": false,
+      "hasError": false,
+      "routing": "Searching knowledge + related JIRA items in Ask mode.",
+      "answerPreview": "Based on the provided context, Manhattan is needed for retail grocery because it provides a Warehouse Management System (WMS) that helps manage and optimize the storage, picking, and shipping of goods. Manhattan's WMS solution is designed to streamline warehouse operations, reduce costs, and improve customer satisfaction. Manhattan's WMS offers features such as: * Warehouse man"
+    }
+  ]
+}

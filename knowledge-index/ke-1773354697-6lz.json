@@ -1,0 +1,26 @@
+{
+  "id": "ke-1773354697-6lz",
+  "type": "qa",
+  "question": "what does LOGS do?",
+  "answer": "Based on the provided source code, LOGS is a package that contains several procedures:\n\n1. `dbg`: This procedure is used for debugging purposes. It takes several input parameters, including `i_msg`, `i_extra`, and `iar_parm`. It writes the debug message to the APP_LOG table, the screen, and a file, if the desired targets are set.\n2. `msg`: This procedure is used to log messages. It takes several input parameters, including `i_msg_cd`, `i_msg_txt`, and `i_extra`. It writes the log message to the APP_LOG table, the screen, and a file, if the desired targets are set.\n3. `err`: This procedure is used to log errors. It takes several input parameters, including `i_err_cd`, `i_err_txt`, and `i_extra`. It writes the error message to the APP_LOG table, the screen, and a file, if the desired targets are set.\n\nThe LOGS package is used to log messages, errors, and debug messages. The procedures in this package can be used to write log messages to different targets, such as the APP_LOG table, the screen, and a file.\n\nNote: LOGS is not a wrapper package like DOCK_WRAPPER_PK, it's more like a utility package for logging messages.",
+  "context": {
+    "group": "cigwms-prod",
+    "schemas": [
+      "FRAMEWORK"
+    ],
+    "dcCodes": [],
+    "systems": [],
+    "objects": []
+  },
+  "tags": [
+    "logs",
+    "app_log"
+  ],
+  "quality": 3,
+  "source": "ai-verified",
+  "capturedBy": "asrajag",
+  "capturedAt": "2026-03-12T22:31:37.653Z",
+  "updatedAt": "2026-03-12T22:31:37.653Z",
+  "approved": true,
+  "notes": ""
+}

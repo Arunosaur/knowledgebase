@@ -1,0 +1,44 @@
+create table MCLANE_MQ_GET
+(
+  mq_get_id     NUMBER,
+  mq_msg_id     VARCHAR2(10),
+  mq_msg_status VARCHAR2(3),
+  create_ts     DATE default sysdate,
+  last_chg_ts   DATE default sysdate,
+  mq_msg_data   VARCHAR2(750),
+  div_part      NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+compress for all operations;
+create index FK_MCLANE_MQ_G_MCLANE_MQ_G_01 on MCLANE_MQ_GET (DIV_PART, MQ_MSG_ID)
+  compress;
+create index N_MCLANE_MQ_GET_01 on MCLANE_MQ_GET (DIV_PART, MQ_MSG_STATUS, MQ_MSG_ID);
+alter table MCLANE_MQ_GET
+  add constraint UNQ_MCLANE_MQ_GET_01 unique (DIV_PART, MQ_GET_ID);
+alter table MCLANE_MQ_GET
+  add constraint FK_MCLANE_MQ_G_MCLANE_MQ_G_01 foreign key (DIV_PART, MQ_MSG_ID)
+  references MCLANE_MQ_GP_CONTROL (DIV_PART, MQ_MSG_ID);
+alter table MCLANE_MQ_GET
+  add constraint MCL_CHK_01_OCT_16_225615243
+  check ("MQ_GET_ID" IS NOT NULL);
+alter table MCLANE_MQ_GET
+  add constraint MCL_CHK_01_OCT_16_225615244
+  check ("MQ_MSG_ID" IS NOT NULL);
+alter table MCLANE_MQ_GET
+  add constraint MCL_CHK_01_OCT_16_225615245
+  check ("MQ_MSG_STATUS" IS NOT NULL);
+alter table MCLANE_MQ_GET
+  add constraint MCL_CHK_01_OCT_16_225615246
+  check ("CREATE_TS" IS NOT NULL);
+alter table MCLANE_MQ_GET
+  add constraint MCL_CHK_01_OCT_16_225615247
+  check ("LAST_CHG_TS" IS NOT NULL);
+alter table MCLANE_MQ_GET
+  add constraint MCL_CHK_01_OCT_16_225615248
+  check ("MQ_MSG_DATA" IS NOT NULL);
+alter table MCLANE_MQ_GET
+  add constraint MCL_CHK_01_OCT_16_225615249
+  check ("DIV_PART" IS NOT NULL);
+alter table MCLANE_MQ_GET
+  add constraint MQ_GET_MQ_MSG_STATUS_CK
+  check (MQ_MSG_STATUS IN ('OPN', 'CMP', 'PRB', 'WRK'));
+

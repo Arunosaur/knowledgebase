@@ -1,0 +1,28 @@
+create table PREPOST_LOAD_OP1P
+(
+  load_num    VARCHAR2(4),
+  stop_num    NUMBER(9,2) not null,
+  cust_num    VARCHAR2(8),
+  llr_date    DATE,
+  last_chg_ts DATE default SYSDATE,
+  div_part    NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+;
+alter table PREPOST_LOAD_OP1P
+  add constraint PK_OP1P primary key (DIV_PART, LOAD_NUM, STOP_NUM, CUST_NUM, LLR_DATE);
+alter table PREPOST_LOAD_OP1P
+  add constraint MCL_CHK_01_OCT_16_225615126
+  check ("LOAD_NUM" IS NOT NULL);
+alter table PREPOST_LOAD_OP1P
+  add constraint MCL_CHK_01_OCT_16_225615128
+  check ("CUST_NUM" IS NOT NULL);
+alter table PREPOST_LOAD_OP1P
+  add constraint MCL_CHK_01_OCT_16_225615129
+  check ("LLR_DATE" IS NOT NULL);
+alter table PREPOST_LOAD_OP1P
+  add constraint MCL_CHK_01_OCT_16_225615130
+  check ("LAST_CHG_TS" IS NOT NULL);
+alter table PREPOST_LOAD_OP1P
+  add constraint MCL_CHK_01_OCT_16_225615131
+  check ("DIV_PART" IS NOT NULL);
+

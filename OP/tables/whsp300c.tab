@@ -1,0 +1,43 @@
+create table WHSP300C
+(
+  itemc    VARCHAR2(25),
+  lotc     VARCHAR2(13),
+  zonec    VARCHAR2(3),
+  aislc    VARCHAR2(3),
+  binc     VARCHAR2(3),
+  levlc    VARCHAR2(3),
+  owncoc   VARCHAR2(3),
+  owndvc   VARCHAR2(3),
+  ownerc   VARCHAR2(8),
+  pltidc   VARCHAR2(20),
+  recdjc   NUMBER(5),
+  qohc     NUMBER(15,4),
+  qalc     NUMBER(15,4),
+  quartc   NUMBER(15,4),
+  qavc     NUMBER(15,4),
+  qstmic   NUMBER(15,4),
+  qstmoc   NUMBER(15,4),
+  ppqtyc   NUMBER(15,4),
+  sflvlc   NUMBER(15,4),
+  expdjc   NUMBER(5),
+  pndrpc   VARCHAR2(1),
+  lclasc   VARCHAR2(1),
+  equmnc   VARCHAR2(1),
+  stypc    VARCHAR2(3),
+  mxqtyc   NUMBER(15,4),
+  mxpqtc   NUMBER(15,4),
+  seqc     NUMBER(9,2),
+  typloc   VARCHAR2(1),
+  uomc     VARCHAR2(3),
+  taxjrc   VARCHAR2(3),
+  div_part NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+compress for all operations;
+create index N_WHSP300C_01 on WHSP300C (DIV_PART, ITEMC, UOMC, TAXJRC, QAVC)
+  compress;
+alter table WHSP300C
+  add constraint UNQ_WHSP300C_01 unique (DIV_PART, ITEMC, UOMC, TAXJRC, ZONEC);
+alter table WHSP300C
+  add constraint MCL_CHK_01_OCT_16_225615158
+  check ("DIV_PART" IS NOT NULL);
+

@@ -1,0 +1,21 @@
+create table PRCS_CNTL_ACTV_CN3P
+(
+  prcs_id     VARCHAR2(30) not null,
+  div_part    NUMBER(3) not null,
+  user_id     VARCHAR2(30) default user,
+  last_chg_ts DATE default sysdate
+)
+;
+create index FK_CN3P_CN1P_01 on PRCS_CNTL_ACTV_CN3P (PRCS_ID)
+  compress;
+create index FK_CN3P_DI1D_02 on PRCS_CNTL_ACTV_CN3P (DIV_PART)
+  compress;
+alter table PRCS_CNTL_ACTV_CN3P
+  add constraint PK_CN3P primary key (PRCS_ID, DIV_PART);
+alter table PRCS_CNTL_ACTV_CN3P
+  add constraint FK_CN3P_CN1P_01 foreign key (PRCS_ID)
+  references PRCS_CNTL_DFN_CN1P (PRCS_ID);
+alter table PRCS_CNTL_ACTV_CN3P
+  add constraint FK_CN3P_DI1D_02 foreign key (DIV_PART)
+  references DIV_MSTR_DI1D (DIV_PART);
+

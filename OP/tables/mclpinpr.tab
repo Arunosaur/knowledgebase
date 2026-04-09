@@ -1,0 +1,18 @@
+create table MCLPINPR
+(
+  ordnor               NUMBER(11),
+  msgidr               VARCHAR2(80),
+  create_ts            DATE default sysdate,
+  order_receipt_status NUMBER(1),
+  customer_id          VARCHAR2(8),
+  order_line_cnt       NUMBER(7),
+  legrfr               VARCHAR2(25),
+  div_part             NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+;
+alter table MCLPINPR
+  add constraint UNQ_MCLPINPR_01 unique (DIV_PART, MSGIDR);
+alter table MCLPINPR
+  add constraint MCL_CHK_01_OCT_16_225615501
+  check ("DIV_PART" IS NOT NULL);
+

@@ -1,0 +1,25 @@
+{
+  "fileId": "manhattan-main-MCLN_EX91_Configuration_Guide.docx",
+  "fileName": "MCLN EX91 Configuration Guide.docx",
+  "webUrl": "MCLN EX91 Configuration Guide.docx",
+  "mimeType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "extension": ".docx",
+  "group": "manhattan-main",
+  "site": "local-bulk-upload",
+  "lastModified": "2026-03-19T09:36:00Z",
+  "syncedAt": "2026-03-19T05:08:35.303Z",
+  "title": "MCLN EX91 Configuration Guide",
+  "fullText": "MCLN EX9 1 Configuration Guide Enablement T o enable EX9 1 : Cigarette Inventory Adjustment within an environment, first global mods must be enabled. This is located within System Codes UI code C-000 and should be configured as below. Second, EX 91 specific enablement must also be configured and turned on. First create Code ID EX 91 , Description EX 91 Extension Control within the C-000 system code. Second, create a parameter 1-1 with description Enablement Flag that will contain the enablement switch itself if it does not already exist . Finally, ensure it is turned on. Additional Dependencies The EX91 enhancement adds the CorrelationID and GroupID fields to the inventory adjustment web service. Please note that additional custom fields IncrQuantity , CreatePLD , and ItemAttribute 1 are dependent on EX24 which should also be enabled and configured if those fields are in use. Sample Flowthrough In this example, CorrelationID and GroupID are added to an inventory adjustment that 30 three units to SW00197 . Previous inventory quantity: WebService request used: < soapenv:Envelope xmlns:soapenv =\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ser =\"http://service.cbo.services.wmos.manh.com/\"> < soapenv:Header /> < soapenv:Body > < ser:adjustInventoryForLocation > < contextId ></ contextId > <location>SW00197</location> <item>687830.00</item> < reasonCode >09</ reasonCode > < correlationID >corrrelationIDpixREF_FILD_8</ correlationID > < groupID >groupIDpixREF_FILD_9</ groupID > < IncrQuantity >30</ IncrQuantity > < CreatePLD >Y</ CreatePLD > <ItemAttribute1> abw </ItemAttribute1> </ ser:adjustInventoryForLocation > </ soapenv:Body > </ soapenv:Envelope > Resulting PIX field population: Resulting inventory quantity:\n\n0 -100840 0 0 Page PAGE 2 of NUMPAGES 5 Last Modified: DATE \\@ \"MM/dd/yyyy\" 08/29/2024 TIME \\@ \"h:mm AM/PM\" 4:21 PM MCLN EX9 1 Configuration Guide\n\n5958459 -264566 0 20000 0 -106430 right 235585 0 0",
+  "extractionMode": "provided-text",
+  "chunks": [
+    {
+      "chunkIndex": 0,
+      "startChar": 0,
+      "text": "[Document: MCLN EX91 Configuration Guide]\n\nMCLN EX9 1 Configuration Guide Enablement T o enable EX9 1 : Cigarette Inventory Adjustment within an environment, first global mods must be enabled. This is located within System Codes UI code C-000 and should be configured as below. Second, EX 91 specific enablement must also be configured and turned on. First create Code ID EX 91 , Description EX 91 Extension Control within the C-000 system code. Second, create a parameter 1-1 with description Enablement Flag that will contain the enablement switch itself if it does not already exist . Finally, ensure it is turned on. Additional Dependencies The EX91 enhancement adds the CorrelationID and GroupID fields to the inventory adjustment web service. Please note that additional custom fields IncrQuantity , CreatePLD , and ItemAttribute 1 are dependent on EX24 which should also be enabled and configured if those fields are in use. Sample Flowthrough In this example, CorrelationID and GroupID are added to an inventory adjustment that 30 three units to SW00197 . Previous inventory quantity: WebService request used: < soapenv:Envelope xmlns:soapenv =\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ser =\"http://service.cbo.services.wmos.manh.com/\"> < soapenv:Header /> < soapenv:Body > < ser:adjustInventoryForLocation > < contextId ></ contextId > <location>SW00197</location> <item>687830.00</item> < reasonCode >09</ reasonCode > < correlationID >corrrelationIDpixREF_FILD_8</ correlationID > < groupID >groupIDpixREF_FILD_9</ groupID > < IncrQuantity >30</ IncrQuantity > < CreatePLD >Y</ CreatePLD > <ItemAttribute1> abw </ItemAttribute1> </ ser:adjustInventoryForLocation > </ soapenv:Body > </ soapenv:Envelope > Resulting PIX field population: Resulting inventory quantity:\nPage PAGE 2 of NUMPAGES 5 Last Modified: \\@ \"h:mm AM/PM\" 4:21 PM MCLN EX9 1 Configuration Guide\n-106430 right 235585 0 0"
+    }
+  ],
+  "chunkCount": 1,
+  "wordCount": 274,
+  "byteSize": 745244,
+  "reindexedAt": "2026-04-09T01:02:11.144Z"
+}

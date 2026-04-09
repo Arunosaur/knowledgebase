@@ -1,0 +1,43 @@
+create table KIT_ITEM_MSTR_KT1M
+(
+  kit_typ       VARCHAR2(3),
+  comp_item_num VARCHAR2(6),
+  item_num      VARCHAR2(6),
+  end_dt        DATE,
+  start_dt      DATE,
+  comp_qty      NUMBER,
+  rtl_pck       NUMBER,
+  last_chg_ts   DATE,
+  div_part      NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+;
+alter table KIT_ITEM_MSTR_KT1M
+  add constraint UNQ_KT1M_01 unique (DIV_PART, KIT_TYP, COMP_ITEM_NUM, ITEM_NUM);
+alter table KIT_ITEM_MSTR_KT1M
+  add constraint MCL_CHK_01_OCT_16_225615421
+  check ("DIV_PART" IS NOT NULL);
+alter table KIT_ITEM_MSTR_KT1M
+  add constraint NN_KT1M_COMP_ITEM_NUM
+  check ("COMP_ITEM_NUM" IS NOT NULL);
+alter table KIT_ITEM_MSTR_KT1M
+  add constraint NN_KT1M_COMP_QTY
+  check ("COMP_QTY" IS NOT NULL);
+alter table KIT_ITEM_MSTR_KT1M
+  add constraint NN_KT1M_END_DT
+  check ("END_DT" IS NOT NULL);
+alter table KIT_ITEM_MSTR_KT1M
+  add constraint NN_KT1M_ITEM_NUM
+  check ("ITEM_NUM" IS NOT NULL);
+alter table KIT_ITEM_MSTR_KT1M
+  add constraint NN_KT1M_KIT_TYP
+  check ("KIT_TYP" IS NOT NULL);
+alter table KIT_ITEM_MSTR_KT1M
+  add constraint NN_KT1M_LAST_CHG_TS
+  check ("LAST_CHG_TS" IS NOT NULL);
+alter table KIT_ITEM_MSTR_KT1M
+  add constraint NN_KT1M_RTL_PCK
+  check ("RTL_PCK" IS NOT NULL);
+alter table KIT_ITEM_MSTR_KT1M
+  add constraint NN_KT1M_START_DT
+  check ("START_DT" IS NOT NULL);
+

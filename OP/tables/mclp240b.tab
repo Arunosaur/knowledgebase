@@ -1,0 +1,30 @@
+create table MCLP240B
+(
+  cntrb       NUMBER,
+  wtypb       VARCHAR2(3),
+  tofrmb      VARCHAR2(1),
+  itemb       VARCHAR2(25),
+  uomb        VARCHAR2(3),
+  txjrb       VARCHAR2(3),
+  qtyb        NUMBER(7),
+  pksltb      VARCHAR2(12),
+  last_chg_ts DATE default sysdate,
+  statb       VARCHAR2(1) default 'A',
+  div_part    NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+;
+comment on column MCLP240B.itemb
+  is 'This is the CBR Item Number.';
+comment on column MCLP240B.uomb
+  is 'This is the CBR Item Unit Of Measure.';
+comment on column MCLP240B.txjrb
+  is 'This is the State Tax Jurisdiction.';
+create index IDX_MCLP240B_VPD_DIV_PART on MCLP240B (DIV_PART)
+  compress;
+alter table MCLP240B
+  add constraint MCL_CHK_01_OCT_16_22561510
+  check ("STATB" IS NOT NULL);
+alter table MCLP240B
+  add constraint MCL_CHK_01_OCT_16_2256155
+  check ("LAST_CHG_TS" IS NOT NULL);
+

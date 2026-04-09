@@ -1,0 +1,39 @@
+create table STRCT_ORD_OP1O
+(
+  cbr_vndr_id  NUMBER,
+  ord_num      NUMBER,
+  ord_ln       NUMBER(7,2),
+  prod_rcpt_ts DATE,
+  recap_ts     DATE default TO_DATE('01-JAN-2999', 'DD-MON-YYYY'),
+  recap_qty    NUMBER default 0,
+  llr_at_recap DATE,
+  stat         VARCHAR2(3) default 'URC',
+  div_part     NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+;
+create index FK_OP1O_OP1V_01 on STRCT_ORD_OP1O (DIV_PART, CBR_VNDR_ID)
+  compress;
+alter table STRCT_ORD_OP1O
+  add constraint PK_OP1O primary key (DIV_PART, ORD_NUM, ORD_LN);
+alter table STRCT_ORD_OP1O
+  add constraint FK_OP1O_OP1V_01 foreign key (DIV_PART, CBR_VNDR_ID)
+  references VNDR_MSTR_OP1V (DIV_PART, CBR_VNDR_ID) on delete cascade;
+alter table STRCT_ORD_OP1O
+  add constraint MCL_CHK_01_OCT_16_225615232
+  check ("CBR_VNDR_ID" IS NOT NULL);
+alter table STRCT_ORD_OP1O
+  add constraint MCL_CHK_01_OCT_16_225615233
+  check ("ORD_NUM" IS NOT NULL);
+alter table STRCT_ORD_OP1O
+  add constraint MCL_CHK_01_OCT_16_225615234
+  check ("ORD_LN" IS NOT NULL);
+alter table STRCT_ORD_OP1O
+  add constraint MCL_CHK_01_OCT_16_225615235
+  check ("PROD_RCPT_TS" IS NOT NULL);
+alter table STRCT_ORD_OP1O
+  add constraint MCL_CHK_01_OCT_16_225615236
+  check ("RECAP_TS" IS NOT NULL);
+alter table STRCT_ORD_OP1O
+  add constraint MCL_CHK_01_OCT_16_225615239
+  check ("DIV_PART" IS NOT NULL);
+

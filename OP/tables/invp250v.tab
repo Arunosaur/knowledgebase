@@ -1,0 +1,20 @@
+create table INVP250V
+(
+  itemv  VARCHAR2(25),
+  seqv   NUMBER(7,2),
+  compv  VARCHAR2(3),
+  divv   VARCHAR2(3),
+  brnchv VARCHAR2(3),
+  avndrv VARCHAR2(8),
+  avndiv VARCHAR2(25),
+  ldaysv NUMBER(3),
+  pumv   VARCHAR2(3),
+  pumcv  NUMBER(13,4),
+  descv  VARCHAR2(40),
+  prcqv  NUMBER(5,2),
+  pltqtv NUMBER(13,4)
+)
+;
+alter table INVP250V
+  add constraint UNQ_INVP250V_01 unique (ITEMV, COMPV, AVNDIV, AVNDRV, BRNCHV);
+

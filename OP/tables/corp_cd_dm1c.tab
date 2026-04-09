@@ -1,0 +1,12 @@
+create table CORP_CD_DM1C
+(
+  corp_cd NUMBER,
+  corp_nm VARCHAR2(30)
+)
+;
+alter table CORP_CD_DM1C
+  add constraint PK_DM1C primary key (CORP_CD);
+alter table CORP_CD_DM1C
+  add constraint MCL_CHK_01_OCT_16_225615508
+  check ("CORP_CD" IS NOT NULL);
+

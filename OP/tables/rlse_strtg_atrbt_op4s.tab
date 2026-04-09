@@ -1,0 +1,33 @@
+create table RLSE_STRTG_ATRBT_OP4S
+(
+  strtg_id NUMBER,
+  typ_id   VARCHAR2(10),
+  val      VARCHAR2(30),
+  div_part NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+;
+create index FK_OP4S_OP4T_01 on RLSE_STRTG_ATRBT_OP4S (DIV_PART, STRTG_ID)
+  compress;
+create index FK_OP4S_OP9Z_01 on RLSE_STRTG_ATRBT_OP4S (TYP_ID)
+  compress;
+alter table RLSE_STRTG_ATRBT_OP4S
+  add constraint PK_OP4S primary key (DIV_PART, STRTG_ID, TYP_ID, VAL);
+alter table RLSE_STRTG_ATRBT_OP4S
+  add constraint FK_OP4S_OP4T_01 foreign key (DIV_PART, STRTG_ID)
+  references RLSE_STRTG_OP4T (DIV_PART, STRTG_ID) on delete cascade;
+alter table RLSE_STRTG_ATRBT_OP4S
+  add constraint FK_OP4S_OP9Z_01 foreign key (TYP_ID)
+  references RLSE_TYP_DMN_OP9Z (TYP_ID) on delete cascade;
+alter table RLSE_STRTG_ATRBT_OP4S
+  add constraint MCL_CHK_01_OCT_16_225615217
+  check ("STRTG_ID" IS NOT NULL);
+alter table RLSE_STRTG_ATRBT_OP4S
+  add constraint MCL_CHK_01_OCT_16_225615218
+  check ("TYP_ID" IS NOT NULL);
+alter table RLSE_STRTG_ATRBT_OP4S
+  add constraint MCL_CHK_01_OCT_16_225615219
+  check ("VAL" IS NOT NULL);
+alter table RLSE_STRTG_ATRBT_OP4S
+  add constraint MCL_CHK_01_OCT_16_225615220
+  check ("DIV_PART" IS NOT NULL);
+

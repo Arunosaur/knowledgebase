@@ -1,0 +1,7 @@
+create sequence OP1F_LOAD_DEPART_ID_SEQ
+minvalue 1
+maxvalue 9999999999999999999999999999
+start with 61540902
+increment by 1
+cache 10000;
+

@@ -1,0 +1,19 @@
+create table MCLP480A
+(
+  loada    VARCHAR2(4),
+  dpdta    NUMBER(6),
+  dptma    NUMBER(6),
+  lpcdta   NUMBER(6),
+  lpctma   NUMBER(6),
+  llcdta   NUMBER(6),
+  llctma   NUMBER(6),
+  orcdta   NUMBER(6),
+  orctma   NUMBER(6),
+  stata    VARCHAR2(1),
+  nstpa    NUMBER(9,2),
+  div_part NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+;
+alter table MCLP480A
+  add constraint UNQ_MCLP480A_01 unique (DIV_PART, LOADA, DPDTA);
+

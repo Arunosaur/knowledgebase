@@ -1,0 +1,28 @@
+create table OP_CLS_DMN_CD_TYP
+(
+  cls_typ  VARCHAR2(6),
+  cls_id   VARCHAR2(10) not null,
+  dmn_typ  VARCHAR2(6),
+  dmn_cd   VARCHAR2(3),
+  dflt_sw  VARCHAR2(1) default 'N',
+  div_part NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+;
+alter table OP_CLS_DMN_CD_TYP
+  add constraint PK_OP_CLS_DMN_CD_TYP primary key (DIV_PART, CLS_TYP, CLS_ID, DMN_TYP, DMN_CD);
+alter table OP_CLS_DMN_CD_TYP
+  add constraint MCL_CHK_01_OCT_16_225615419
+  check ("CLS_TYP" IS NOT NULL);
+alter table OP_CLS_DMN_CD_TYP
+  add constraint MCL_CHK_01_OCT_16_225615423
+  check ("DMN_TYP" IS NOT NULL);
+alter table OP_CLS_DMN_CD_TYP
+  add constraint MCL_CHK_01_OCT_16_225615424
+  check ("DMN_CD" IS NOT NULL);
+alter table OP_CLS_DMN_CD_TYP
+  add constraint MCL_CHK_01_OCT_16_225615426
+  check ("DIV_PART" IS NOT NULL);
+alter table OP_CLS_DMN_CD_TYP
+  add constraint MCL_CHK_01_OCT_16_225615427
+  check (DFLT_SW IN ('Y', 'N'));
+

@@ -1,0 +1,27 @@
+create table RPT_PARM_AP1E
+(
+  rpt_nm      VARCHAR2(20),
+  rpt_typ     VARCHAR2(8) not null,
+  val_cd      VARCHAR2(10),
+  user_id     VARCHAR2(10),
+  last_chg_ts DATE default sysdate,
+  div_part    NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+;
+create index FK_AP1E_AP7R_01 on RPT_PARM_AP1E (DIV_PART, RPT_NM)
+  compress;
+alter table RPT_PARM_AP1E
+  add constraint PK_AP1E primary key (DIV_PART, RPT_NM, RPT_TYP, VAL_CD);
+alter table RPT_PARM_AP1E
+  add constraint FK_AP1E_AP7R_01 foreign key (DIV_PART, RPT_NM)
+  references RPT_NAME_AP7R (DIV_PART, RPT_NM);
+alter table RPT_PARM_AP1E
+  add constraint MCL_CHK_01_OCT_16_225615558
+  check ("RPT_NM" IS NOT NULL);
+alter table RPT_PARM_AP1E
+  add constraint MCL_CHK_01_OCT_16_225615560
+  check ("VAL_CD" IS NOT NULL);
+alter table RPT_PARM_AP1E
+  add constraint MCL_CHK_01_OCT_16_225615562
+  check ("DIV_PART" IS NOT NULL);
+

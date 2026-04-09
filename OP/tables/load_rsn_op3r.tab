@@ -1,0 +1,21 @@
+create table LOAD_RSN_OP3R
+(
+  rsn_id    NUMBER,
+  rsn_descr VARCHAR2(80),
+  user_id   VARCHAR2(8),
+  create_ts DATE,
+  div_part  NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part') not null
+)
+;
+alter table LOAD_RSN_OP3R
+  add constraint PK_OP3R primary key (DIV_PART, RSN_ID);
+alter table LOAD_RSN_OP3R
+  add constraint MCL_CHK_01_OCT_16_225615480
+  check ("RSN_ID" IS NOT NULL);
+alter table LOAD_RSN_OP3R
+  add constraint MCL_CHK_01_OCT_16_225615492
+  check ("RSN_DESCR" IS NOT NULL);
+alter table LOAD_RSN_OP3R
+  add constraint MCL_CHK_01_OCT_16_225615494
+  check ("CREATE_TS" IS NOT NULL);
+

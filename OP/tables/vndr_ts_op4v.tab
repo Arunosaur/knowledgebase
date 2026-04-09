@@ -1,0 +1,31 @@
+create table VNDR_TS_OP4V
+(
+  cbr_vndr_id NUMBER,
+  ts_typ      VARCHAR2(3),
+  ts          DATE,
+  div_part    NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+;
+create index FK_OP4V_OP1V_01 on VNDR_TS_OP4V (DIV_PART, CBR_VNDR_ID)
+  compress;
+alter table VNDR_TS_OP4V
+  add constraint PK_OP4V primary key (DIV_PART, CBR_VNDR_ID, TS_TYP, TS);
+alter table VNDR_TS_OP4V
+  add constraint FK_OP4V_OP1V_01 foreign key (DIV_PART, CBR_VNDR_ID)
+  references VNDR_MSTR_OP1V (DIV_PART, CBR_VNDR_ID);
+alter table VNDR_TS_OP4V
+  add constraint CHK_OP4V_TS_TYP
+  check (ts_typ in ('PO', 'PRC', 'LED'));
+alter table VNDR_TS_OP4V
+  add constraint MCL_CHK_01_OCT_16_225615390
+  check ("CBR_VNDR_ID" IS NOT NULL);
+alter table VNDR_TS_OP4V
+  add constraint MCL_CHK_01_OCT_16_225615391
+  check ("TS_TYP" IS NOT NULL);
+alter table VNDR_TS_OP4V
+  add constraint MCL_CHK_01_OCT_16_225615392
+  check ("TS" IS NOT NULL);
+alter table VNDR_TS_OP4V
+  add constraint MCL_CHK_01_OCT_16_225615393
+  check ("DIV_PART" IS NOT NULL);
+

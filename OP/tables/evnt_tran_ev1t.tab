@@ -1,0 +1,31 @@
+create table EVNT_TRAN_EV1T
+(
+  evnt_nm                VARCHAR2(16) not null,
+  evnt_rqst_ts           DATE default sysdate,
+  email_comnts           VARCHAR2(200) default ' ',
+  evnt_compl_notifctn_ts DATE,
+  user_id                VARCHAR2(8) default user,
+  last_chg_ts            DATE default sysdate,
+  div_part               NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+;
+create index FK_EV1T_EV1M_01 on EVNT_TRAN_EV1T (DIV_PART, EVNT_NM)
+  compress;
+alter table EVNT_TRAN_EV1T
+  add constraint PK_EV1T primary key (DIV_PART, EVNT_NM, EVNT_RQST_TS);
+alter table EVNT_TRAN_EV1T
+  add constraint FK_EV1T_EV1M_01 foreign key (DIV_PART, EVNT_NM)
+  references EVNT_MSTR_EV1M (DIV_PART, EVNT_NM);
+alter table EVNT_TRAN_EV1T
+  add constraint MCL_CHK_01_OCT_16_225615482
+  check ("EVNT_RQST_TS" IS NOT NULL);
+alter table EVNT_TRAN_EV1T
+  add constraint MCL_CHK_01_OCT_16_225615484
+  check ("USER_ID" IS NOT NULL);
+alter table EVNT_TRAN_EV1T
+  add constraint MCL_CHK_01_OCT_16_225615485
+  check ("LAST_CHG_TS" IS NOT NULL);
+alter table EVNT_TRAN_EV1T
+  add constraint MCL_CHK_01_OCT_16_225615486
+  check ("DIV_PART" IS NOT NULL);
+

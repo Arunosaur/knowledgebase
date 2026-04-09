@@ -1,0 +1,65 @@
+create table MCLANE_MQ_GP_CONTROL
+(
+  mq_msg_id          VARCHAR2(10),
+  mq_queue           VARCHAR2(40),
+  mq_qmanager        VARCHAR2(20),
+  mq_msg_id_desc     VARCHAR2(30),
+  gp_type            VARCHAR2(3),
+  mq_msg_hdr         VARCHAR2(53),
+  transmit_mode      VARCHAR2(5),
+  hdr_incl_sw        VARCHAR2(1),
+  mq_channel         VARCHAR2(20) default 'N/A',
+  mq_port            NUMBER(5) default 0,
+  concurrent_threads NUMBER(5) default 1,
+  hostname           VARCHAR2(20),
+  max_prcs_attmpt    NUMBER(2) default 1,
+  cmnd               VARCHAR2(1000),
+  cmnd_typ           VARCHAR2(1) default 'D',
+  div_part           NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+;
+alter table MCLANE_MQ_GP_CONTROL
+  add constraint PK_MCLANE_MQ_GP_CONTROL primary key (DIV_PART, MQ_MSG_ID);
+alter table MCLANE_MQ_GP_CONTROL
+  add constraint MCL_CHK_01_OCT_16_225615511
+  check ("MQ_MSG_ID" IS NOT NULL);
+alter table MCLANE_MQ_GP_CONTROL
+  add constraint MCL_CHK_01_OCT_16_225615512
+  check ("MQ_QUEUE" IS NOT NULL);
+alter table MCLANE_MQ_GP_CONTROL
+  add constraint MCL_CHK_01_OCT_16_225615513
+  check ("MQ_QMANAGER" IS NOT NULL);
+alter table MCLANE_MQ_GP_CONTROL
+  add constraint MCL_CHK_01_OCT_16_225615514
+  check ("MQ_MSG_ID_DESC" IS NOT NULL);
+alter table MCLANE_MQ_GP_CONTROL
+  add constraint MCL_CHK_01_OCT_16_225615515
+  check ("GP_TYPE" IS NOT NULL);
+alter table MCLANE_MQ_GP_CONTROL
+  add constraint MCL_CHK_01_OCT_16_225615516
+  check ("MQ_MSG_HDR" IS NOT NULL);
+alter table MCLANE_MQ_GP_CONTROL
+  add constraint MCL_CHK_01_OCT_16_225615517
+  check ("TRANSMIT_MODE" IS NOT NULL);
+alter table MCLANE_MQ_GP_CONTROL
+  add constraint MCL_CHK_01_OCT_16_225615518
+  check ("HDR_INCL_SW" IS NOT NULL);
+alter table MCLANE_MQ_GP_CONTROL
+  add constraint MCL_CHK_01_OCT_16_225615519
+  check ("MQ_CHANNEL" IS NOT NULL);
+alter table MCLANE_MQ_GP_CONTROL
+  add constraint MCL_CHK_01_OCT_16_225615521
+  check ("CONCURRENT_THREADS" IS NOT NULL);
+alter table MCLANE_MQ_GP_CONTROL
+  add constraint MCL_CHK_01_OCT_16_225615522
+  check ("MAX_PRCS_ATTMPT" IS NOT NULL);
+alter table MCLANE_MQ_GP_CONTROL
+  add constraint MCL_CHK_01_OCT_16_225615523
+  check ("CMND_TYP" IS NOT NULL);
+alter table MCLANE_MQ_GP_CONTROL
+  add constraint MCL_CHK_01_OCT_16_225615524
+  check ("DIV_PART" IS NOT NULL);
+alter table MCLANE_MQ_GP_CONTROL
+  add constraint MQ_GP_CONTROL_CMND_TYP_CK
+  check (cmnd_typ in ('D', 'U'));
+

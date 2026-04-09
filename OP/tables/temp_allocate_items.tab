@@ -1,0 +1,21 @@
+create global temporary table TEMP_ALLOCATE_ITEMS
+(
+  rec_type        VARCHAR2(30),
+  item_num        VARCHAR2(25),
+  meas_unit       VARCHAR2(3),
+  inv_avail       NUMBER(15),
+  ord_qty         NUMBER(15),
+  cust_juris      VARCHAR2(3),
+  stamp_flag      VARCHAR2(1),
+  slot_juris      VARCHAR2(3),
+  cust_num        VARCHAR2(8),
+  item_pack       VARCHAR2(4),
+  single_item_num VARCHAR2(25),
+  single_item_uom VARCHAR2(3),
+  stamps_on_hand  NUMBER(15),
+  stamps_per_item NUMBER(11),
+  stamp_item      VARCHAR2(25),
+  stamp_uom       VARCHAR2(3)
+)
+on commit preserve rows;
+

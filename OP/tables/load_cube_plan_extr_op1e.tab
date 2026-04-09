@@ -1,0 +1,15 @@
+create table LOAD_CUBE_PLAN_EXTR_OP1E
+(
+  div_part     NUMBER(3) not null,
+  llr_dt       DATE not null,
+  load_num     VARCHAR2(4) not null,
+  user_id      VARCHAR2(30),
+  last_extr_ts DATE
+)
+;
+alter table LOAD_CUBE_PLAN_EXTR_OP1E
+  add constraint PK_OP1E primary key (DIV_PART, LLR_DT, LOAD_NUM);
+alter table LOAD_CUBE_PLAN_EXTR_OP1E
+  add constraint FK_OP1E_DI1D_01 foreign key (DIV_PART)
+  references DIV_MSTR_DI1D (DIV_PART);
+

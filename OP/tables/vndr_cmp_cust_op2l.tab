@@ -1,0 +1,19 @@
+create table VNDR_CMP_CUST_OP2L
+(
+  prof_id  NUMBER,
+  div_part NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part'),
+  cust_id  VARCHAR2(8) not null,
+  cmp_qty  NUMBER,
+  beg_dt   DATE,
+  end_dt   DATE
+)
+;
+alter table VNDR_CMP_CUST_OP2L
+  add constraint PK_OP2L primary key (DIV_PART, PROF_ID, CUST_ID);
+alter table VNDR_CMP_CUST_OP2L
+  add constraint MCL_CHK_01_OCT_16_225615103
+  check ("PROF_ID" IS NOT NULL);
+alter table VNDR_CMP_CUST_OP2L
+  add constraint MCL_CHK_01_OCT_16_225615104
+  check ("DIV_PART" IS NOT NULL);
+

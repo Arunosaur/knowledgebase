@@ -1,0 +1,25 @@
+{
+  "fileId": "manhattan-main-MCLN_EX106_Add_Item_Repack_to_Fill_Active_Configuration_Guide.docx",
+  "fileName": "MCLN EX106 Add Item Repack to Fill Active Configuration Guide.docx",
+  "webUrl": "MCLN EX106 Add Item Repack to Fill Active Configuration Guide.docx",
+  "mimeType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "extension": ".docx",
+  "group": "manhattan-main",
+  "site": "local-bulk-upload",
+  "lastModified": "2026-03-19T09:35:00Z",
+  "syncedAt": "2026-03-19T05:07:33.478Z",
+  "title": "MCLN EX106 Add Item Repack to Fill Active Configuration Guide",
+  "fullText": "center 83548 center 290830 EX10 6 Add Pack/Repack to Fill Active Configuration Guide 0 0 EX10 6 Add Pack/Repack to Fill Active Configuration Guide Table of Contents TOC \\o \"1-3\" \\h \\z \\u 1. Create EX106 Enablement System Code PAGEREF _Toc221101220 \\h 3 2. Configure RF Fill Active Transaction PAGEREF _Toc221101221 \\h 4 Create EX106 Enablement System Code Navigate to System Code UI Filter for Code Type 000 Select the Custom Code 000 record Click Code IDs on the bottom rght -hand corner Select any Extension Control code ID and hit the Copy button Fill in the following details for the EX106 Code ID . Click Save when finished. Code ID description : EX106 Add Item Repack to Fill Active Navigate to the Parameters tab and ensure that the Enablement Flag is turned on. If not enabled, enable it and click Save . Configure RF Fill Active Transaction Navigate to Transaction Parameters UI Filter for Fill Actv Sys Dir Select Program Template Select Add Fill out the information below Select Save Navigate back to Fill Active transaction Select Edit Enable parameter 106-106 for Fill Active transaction(s) Configure the base parameters as shown below\n\n2329180 -237044 Page PAGE \\* MERGEFORMAT 1 o f = NUMPAGES 7 7 0 0 Page PAGE \\* MERGEFORMAT 1 o f = NUMPAGES 7 7 -663484 9524819 © 2014 Manhattan Associates, Inc. All rights reserved. 0 0 © 2014 Manhattan Associates, Inc. All rights reserved.\n\nPAGE \\* MERGEFORMAT 1\n\n2329180 -237044 Page PAGE \\* MERGEFORMAT 1 o f = NUMPAGES 7 7 0 0 Page PAGE \\* MERGEFORMAT 1 o f = NUMPAGES 7 7 -663484 9524819 © 2014 Manhattan Associates, Inc. All rights reserved. 0 0 © 2014 Manhattan Associates, Inc. All rights reserved.\n\n1\n\n5441406 -30480 -391885 10705",
+  "extractionMode": "provided-text",
+  "chunks": [
+    {
+      "chunkIndex": 0,
+      "startChar": 0,
+      "text": "[Document: MCLN EX106 Add Item Repack to Fill Active Configuration Guide]\n\ncenter 83548 center 290830 EX10 6 Add Pack/Repack to Fill Active Configuration Guide 0 0 EX10 6 Add Pack/Repack to Fill Active Configuration Guide Table of Contents  1. Create EX106 Enablement System Code  2. Configure RF Fill Active Transaction  Create EX106 Enablement System Code Navigate to System Code UI Filter for Code Type 000 Select the Custom Code 000 record Click Code IDs on the bottom rght -hand corner Select any Extension Control code ID and hit the Copy button Fill in the following details for the EX106 Code ID . Click Save when finished. Code ID description : EX106 Add Item Repack to Fill Active Navigate to the Parameters tab and ensure that the Enablement Flag is turned on. If not enabled, enable it and click Save . Configure RF Fill Active Transaction Navigate to Transaction Parameters UI Filter for Fill Actv Sys Dir Select Program Template Select Add Fill out the information below Select Save Navigate back to Fill Active transaction Select Edit Enable parameter 106-106 for Fill Active transaction(s) Configure the base parameters as shown below\n\n2329180 -237044 Page PAGE \\* MERGEFORMAT 1 o f = NUMPAGES 7 7 0 0 Page PAGE \\* MERGEFORMAT 1 o f = NUMPAGES 7 7 -663484 9524819 © 2014 Manhattan Associates, Inc. All rights reserved. 0 0 © 2014 Manhattan Associates, Inc. All rights reserved.\n\nPAGE \\* MERGEFORMAT 1\n\n2329180 -237044 Page PAGE \\* MERGEFORMAT 1 o f = NUMPAGES 7 7 0 0 Page PAGE \\* MERGEFORMAT 1 o f = NUMPAGES 7 7 -663484 9524819 © 2014 Manhattan Associates, Inc. All rights reserved. 0 0 © 2014 Manhattan Associates, Inc. All rights reserved."
+    }
+  ],
+  "chunkCount": 1,
+  "wordCount": 294,
+  "byteSize": 932639,
+  "reindexedAt": "2026-04-09T01:02:10.554Z"
+}

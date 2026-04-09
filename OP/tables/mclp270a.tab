@@ -1,0 +1,15 @@
+create table MCLP270A
+(
+  itema    VARCHAR2(25) not null,
+  uoma     VARCHAR2(3) not null,
+  txjra    VARCHAR2(3) not null,
+  stitma   VARCHAR2(25) not null,
+  stumoma  VARCHAR2(3) not null,
+  div_part NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part') not null
+)
+;
+comment on column MCLP270A.itema
+  is 'This is the CBR Item Number.';
+alter table MCLP270A
+  add constraint PK_MCLP270A primary key (DIV_PART, ITEMA, UOMA, TXJRA, STITMA, STUMOMA);
+

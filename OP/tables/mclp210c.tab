@@ -1,0 +1,24 @@
+create table MCLP210C
+(
+  manctc      VARCHAR2(3) not null,
+  descc       VARCHAR2(25),
+  seqc        NUMBER(3),
+  totdfc      VARCHAR2(3),
+  div_part    NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part'),
+  catg_typ_cd VARCHAR2(3) default 'DUM' not null
+)
+;
+comment on table MCLP210C
+  is 'Usage: Describes manifest categories known to system	
+';
+comment on column MCLP210C.descc
+  is 'A brief description of the MANIFEST CATEGORY CODE specified.';
+alter table MCLP210C
+  add constraint PK_MCLP210C primary key (DIV_PART, MANCTC, CATG_TYP_CD);
+alter table MCLP210C
+  add constraint FK_MCLP210C_CTIC_01 foreign key (CATG_TYP_CD)
+  references CATG_TYP_CT1C (CATG_TYP_CD);
+alter table MCLP210C
+  add constraint MCL_CHK_01_OCT_16_225615507
+  check ("DIV_PART" IS NOT NULL);
+

@@ -1,0 +1,8 @@
+create sequence OP1I_PRTCTD_ID_SEQ
+minvalue 1
+maxvalue 99999999
+start with 204568
+increment by 1
+cache 100
+cycle;
+

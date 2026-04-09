@@ -1,0 +1,53 @@
+create table EVNT_MSTR_EV1M
+(
+  evnt_nm       VARCHAR2(16),
+  evnt_desc     VARCHAR2(40),
+  job_rqst_sw   VARCHAR2(1) default 'N',
+  email_rqst_sw VARCHAR2(1) default 'N',
+  reset_time    NUMBER default 0,
+  nxt_rqst_ts   DATE default sysdate,
+  actv_sw       VARCHAR2(1) default 'Y',
+  user_id       VARCHAR2(8) default user,
+  last_chg_ts   DATE default sysdate,
+  div_part      NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+;
+alter table EVNT_MSTR_EV1M
+  add constraint PK_EV1M primary key (DIV_PART, EVNT_NM);
+alter table EVNT_MSTR_EV1M
+  add constraint MCL_CHK_01_OCT_16_225615461
+  check ("EVNT_NM" IS NOT NULL);
+alter table EVNT_MSTR_EV1M
+  add constraint MCL_CHK_01_OCT_16_225615462
+  check ("EVNT_DESC" IS NOT NULL);
+alter table EVNT_MSTR_EV1M
+  add constraint MCL_CHK_01_OCT_16_225615463
+  check ("JOB_RQST_SW" IS NOT NULL);
+alter table EVNT_MSTR_EV1M
+  add constraint MCL_CHK_01_OCT_16_225615464
+  check ("EMAIL_RQST_SW" IS NOT NULL);
+alter table EVNT_MSTR_EV1M
+  add constraint MCL_CHK_01_OCT_16_225615465
+  check ("RESET_TIME" IS NOT NULL);
+alter table EVNT_MSTR_EV1M
+  add constraint MCL_CHK_01_OCT_16_225615467
+  check ("ACTV_SW" IS NOT NULL);
+alter table EVNT_MSTR_EV1M
+  add constraint MCL_CHK_01_OCT_16_225615468
+  check ("USER_ID" IS NOT NULL);
+alter table EVNT_MSTR_EV1M
+  add constraint MCL_CHK_01_OCT_16_225615469
+  check ("LAST_CHG_TS" IS NOT NULL);
+alter table EVNT_MSTR_EV1M
+  add constraint MCL_CHK_01_OCT_16_225615470
+  check ("DIV_PART" IS NOT NULL);
+alter table EVNT_MSTR_EV1M
+  add constraint MCL_CHK_01_OCT_16_225615471
+  check (actv_sw IN ('N', 'Y'));
+alter table EVNT_MSTR_EV1M
+  add constraint MCL_CHK_01_OCT_16_225615472
+  check (email_rqst_sw IN ('N', 'Y'));
+alter table EVNT_MSTR_EV1M
+  add constraint MCL_CHK_01_OCT_16_225615473
+  check (job_rqst_sw IN ('N', 'Y'));
+

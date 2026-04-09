@@ -1,0 +1,29 @@
+create table GRP_CNTCT
+(
+  grp_id   VARCHAR2(16),
+  cntct_id NUMBER(3),
+  div_part NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+;
+create index FK_GRP_CNTCT_CNTCT_INFO_01 on GRP_CNTCT (DIV_PART, CNTCT_ID)
+  compress;
+create index FK_GRP_CNTCT_GRP_INFO_01 on GRP_CNTCT (DIV_PART, GRP_ID)
+  compress;
+alter table GRP_CNTCT
+  add constraint PK_GRP_CNTCT primary key (DIV_PART, GRP_ID, CNTCT_ID);
+alter table GRP_CNTCT
+  add constraint FK_GRP_CNTCT_CNTCT_INFO_01 foreign key (DIV_PART, CNTCT_ID)
+  references CNTCT_INFO (DIV_PART, CNTCT_ID) on delete cascade;
+alter table GRP_CNTCT
+  add constraint FK_GRP_CNTCT_GRP_INFO_01 foreign key (DIV_PART, GRP_ID)
+  references GRP_INFO (DIV_PART, GRP_ID) on delete cascade;
+alter table GRP_CNTCT
+  add constraint MCL_CHK_01_OCT_16_225615322
+  check ("GRP_ID" IS NOT NULL);
+alter table GRP_CNTCT
+  add constraint MCL_CHK_01_OCT_16_225615323
+  check ("CNTCT_ID" IS NOT NULL);
+alter table GRP_CNTCT
+  add constraint MCL_CHK_01_OCT_16_225615324
+  check ("DIV_PART" IS NOT NULL);
+

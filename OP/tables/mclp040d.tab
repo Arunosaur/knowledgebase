@@ -1,0 +1,42 @@
+create table MCLP040D
+(
+  custd    VARCHAR2(8),
+  loadd    VARCHAR2(4),
+  stopd    NUMBER(9,2),
+  dayrcd   VARCHAR2(3),
+  etad     NUMBER(4),
+  wkoffd   NUMBER(1),
+  delwid   VARCHAR2(25),
+  hropnd   VARCHAR2(10),
+  delrsd   VARCHAR2(30),
+  prod_typ VARCHAR2(3) default 'GRO',
+  div_part NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part'),
+  recur_wk NUMBER default 1,
+  eff_dt   DATE default to_date('01-JAN-1900', 'DD-MON-YYYY')
+)
+;
+comment on table MCLP040D
+  is 'Usage: Defines Scheduled Loads for Customers	
+';
+comment on column MCLP040D.custd
+  is 'This is the CBR Customer Number.';
+comment on column MCLP040D.delrsd
+  is 'These are the restrictions for a truck (i.e., Trailer size).';
+alter table MCLP040D
+  add constraint UNQ_MCLP040D_01 unique (DIV_PART, CUSTD, LOADD);
+alter table MCLP040D
+  add constraint MCLP040D_CHK_1
+  check (prod_typ in ('GRO', 'GMP', 'BTH'));
+alter table MCLP040D
+  add constraint MCL_CHK_01_OCT_16_22561529
+  check ("PROD_TYP" IS NOT NULL);
+alter table MCLP040D
+  add constraint MCL_CHK_01_OCT_16_22561530
+  check ("DIV_PART" IS NOT NULL);
+alter table MCLP040D
+  add constraint MCL_CHK_01_OCT_16_22561531
+  check ("RECUR_WK" IS NOT NULL);
+alter table MCLP040D
+  add constraint MCL_CHK_01_OCT_16_22561532
+  check ("EFF_DT" IS NOT NULL);
+

@@ -1,0 +1,26 @@
+create table VNDR_MSTR_OP1V
+(
+  cbr_vndr_id      NUMBER not null,
+  dcs_vndr_id      NUMBER,
+  vndr_nm          VARCHAR2(40),
+  lead_days        NUMBER,
+  div_part         NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part') not null,
+  cust_lvl_dtl_sw  VARCHAR2(1) default 'N',
+  enforc_po_qty_sw VARCHAR2(1) default 'N' not null
+)
+;
+alter table VNDR_MSTR_OP1V
+  add constraint PK_OP1V primary key (DIV_PART, CBR_VNDR_ID);
+alter table VNDR_MSTR_OP1V
+  add constraint CK_OP1V_ENFORCE_PO
+  check (ENFORC_PO_QTY_SW IN ('Y', 'N'));
+alter table VNDR_MSTR_OP1V
+  add constraint MCL_CHK_01_OCT_16_225615368
+  check ("DCS_VNDR_ID" IS NOT NULL);
+alter table VNDR_MSTR_OP1V
+  add constraint MCL_CHK_01_OCT_16_225615370
+  check ("LEAD_DAYS" IS NOT NULL);
+alter table VNDR_MSTR_OP1V
+  add constraint MCL_CHK_01_OCT_16_225615373
+  check (cust_lvl_dtl_sw IN ('N','Y'));
+

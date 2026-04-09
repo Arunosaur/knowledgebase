@@ -1,0 +1,11 @@
+create table STRCT_MSTR_CS_OP3I
+(
+  div_part    NUMBER not null,
+  ss_item     VARCHAR2(6) not null,
+  fc_item     VARCHAR2(6) not null,
+  cbr_vndr_id NUMBER not null
+)
+;
+alter table STRCT_MSTR_CS_OP3I
+  add constraint PK_OP3I primary key (DIV_PART, SS_ITEM);
+

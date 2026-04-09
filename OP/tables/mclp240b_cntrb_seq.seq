@@ -1,0 +1,7 @@
+create sequence MCLP240B_CNTRB_SEQ
+minvalue 1
+maxvalue 9999999999999999999999999999
+start with 35347523
+increment by 1
+cache 10000;
+

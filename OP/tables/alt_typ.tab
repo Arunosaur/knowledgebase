@@ -1,0 +1,15 @@
+create table ALT_TYP
+(
+  alt_typ VARCHAR2(3),
+  descr   VARCHAR2(40)
+)
+;
+alter table ALT_TYP
+  add constraint PK_ALT_TYP primary key (ALT_TYP);
+alter table ALT_TYP
+  add constraint MCL_CHK_01_OCT_16_225615477
+  check ("ALT_TYP" IS NOT NULL);
+alter table ALT_TYP
+  add constraint MCL_CHK_01_OCT_16_225615478
+  check ("DESCR" IS NOT NULL);
+

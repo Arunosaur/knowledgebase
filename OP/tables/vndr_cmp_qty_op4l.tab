@@ -1,0 +1,21 @@
+create table VNDR_CMP_QTY_OP4L
+(
+  prof_id    NUMBER,
+  div_part   NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part') not null,
+  cust_id    VARCHAR2(8),
+  parnt_item NUMBER not null,
+  cmp_qty    NUMBER
+)
+;
+alter table VNDR_CMP_QTY_OP4L
+  add constraint PK_OP4L primary key (DIV_PART, PROF_ID, CUST_ID, PARNT_ITEM);
+alter table VNDR_CMP_QTY_OP4L
+  add constraint MCL_CHK_01_OCT_16_225615100
+  check ("CUST_ID" IS NOT NULL);
+alter table VNDR_CMP_QTY_OP4L
+  add constraint MCL_CHK_01_OCT_16_225615102
+  check ("CMP_QTY" IS NOT NULL);
+alter table VNDR_CMP_QTY_OP4L
+  add constraint MCL_CHK_01_OCT_16_22561598
+  check ("PROF_ID" IS NOT NULL);
+

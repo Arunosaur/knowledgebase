@@ -1,0 +1,30 @@
+create table LOAD_DEPART_OP1F
+(
+  load_depart_sid NUMBER not null,
+  div_part        NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part') not null,
+  llr_ts          DATE,
+  load_num        VARCHAR2(4),
+  depart_ts       DATE,
+  llr_dt          DATE default sysdate
+)
+;
+create index FK_OP1F_DI1D_01 on LOAD_DEPART_OP1F (DIV_PART)
+  compress;
+create index N_OP1F_01 on LOAD_DEPART_OP1F (DIV_PART, LLR_DT, LOAD_NUM, LOAD_DEPART_SID)
+  compress;
+create index N_OP1F_02 on LOAD_DEPART_OP1F (DIV_PART, LLR_DT)
+  compress;
+alter table LOAD_DEPART_OP1F
+  add constraint PK_OP1F primary key (DIV_PART, LOAD_DEPART_SID);
+alter table LOAD_DEPART_OP1F
+  add constraint UNQ_OP1F_01 unique (DIV_PART, LLR_TS, LOAD_NUM);
+alter table LOAD_DEPART_OP1F
+  add constraint FK_OP1F_DI1D_01 foreign key (DIV_PART)
+  references DIV_MSTR_DI1D (DIV_PART) on delete cascade;
+alter table LOAD_DEPART_OP1F
+  add constraint MCL_CHK_01_OCT_16_225615410
+  check ("DEPART_TS" IS NOT NULL);
+alter table LOAD_DEPART_OP1F
+  add constraint MCL_CHK_01_OCT_16_225615411
+  check ("LLR_DT" IS NOT NULL);
+

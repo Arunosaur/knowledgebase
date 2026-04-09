@@ -1,0 +1,56 @@
+create table LOAD_CLOS_CNTRL_BC2C
+(
+  llr_dt           DATE not null,
+  load_num         VARCHAR2(4),
+  dspstn_err_sw    VARCHAR2(1) default 'N',
+  pct_dscrpncy     NUMBER(3) default 0,
+  load_status      VARCHAR2(1) default 'R',
+  test_bil_load_sw VARCHAR2(1) default 'N',
+  acs_load_clos_sw VARCHAR2(1) default 'N',
+  pick_compl_sw    VARCHAR2(1) default 'N',
+  cwt_compl_sw     VARCHAR2(1) default 'Y',
+  div_part         NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+;
+alter table LOAD_CLOS_CNTRL_BC2C
+  add constraint PK_BC2C primary key (DIV_PART, LLR_DT, LOAD_NUM);
+alter table LOAD_CLOS_CNTRL_BC2C
+  add constraint BC2C_ACS_LOAD_CLOS_SW_CHK
+  check (acs_load_clos_sw IN ('N', 'Y', 'P'));
+alter table LOAD_CLOS_CNTRL_BC2C
+  add constraint BC2C_DSPSTN_ERR_SW_CHK
+  check (dspstn_err_sw IN ('N', 'Y'));
+alter table LOAD_CLOS_CNTRL_BC2C
+  add constraint BC2C_PICK_COMPL_SW_CHK
+  check (pick_compl_sw IN ('N', 'Y'));
+alter table LOAD_CLOS_CNTRL_BC2C
+  add constraint BC2C_TEST_BIL_LOAD_SW_CHK
+  check (test_bil_load_sw IN ('N', 'Y'));
+alter table LOAD_CLOS_CNTRL_BC2C
+  add constraint MCL_CHK_01_OCT_16_225615141
+  check ("LOAD_NUM" IS NOT NULL);
+alter table LOAD_CLOS_CNTRL_BC2C
+  add constraint MCL_CHK_01_OCT_16_225615142
+  check ("DSPSTN_ERR_SW" IS NOT NULL);
+alter table LOAD_CLOS_CNTRL_BC2C
+  add constraint MCL_CHK_01_OCT_16_225615143
+  check ("PCT_DSCRPNCY" IS NOT NULL);
+alter table LOAD_CLOS_CNTRL_BC2C
+  add constraint MCL_CHK_01_OCT_16_225615144
+  check ("LOAD_STATUS" IS NOT NULL);
+alter table LOAD_CLOS_CNTRL_BC2C
+  add constraint MCL_CHK_01_OCT_16_225615145
+  check ("TEST_BIL_LOAD_SW" IS NOT NULL);
+alter table LOAD_CLOS_CNTRL_BC2C
+  add constraint MCL_CHK_01_OCT_16_225615146
+  check ("ACS_LOAD_CLOS_SW" IS NOT NULL);
+alter table LOAD_CLOS_CNTRL_BC2C
+  add constraint MCL_CHK_01_OCT_16_225615147
+  check ("PICK_COMPL_SW" IS NOT NULL);
+alter table LOAD_CLOS_CNTRL_BC2C
+  add constraint MCL_CHK_01_OCT_16_225615148
+  check ("CWT_COMPL_SW" IS NOT NULL);
+alter table LOAD_CLOS_CNTRL_BC2C
+  add constraint MCL_CHK_01_OCT_16_225615149
+  check ("DIV_PART" IS NOT NULL);
+

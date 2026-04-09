@@ -1,0 +1,56 @@
+create table REROUTE_RT1R
+(
+  div_part    NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part'),
+  cust_id     VARCHAR2(8),
+  load_num    VARCHAR2(4),
+  llr_dt      DATE,
+  stop_num    NUMBER,
+  llr_day     VARCHAR2(3),
+  llr_time    NUMBER,
+  depart_day  VARCHAR2(3),
+  depart_time NUMBER,
+  eta_day     VARCHAR2(3),
+  eta_time    NUMBER,
+  eff_ts      DATE,
+  end_ts      DATE
+)
+;
+alter table REROUTE_RT1R
+  add constraint PK_RT1R primary key (DIV_PART, CUST_ID, LOAD_NUM, LLR_DT);
+alter table REROUTE_RT1R
+  add constraint MCL_CHK_01_OCT_16_22561540
+  check ("DIV_PART" IS NOT NULL);
+alter table REROUTE_RT1R
+  add constraint MCL_CHK_01_OCT_16_22561541
+  check ("CUST_ID" IS NOT NULL);
+alter table REROUTE_RT1R
+  add constraint MCL_CHK_01_OCT_16_22561542
+  check ("LOAD_NUM" IS NOT NULL);
+alter table REROUTE_RT1R
+  add constraint MCL_CHK_01_OCT_16_22561543
+  check ("LLR_DT" IS NOT NULL);
+alter table REROUTE_RT1R
+  add constraint MCL_CHK_01_OCT_16_22561544
+  check ("STOP_NUM" IS NOT NULL);
+alter table REROUTE_RT1R
+  add constraint MCL_CHK_01_OCT_16_22561545
+  check ("LLR_DAY" IS NOT NULL);
+alter table REROUTE_RT1R
+  add constraint MCL_CHK_01_OCT_16_22561546
+  check ("LLR_TIME" IS NOT NULL);
+alter table REROUTE_RT1R
+  add constraint MCL_CHK_01_OCT_16_22561548
+  check ("DEPART_TIME" IS NOT NULL);
+alter table REROUTE_RT1R
+  add constraint MCL_CHK_01_OCT_16_22561549
+  check ("ETA_DAY" IS NOT NULL);
+alter table REROUTE_RT1R
+  add constraint MCL_CHK_01_OCT_16_22561550
+  check ("ETA_TIME" IS NOT NULL);
+alter table REROUTE_RT1R
+  add constraint MCL_CHK_01_OCT_16_22561551
+  check ("EFF_TS" IS NOT NULL);
+alter table REROUTE_RT1R
+  add constraint MCL_CHK_01_OCT_16_22561552
+  check ("END_TS" IS NOT NULL);
+

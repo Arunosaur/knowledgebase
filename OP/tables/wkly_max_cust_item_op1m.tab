@@ -1,0 +1,29 @@
+create table WKLY_MAX_CUST_ITEM_OP1M
+(
+  cust_item_sid NUMBER,
+  div_part      NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part'),
+  cust_id       VARCHAR2(8),
+  catlg_num     NUMBER,
+  pick_qty      NUMBER
+)
+compress for all operations;
+alter table WKLY_MAX_CUST_ITEM_OP1M
+  add constraint PK_OP1M primary key (DIV_PART, CUST_ITEM_SID);
+alter table WKLY_MAX_CUST_ITEM_OP1M
+  add constraint UNQ_OP1M_01 unique (DIV_PART, CUST_ID, CATLG_NUM);
+alter table WKLY_MAX_CUST_ITEM_OP1M
+  add constraint MCL_CHK_01_OCT_16_225615262
+  check ("CUST_ITEM_SID" IS NOT NULL);
+alter table WKLY_MAX_CUST_ITEM_OP1M
+  add constraint MCL_CHK_01_OCT_16_225615263
+  check ("DIV_PART" IS NOT NULL);
+alter table WKLY_MAX_CUST_ITEM_OP1M
+  add constraint MCL_CHK_01_OCT_16_225615264
+  check ("CUST_ID" IS NOT NULL);
+alter table WKLY_MAX_CUST_ITEM_OP1M
+  add constraint MCL_CHK_01_OCT_16_225615265
+  check ("CATLG_NUM" IS NOT NULL);
+alter table WKLY_MAX_CUST_ITEM_OP1M
+  add constraint MCL_CHK_01_OCT_16_225615266
+  check ("PICK_QTY" IS NOT NULL);
+

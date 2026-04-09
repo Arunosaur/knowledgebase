@@ -1,0 +1,7 @@
+create sequence RLSE_ID_SEQ
+minvalue 1
+maxvalue 9999999999999999999999999999
+start with 52363666
+increment by 1
+cache 10000;
+

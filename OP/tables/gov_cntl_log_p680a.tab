@@ -1,0 +1,65 @@
+create table GOV_CNTL_LOG_P680A
+(
+  ord_num     NUMBER(11),
+  ord_ln      NUMBER(7,2),
+  gov_cntl_id NUMBER(9),
+  cust_num    VARCHAR2(8),
+  prd_beg_ts  DATE default SYSDATE,
+  release_ts  DATE default SYSDATE,
+  shp_pts     NUMBER(15,4),
+  tot_pts     NUMBER(15,4),
+  status      NUMBER(3),
+  div_part    NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+;
+comment on column GOV_CNTL_LOG_P680A.ord_num
+  is 'Order Number';
+comment on column GOV_CNTL_LOG_P680A.ord_ln
+  is 'Order Line Number';
+comment on column GOV_CNTL_LOG_P680A.gov_cntl_id
+  is 'Government Control Identifier';
+comment on column GOV_CNTL_LOG_P680A.cust_num
+  is 'Mclane Custumer Number';
+comment on column GOV_CNTL_LOG_P680A.prd_beg_ts
+  is 'Begin Timestamp of Gov Control Period';
+comment on column GOV_CNTL_LOG_P680A.release_ts
+  is 'Allocation Release Start Timestamp';
+comment on column GOV_CNTL_LOG_P680A.shp_pts
+  is 'Points Accumulated for Shipped Government Control Product';
+comment on column GOV_CNTL_LOG_P680A.tot_pts
+  is 'Total Points Accumulated for Attempted Allocation of Government Control Product';
+comment on column GOV_CNTL_LOG_P680A.status
+  is 'Status: 0 (Initial Setup), 1 (Active), 2 (Inactive)';
+alter table GOV_CNTL_LOG_P680A
+  add constraint PK_GOV_CNTL_LOG_P680A primary key (DIV_PART, ORD_NUM, ORD_LN);
+alter table GOV_CNTL_LOG_P680A
+  add constraint GOV_CNTL_LOG_P680A_CHK1
+  check (STATUS in(0, 1, 2));
+alter table GOV_CNTL_LOG_P680A
+  add constraint MCL_CHK_01_OCT_16_225615412
+  check ("PRD_BEG_TS" IS NOT NULL);
+alter table GOV_CNTL_LOG_P680A
+  add constraint MCL_CHK_01_OCT_16_225615413
+  check ("RELEASE_TS" IS NOT NULL);
+alter table GOV_CNTL_LOG_P680A
+  add constraint MCL_CHK_01_OCT_16_225615414
+  check ("SHP_PTS" IS NOT NULL);
+alter table GOV_CNTL_LOG_P680A
+  add constraint MCL_CHK_01_OCT_16_225615415
+  check ("TOT_PTS" IS NOT NULL);
+alter table GOV_CNTL_LOG_P680A
+  add constraint MCL_CHK_01_OCT_16_225615416
+  check ("STATUS" IS NOT NULL);
+alter table GOV_CNTL_LOG_P680A
+  add constraint MCL_CHK_01_OCT_16_225615417
+  check ("DIV_PART" IS NOT NULL);
+alter table GOV_CNTL_LOG_P680A
+  add constraint MCL_CHK_01_OCT_16_225615614
+  check ("ORD_NUM" IS NOT NULL);
+alter table GOV_CNTL_LOG_P680A
+  add constraint MCL_CHK_01_OCT_16_225615615
+  check ("ORD_LN" IS NOT NULL);
+alter table GOV_CNTL_LOG_P680A
+  add constraint MCL_CHK_01_OCT_16_225615616
+  check ("GOV_CNTL_ID" IS NOT NULL);
+

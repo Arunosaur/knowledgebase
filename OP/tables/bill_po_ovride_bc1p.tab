@@ -1,0 +1,22 @@
+create table BILL_PO_OVRIDE_BC1P
+(
+  ord_num    NUMBER(11),
+  ord_ln_num NUMBER(7,2) not null,
+  po_num     VARCHAR2(30),
+  div_part   NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+compress for all operations;
+create index N_BC1P_01 on BILL_PO_OVRIDE_BC1P (ORD_NUM, ORD_LN_NUM, DIV_PART, PO_NUM)
+  compress;
+alter table BILL_PO_OVRIDE_BC1P
+  add constraint PK_BC1P primary key (DIV_PART, ORD_NUM, ORD_LN_NUM);
+alter table BILL_PO_OVRIDE_BC1P
+  add constraint MCL_CHK_01_OCT_16_225615186
+  check ("ORD_NUM" IS NOT NULL);
+alter table BILL_PO_OVRIDE_BC1P
+  add constraint MCL_CHK_01_OCT_16_225615188
+  check ("PO_NUM" IS NOT NULL);
+alter table BILL_PO_OVRIDE_BC1P
+  add constraint MCL_CHK_01_OCT_16_225615200
+  check ("DIV_PART" IS NOT NULL);
+

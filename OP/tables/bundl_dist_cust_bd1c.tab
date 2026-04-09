@@ -1,0 +1,20 @@
+create table BUNDL_DIST_CUST_BD1C
+(
+  dist_id  VARCHAR2(10),
+  dist_sfx NUMBER not null,
+  cust_id  VARCHAR2(8),
+  div_part NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+;
+alter table BUNDL_DIST_CUST_BD1C
+  add constraint PK_BD1C primary key (DIV_PART, DIST_ID, DIST_SFX, CUST_ID);
+alter table BUNDL_DIST_CUST_BD1C
+  add constraint MCL_CHK_01_OCT_16_225615418
+  check ("DIST_ID" IS NOT NULL);
+alter table BUNDL_DIST_CUST_BD1C
+  add constraint MCL_CHK_01_OCT_16_225615434
+  check ("CUST_ID" IS NOT NULL);
+alter table BUNDL_DIST_CUST_BD1C
+  add constraint MCL_CHK_01_OCT_16_225615435
+  check ("DIV_PART" IS NOT NULL);
+

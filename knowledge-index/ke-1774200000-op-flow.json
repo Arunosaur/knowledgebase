@@ -1,0 +1,20 @@
+{
+  "id": "ke-1774200000-op-flow",
+  "type": "integration",
+  "question": "How do customer orders flow between OP, Mainframe, WMSHUB, and Manhattan?",
+  "answer": "Customer order lifecycle across McLane systems: (1) Orders are billed and originate in the OP system (CIG WMS / OPCIGP database). (2) After billing in OP, orders move to the Mainframe. (3) From Mainframe, orders flow to WMSHUB. (4) From WMSHUB, orders are sent to Manhattan WMS — but only for DCs that are on Manhattan (not all DCs use Manhattan). For non-Manhattan DCs, order processing stays in OP and Mainframe only. Shipment close path: when a shipment is closed in Manhattan, the closure is sent back to Mainframe, and then to OP (closing the order there). For non-Manhattan DCs, orders are closed directly in OP and Mainframe. Order status in OP order tables: O = Open, R = Released, A = Shipped/Closed.",
+  "context": {
+    "group": "cigwms-prod",
+    "schemas": ["OP", "WMSHUB", "FE_DM", "MD_DM", "MK_DM", "MN_DM", "MY_DM", "MZ_DM", "NE_DM", "SE_DM", "FS06_DM"],
+    "dcCodes": [],
+    "systems": ["op", "mainframe", "wmshub", "manhattan"],
+    "objects": ["ORDP100A", "ORDP120B", "LOAD_DEPART_OP1F", "LOAD_CLOS_CNTRL_BC2C", "DIV_MSTR_DI1D"]
+  },
+  "tags": ["customer orders", "order flow", "op system", "mainframe", "wmshub", "manhattan", "integration", "order lifecycle", "shipment close", "cross-system"],
+  "quality": 3,
+  "source": "expert-provided",
+  "capturedBy": "asrajag",
+  "approved": true,
+  "createdAt": "2026-03-21T00:00:00.000Z",
+  "updatedAt": "2026-03-21T00:00:00.000Z"
+}

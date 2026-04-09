@@ -1,0 +1,52 @@
+create table RLSE_OP1Z
+(
+  rlse_id     NUMBER,
+  div_part    NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part'),
+  rlse_ts     DATE default sysdate,
+  end_ts      DATE default to_date('1-jan-1900', 'dd-mon-yyyy'),
+  ord_ln_cnt  NUMBER,
+  stat_cd     VARCHAR2(1) default 'P',
+  llr_dt      DATE default sysdate,
+  test_bil_cd VARCHAR2(1) default '~',
+  forc_inv_sw VARCHAR2(1) default 'N',
+  strtg_id    NUMBER default 999,
+  user_id     VARCHAR2(8) default user
+)
+;
+alter table RLSE_OP1Z
+  add constraint PK_OP1Z primary key (DIV_PART, RLSE_ID);
+alter table RLSE_OP1Z
+  add constraint UNQ_OP1Z_01 unique (DIV_PART, RLSE_TS);
+alter table RLSE_OP1Z
+  add constraint UNQ_OP1Z_02 unique (DIV_PART, RLSE_TS, RLSE_ID, LLR_DT);
+alter table RLSE_OP1Z
+  add constraint MCL_CHK_01_OCT_16_225615526
+  check ("RLSE_ID" IS NOT NULL);
+alter table RLSE_OP1Z
+  add constraint MCL_CHK_01_OCT_16_225615527
+  check ("DIV_PART" IS NOT NULL);
+alter table RLSE_OP1Z
+  add constraint MCL_CHK_01_OCT_16_225615528
+  check ("RLSE_TS" IS NOT NULL);
+alter table RLSE_OP1Z
+  add constraint MCL_CHK_01_OCT_16_225615529
+  check ("END_TS" IS NOT NULL);
+alter table RLSE_OP1Z
+  add constraint MCL_CHK_01_OCT_16_225615530
+  check ("ORD_LN_CNT" IS NOT NULL);
+alter table RLSE_OP1Z
+  add constraint MCL_CHK_01_OCT_16_225615532
+  check ("LLR_DT" IS NOT NULL);
+alter table RLSE_OP1Z
+  add constraint MCL_CHK_01_OCT_16_225615533
+  check ("TEST_BIL_CD" IS NOT NULL);
+alter table RLSE_OP1Z
+  add constraint MCL_CHK_01_OCT_16_225615534
+  check ("FORC_INV_SW" IS NOT NULL);
+alter table RLSE_OP1Z
+  add constraint MCL_CHK_01_OCT_16_225615536
+  check ("USER_ID" IS NOT NULL);
+alter table RLSE_OP1Z
+  add constraint MCL_CHK_01_OCT_16_225615537
+  check (forc_inv_sw in ('N', 'Y'));
+

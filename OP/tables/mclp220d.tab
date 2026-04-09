@@ -1,0 +1,14 @@
+create table MCLP220D
+(
+  nacsd  VARCHAR2(3) not null,
+  descd  VARCHAR2(30),
+  nacshd VARCHAR2(11)
+)
+;
+comment on column MCLP220D.nacsd
+  is 'A brief description of the NACS CODE specified.';
+comment on column MCLP220D.descd
+  is 'A brief description of the NACS specified.';
+alter table MCLP220D
+  add constraint PK_MCLP220D primary key (NACSD);
+

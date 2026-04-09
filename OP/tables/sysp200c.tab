@@ -1,0 +1,273 @@
+create table SYSP200C
+(
+  cocc          VARCHAR2(3),
+  acnoc         VARCHAR2(8),
+  acbrc         VARCHAR2(3),
+  opnyyc        NUMBER(4),
+  opnmmc        NUMBER(2),
+  opnddc        NUMBER(2),
+  sortc         VARCHAR2(20),
+  namec         VARCHAR2(40),
+  add1c         VARCHAR2(40),
+  add2c         VARCHAR2(40),
+  add3c         VARCHAR2(40),
+  cityc         VARCHAR2(40),
+  statec        VARCHAR2(2),
+  zipc          VARCHAR2(15),
+  contyc        VARCHAR2(40),
+  cntrc         VARCHAR2(40),
+  telnoc        VARCHAR2(30),
+  faxnoc        VARCHAR2(30),
+  telexc        VARCHAR2(30),
+  statc         VARCHAR2(1),
+  clscc         VARCHAR2(3),
+  typecc        VARCHAR2(3),
+  tclscc        VARCHAR2(3),
+  langcc        VARCHAR2(3),
+  owncoc        VARCHAR2(3),
+  owndvc        VARCHAR2(3),
+  ownerc        VARCHAR2(8),
+  routec        VARCHAR2(4),
+  stopsc        NUMBER(9,2),
+  shelfc        NUMBER(5),
+  asnouc        VARCHAR2(1),
+  regnc         VARCHAR2(5),
+  carrc         VARCHAR2(4),
+  dockc         VARCHAR2(4),
+  priorc        NUMBER(2),
+  shporc        VARCHAR2(1),
+  updnoc        NUMBER(3),
+  syerc         NUMBER(4),
+  smthc         NUMBER(2),
+  sdayc         NUMBER(2),
+  userc         VARCHAR2(20),
+  stimec        NUMBER(6),
+  tmamtc        NUMBER(8),
+  outamc        NUMBER(8),
+  prblrc        VARCHAR2(1),
+  pntpkc        VARCHAR2(1),
+  cglicc        VARCHAR2(15),
+  cgexdc        NUMBER(6),
+  msitnc        VARCHAR2(1),
+  rttypc        VARCHAR2(4),
+  shad1c        VARCHAR2(40),
+  shad2c        VARCHAR2(40),
+  shpctc        VARCHAR2(30),
+  shpstc        VARCHAR2(2),
+  shpzpc        VARCHAR2(9),
+  shpcnc        VARCHAR2(3),
+  blad1c        VARCHAR2(40),
+  blad2c        VARCHAR2(40),
+  blcitc        VARCHAR2(30),
+  blstc         VARCHAR2(2),
+  blzpc         VARCHAR2(9),
+  blcnc         VARCHAR2(3),
+  cntadc        VARCHAR2(30),
+  acdvsc        VARCHAR2(1),
+  conmtc        VARCHAR2(3),
+  dupodc        VARCHAR2(1),
+  dlcstc        VARCHAR2(8),
+  hivalc        VARCHAR2(1),
+  csrc          VARCHAR2(8),
+  cnnamc        VARCHAR2(40),
+  cnphnc        VARCHAR2(20),
+  cnemac        VARCHAR2(70),
+  cnfaxc        VARCHAR2(20),
+  cnpagc        VARCHAR2(20),
+  rndgpc        VARCHAR2(10),
+  subgpc        VARCHAR2(10),
+  resgpc        VARCHAR2(10),
+  alparc        VARCHAR2(1),
+  titlec        VARCHAR2(40),
+  lnamec        VARCHAR2(40),
+  connmc        VARCHAR2(40),
+  emailc        VARCHAR2(40),
+  dshtna        VARCHAR2(15),
+  dcatla        VARCHAR2(15),
+  downca        VARCHAR2(15),
+  dshvia        VARCHAR2(15),
+  dshcoa        VARCHAR2(15),
+  dfwda         VARCHAR2(15),
+  dwhpua        VARCHAR2(1),
+  alwboa        VARCHAR2(1),
+  pomand        VARCHAR2(1),
+  dfrgta        VARCHAR2(15),
+  dfslra        VARCHAR2(15),
+  dfcura        VARCHAR2(15),
+  dforta        VARCHAR2(15),
+  dfwhsa        VARCHAR2(5),
+  dfprca        VARCHAR2(15),
+  mdelca        NUMBER(13,2),
+  mordca        NUMBER(13,2),
+  txexa         VARCHAR2(1),
+  exmnoa        VARCHAR2(5),
+  dfcntd        VARCHAR2(15),
+  dfshta        VARCHAR2(15),
+  dftoda        VARCHAR2(3),
+  dftowa        VARCHAR2(8),
+  dfptma        VARCHAR2(15),
+  mxcofc        VARCHAR2(1),
+  mxcsfc        VARCHAR2(1),
+  retgpc        VARCHAR2(10),
+  dist_frst_day VARCHAR2(3),
+  div_part      NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part'),
+  cust_typ      VARCHAR2(3)
+)
+compress for all operations;
+comment on table SYSP200C
+  is 'Each customer used in eWMS may have a record on this table.';
+comment on column SYSP200C.cocc
+  is 'This is the Company Code.';
+comment on column SYSP200C.acnoc
+  is 'This is the ACCOUNT NUMBER.';
+comment on column SYSP200C.acbrc
+  is 'This is the Account Branch.';
+comment on column SYSP200C.opnyyc
+  is 'This is the Year when the account was opened.';
+comment on column SYSP200C.opnmmc
+  is 'This is the month when the account was open.';
+comment on column SYSP200C.opnddc
+  is 'This is the day when the account was opened.';
+comment on column SYSP200C.sortc
+  is 'This is the sort name.';
+comment on column SYSP200C.namec
+  is 'This is the name of the Customer.';
+comment on column SYSP200C.add1c
+  is 'This is the detail lines of the address.';
+comment on column SYSP200C.add2c
+  is 'Address Line 2 of the address should contain the Suite, Building or Location which may occur within an address.';
+comment on column SYSP200C.add3c
+  is 'Address Line 3 of the address should contain the street address';
+comment on column SYSP200C.cityc
+  is 'The City is the Name of the political subdivision in which the address lies.';
+comment on column SYSP200C.statec
+  is '           This field contains the two-letter postal abbreviation
+           of the state where the customer to which the order is 
+           to be delivered is located.                           
+                                                                 
+           Valid Values are:                                     
+                                                                 
+"AL"       ALABAMA                                               
+"AK"       ALASKA                                                
+"AZ"       ARIZONA                                               
+"AR"       ARKANSAS                                              
+"CA"       CALIFORNIA                                            
+"CO"       COLORADO                                              
+"CT"       CONNECTICUT                                           
+"DE"       DELAWARE                                              
+"DC"       DISTRICT OF COLUMBIA                                  
+"FL"       FLORIDA                                               
+"GA"       GEORGIA                                               
+"HI"       HAWAII                                                
+           This field contains the two-letter postal abbreviation
+           of the state where the customer to which the order is 
+           to be delivered is located.                           
+                                                                 
+           Valid Values are:                                     
+                                                                 
+"AL"       ALABAMA                                               
+"AK"       ALASKA                                                
+"AZ"       ARIZONA                                               
+"AR"       ARKANSAS                                              
+"CA"       CALIFORNIA                                            
+"CO"       COLORADO                                              
+"CT"       CONNECTICUT                                           
+"DE"       DELAWARE                                              
+"DC"       DISTRICT OF COLUMBIA                                  
+"FL"       FLORIDA                                               
+"GA"       GEORGIA                                               
+"HI"       HAWAII  
+"ID"       IDAHO        
+"IL"       ILLINOIS     
+"IN"       INDIANA      
+"IA"       IOWA         
+"KS"       KANSAS       
+"KY"       KENTUCKY     
+"LA"       LOUISIANA    
+"ME"       MAINE        
+"MD"       MARYLAND     
+"MA"       MASSACHUSETTS
+"MI"       MICHIGAN     
+"MN"       MINNESOTA    
+"MS"       MISSISSIPPI  
+"MO"       MISSOURI     
+"MT"       MONTANA      
+"NE"       NEBRASKA     
+"NV"       NEVADA       
+"NH"       NEW HAMPSHIRE
+"NJ"       NEW JERSEY    
+"NM"       NEW MEXICO    
+"NY"       NEW YORK      
+"NC"       NORTH CAROLINA
+"ND"       NORTH DAKOTA  
+"OH"       OHIO          
+"OK"       OKLAHOMA      
+"OR"       OREGON        
+"PA"       PENNSYLVANIA  
+"PR"       PUERTO RICO   
+"RI"       RHODE ISLAND  
+"SC"       SOUTH CAROLINA
+"SD"       SOUTH DAKOTA  
+"TN"       TENNESSEE     
+"TX"       TEXAS         
+"UT"       UTAH          
+"VA"       VIRGINIA      
+"VT"       VERMONT       
+"WA"       WASHINGTON   
+"WV"       WEST VIRGINIA
+"WI"       WISCONSIN    
+"WY"       WYOMING                                                    
+                                                                                                                                  
+';
+comment on column SYSP200C.zipc
+  is 'The Primary zip code length designate how many bytes of the zip code are valid for the country being processed.                                          
+                                                    
+For Example, for USA  it is 5.';
+comment on column SYSP200C.contyc
+  is 'The County Name specifies the name of a county in a state of the United States.';
+comment on column SYSP200C.cntrc
+  is 'The Country is the name of a country that does business with McLane.';
+comment on column SYSP200C.telnoc
+  is 'The Phone is the portion of the telephone number which designates the specific recipient or telephone  system (in the case of a company with multiple extensions to the same telephone number).';
+comment on column SYSP200C.faxnoc
+  is 'The fax number associated with a customer.';
+comment on column SYSP200C.telexc
+  is 'The Telex number associated with a customer.';
+comment on column SYSP200C.statc
+  is 'The Status is an indicator of the current status 
+of the customer.';
+comment on column SYSP200C.typecc
+  is 'This is the Account Type Code.';
+comment on column SYSP200C.tclscc
+  is 'This is the trade classification code.';
+comment on column SYSP200C.langcc
+  is 'This is the Language Code.';
+comment on column SYSP200C.owncoc
+  is 'This is the name of the Owner-Company.';
+comment on column SYSP200C.owndvc
+  is 'This is the Owner Division.';
+comment on column SYSP200C.ownerc
+  is 'This is the Owner.';
+comment on column SYSP200C.routec
+  is 'This is the Route Code.';
+comment on column SYSP200C.stopsc
+  is 'This is the Stop Sequence.';
+comment on column SYSP200C.shelfc
+  is 'This is the Shelf Life (Days).';
+comment on column SYSP200C.asnouc
+  is 'This is the ASN info required.';
+comment on column SYSP200C.regnc
+  is 'The region code is the unique identifier for a grouping of McLane divisions used for reporting purposes.  Valid values for the description include: Coastal,  Inland, Mountain, and International.';
+comment on column SYSP200C.carrc
+  is ' A 4-DIGIT CODE ASSIGNED TO EACH CARRIER THAT WILL BE USED TO IDENTIFY THE CARRIER ASSOCIATED WITH A CARRIER SHIPMENT.';
+comment on column SYSP200C.dockc
+  is 'This is the Dock Door Number.';
+comment on column SYSP200C.priorc
+  is 'This is the Order Priority.';
+comment on column SYSP200C.shporc
+  is 'Pallet Order Reporting Flag';
+comment on column SYSP200C.updnoc
+  is 'This is the Record Update Number.';
+alter table SYSP200C
+  add constraint UNQ_SYSP200C_01 unique (DIV_PART, ACNOC);
+

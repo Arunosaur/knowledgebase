@@ -1,0 +1,20 @@
+create table PRCS_CNTL_DFN_CN1P
+(
+  prcs_id    VARCHAR2(30),
+  descr      VARCHAR2(80),
+  wait_secs  NUMBER default 5,
+  max_attmpt NUMBER default 12
+)
+;
+alter table PRCS_CNTL_DFN_CN1P
+  add constraint PK_CN1P primary key (PRCS_ID);
+alter table PRCS_CNTL_DFN_CN1P
+  add constraint MCL_CHK_01_OCT_16_22561591
+  check ("PRCS_ID" IS NOT NULL);
+alter table PRCS_CNTL_DFN_CN1P
+  add constraint MCL_CHK_01_OCT_16_22561592
+  check ("DESCR" IS NOT NULL);
+alter table PRCS_CNTL_DFN_CN1P
+  add constraint MCL_CHK_01_OCT_16_22561594
+  check ("MAX_ATTMPT" IS NOT NULL);
+

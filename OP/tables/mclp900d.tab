@@ -1,0 +1,41 @@
+create table MCLP900D
+(
+  ordnod        NUMBER(11),
+  ordlnd        NUMBER(7,2),
+  reasnd        VARCHAR2(8),
+  descd         VARCHAR2(50),
+  exlvld        NUMBER(2),
+  itemd         VARCHAR2(25),
+  uomd          VARCHAR2(3),
+  repitd        VARCHAR2(25),
+  repumd        VARCHAR2(3),
+  repsbd        VARCHAR2(1),
+  qtyfrd        NUMBER(13,4),
+  qtytod        NUMBER(13,4),
+  exdtd         NUMBER(2),
+  exmond        NUMBER(2),
+  exyerd        NUMBER(4),
+  extimd        NUMBER(6),
+  resexd        VARCHAR2(2),
+  exdesd        VARCHAR2(40),
+  resusd        VARCHAR2(20),
+  resdtd        NUMBER(6),
+  restmd        NUMBER(6),
+  last_chg_ts   DATE default SYSDATE,
+  div_part      NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part'),
+  excptn_log_id NUMBER generated always as identity (cycle nocache order)
+)
+compress for all operations;
+comment on column MCLP900D.excptn_log_id
+  is 'An unique identifier of the exception log record.';
+create index N_MCLP900D_01 on MCLP900D (DIV_PART, ORDNOD)
+  compress;
+alter table MCLP900D
+  add constraint PK_MCLP900D primary key (EXCPTN_LOG_ID);
+alter table MCLP900D
+  add constraint MCL_CHK_01_OCT_16_225615213
+  check ("LAST_CHG_TS" IS NOT NULL);
+alter table MCLP900D
+  add constraint MCL_CHK_01_OCT_16_225615214
+  check ("DIV_PART" IS NOT NULL);
+

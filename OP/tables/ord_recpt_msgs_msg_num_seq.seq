@@ -1,0 +1,7 @@
+create sequence ORD_RECPT_MSGS_MSG_NUM_SEQ
+minvalue 1
+maxvalue 9999999999999999999999999999
+start with 914981931
+increment by 1
+cache 100000;
+

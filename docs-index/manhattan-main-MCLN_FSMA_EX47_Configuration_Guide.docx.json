@@ -1,0 +1,25 @@
+{
+  "fileId": "manhattan-main-MCLN_FSMA_EX47_Configuration_Guide.docx",
+  "fileName": "MCLN_FSMA_EX47_Configuration Guide.docx",
+  "webUrl": "MCLN_FSMA_EX47_Configuration Guide.docx",
+  "mimeType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "extension": ".docx",
+  "group": "manhattan-main",
+  "site": "local-bulk-upload",
+  "lastModified": "2026-03-19T09:36:00Z",
+  "syncedAt": "2026-03-19T05:08:35.696Z",
+  "title": "MCLN_FSMA_EX47_Configuration Guide",
+  "fullText": "Configuration Document    EX4 7  – Receiving Item Attribute Enhancements                                                        1 . System Codes       Global Extension       Navigate to the  System Codes  UI.          Search by Code Type 000 and select the Apply button.           Click the selected Custom Codes and select Code IDs      4. Select the Add button, populate as below, and select save     Enable the EX4 7  extension and save.      2.  Transaction Parameters         EX4 7  Receiving Date Enhancements      1. Navigate to the  Transaction Parameters (Configuration)  UI and search  NEW Recv -Single Item .         2. Select  NEW Recv -Single Item  and click Program Template to add a parameter.               3. Select the ‘Add’ button to add a new transaction parameter         [Text Wrapping Break]    4. Add a new transaction parameter as below, hit the Save button         Select the ‘Add’ button again and configure the second EX47 enablement parameter as below. Click Save when finished. Select the  NEW Recv -Single Item  transaction, and hit the Edit button     Confirm that Parameter 14-14 ‘Prompt for SKU Attributes’ is set to ‘Yes’    Enable the parameter s as below and select the Save button  Item Warehouse Config (Lot tracking) For Lot-tracked (FSMA) items, navigate to the Items UI and search using your item name Select the record and hit view Select the Warehouse tab and hit the Edit button Configure Inventory Tracking fields as below and hit Save. Post Configuration Instructions        Once the configuration has been entered, the following actions need to be taken before the configuration is active:      System Action    Required?    No Action Needed   No   Environment Cache Clear   Yes   Environment Restart   No   App Server Restart   No      Questions and Answers       This below table is used to track questions that were asked and answered regarding this enhancement. If the question resulted in any action it is listed against the question.      #    Asked By    Question    Answered By    Answer    Date Added    Action Taken",
+  "extractionMode": "provided-text",
+  "chunks": [
+    {
+      "chunkIndex": 0,
+      "startChar": 0,
+      "text": "[Document: MCLN_FSMA_EX47_Configuration Guide]\n\nConfiguration Document    EX4 7  – Receiving Item Attribute Enhancements                                                        1 . System Codes       Global Extension       Navigate to the  System Codes  UI.          Search by Code Type 000 and select the Apply button.           Click the selected Custom Codes and select Code IDs      4. Select the Add button, populate as below, and select save     Enable the EX4 7  extension and save.      2.  Transaction Parameters         EX4 7  Receiving Date Enhancements      1. Navigate to the  Transaction Parameters (Configuration)  UI and search  NEW Recv -Single Item .         2. Select  NEW Recv -Single Item  and click Program Template to add a parameter.               3. Select the ‘Add’ button to add a new transaction parameter         [Text Wrapping Break]    4. Add a new transaction parameter as below, hit the Save button         Select the ‘Add’ button again and configure the second EX47 enablement parameter as below. Click Save when finished. Select the  NEW Recv -Single Item  transaction, and hit the Edit button     Confirm that Parameter 14-14 ‘Prompt for SKU Attributes’ is set to ‘Yes’    Enable the parameter s as below and select the Save button  Item Warehouse Config (Lot tracking) For Lot-tracked (FSMA) items, navigate to the Items UI and search using your item name Select the record and hit view Select the Warehouse tab and hit the Edit button Configure Inventory Tracking fields as below and hit Save. Post Configuration Instructions        Once the configuration has been entered, the following actions need to be taken before the configuration is active:      System Action    Required?    No Action Needed   No   Environment Cache Clear   Yes   Environment Restart   No   App Server Restart   No      Questions and Answers       This below table is used to track questions that were asked and answered regarding this enhancement. If the question resulted in any action it is listed against the question.      #    Asked By    Question    Answered By    Answer    Date Added    Action Taken"
+    }
+  ],
+  "chunkCount": 1,
+  "wordCount": 300,
+  "byteSize": 1989703,
+  "reindexedAt": "2026-04-09T01:02:11.203Z"
+}

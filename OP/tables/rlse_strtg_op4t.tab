@@ -1,0 +1,26 @@
+create table RLSE_STRTG_OP4T
+(
+  strtg_id NUMBER,
+  div_part NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part'),
+  strtg_nm VARCHAR2(30)
+)
+;
+create index FK_OP4T_DI1D_01 on RLSE_STRTG_OP4T (DIV_PART)
+  compress;
+alter table RLSE_STRTG_OP4T
+  add constraint PK_OP4T primary key (DIV_PART, STRTG_ID);
+alter table RLSE_STRTG_OP4T
+  add constraint UNQ_OP4T_01 unique (DIV_PART, STRTG_NM);
+alter table RLSE_STRTG_OP4T
+  add constraint FK_OP4T_DI1D_01 foreign key (DIV_PART)
+  references DIV_MSTR_DI1D (DIV_PART);
+alter table RLSE_STRTG_OP4T
+  add constraint MCL_CHK_01_OCT_16_225615343
+  check ("STRTG_ID" IS NOT NULL);
+alter table RLSE_STRTG_OP4T
+  add constraint MCL_CHK_01_OCT_16_225615344
+  check ("DIV_PART" IS NOT NULL);
+alter table RLSE_STRTG_OP4T
+  add constraint MCL_CHK_01_OCT_16_225615345
+  check ("STRTG_NM" IS NOT NULL);
+

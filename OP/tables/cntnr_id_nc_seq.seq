@@ -1,0 +1,8 @@
+create sequence CNTNR_ID_NC_SEQ
+minvalue 1
+maxvalue 999999
+start with 540830
+increment by 1
+cache 100
+cycle;
+

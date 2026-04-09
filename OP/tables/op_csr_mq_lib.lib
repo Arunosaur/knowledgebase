@@ -1,0 +1,4 @@
+create or replace library OP_CSR_MQ_LIB
+  as '/OPCIGP/opcig/prodcode/bin/op_mq_put_call.so'
+/
+

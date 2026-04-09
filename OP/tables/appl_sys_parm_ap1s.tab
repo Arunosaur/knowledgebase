@@ -1,0 +1,51 @@
+create table APPL_SYS_PARM_AP1S
+(
+  appl_id     VARCHAR2(5),
+  parm_id     VARCHAR2(20),
+  parm_typ    VARCHAR2(3),
+  col_typ     VARCHAR2(4),
+  intgr_val   NUMBER(9),
+  vchar_val   VARCHAR2(20),
+  dec_val     NUMBER(12,4),
+  dt_val      DATE,
+  user_id     VARCHAR2(8),
+  last_chg_ts DATE default SYSDATE,
+  div_part    NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+;
+create index N_AP1S_01 on APPL_SYS_PARM_AP1S (DIV_PART, APPL_ID, PARM_ID, VCHAR_VAL)
+  compress;
+create index N_AP1S_02 on APPL_SYS_PARM_AP1S (DIV_PART, APPL_ID, PARM_ID, INTGR_VAL)
+  compress;
+create index N_AP1S_03 on APPL_SYS_PARM_AP1S (DIV_PART, VCHAR_VAL, APPL_ID, PARM_ID)
+  compress;
+alter table APPL_SYS_PARM_AP1S
+  add constraint PK_AP1S primary key (DIV_PART, APPL_ID, PARM_ID);
+alter table APPL_SYS_PARM_AP1S
+  add constraint MCL_CHK_01_OCT_16_225615109
+  check ("APPL_ID" IS NOT NULL);
+alter table APPL_SYS_PARM_AP1S
+  add constraint MCL_CHK_01_OCT_16_225615110
+  check ("PARM_ID" IS NOT NULL);
+alter table APPL_SYS_PARM_AP1S
+  add constraint MCL_CHK_01_OCT_16_225615111
+  check ("PARM_TYP" IS NOT NULL);
+alter table APPL_SYS_PARM_AP1S
+  add constraint MCL_CHK_01_OCT_16_225615112
+  check ("COL_TYP" IS NOT NULL);
+alter table APPL_SYS_PARM_AP1S
+  add constraint MCL_CHK_01_OCT_16_225615113
+  check ("INTGR_VAL" IS NOT NULL);
+alter table APPL_SYS_PARM_AP1S
+  add constraint MCL_CHK_01_OCT_16_225615114
+  check ("VCHAR_VAL" IS NOT NULL);
+alter table APPL_SYS_PARM_AP1S
+  add constraint MCL_CHK_01_OCT_16_225615115
+  check ("DEC_VAL" IS NOT NULL);
+alter table APPL_SYS_PARM_AP1S
+  add constraint MCL_CHK_01_OCT_16_225615116
+  check ("USER_ID" IS NOT NULL);
+alter table APPL_SYS_PARM_AP1S
+  add constraint MCL_CHK_01_OCT_16_225615118
+  check ("DIV_PART" IS NOT NULL);
+

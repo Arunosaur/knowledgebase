@@ -1,0 +1,25 @@
+{
+  "fileId": "manhattan-main-MCLN_FS_EX55_Configuration_Guide.docx",
+  "fileName": "MCLN_FS_EX55_Configuration Guide.docx",
+  "webUrl": "MCLN_FS_EX55_Configuration Guide.docx",
+  "mimeType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "extension": ".docx",
+  "group": "manhattan-main",
+  "site": "local-bulk-upload",
+  "lastModified": "2026-03-19T09:36:00Z",
+  "syncedAt": "2026-03-19T05:08:35.772Z",
+  "title": "MCLN_FS_EX55_Configuration Guide",
+  "fullText": "Configuration Document    EX 55  – Pick from Reserve Traceability Capture               Contents                                                              Configuration Explanation       This document details the configuration steps for the  EX55  – Pick from Reserve Traceability Capture .      Configuration Prerequisites          Configuration Steps         Steps for all necessary configuration can be found below.      3.1 System Codes       Global Extension       Navigate to the  System Codes  UI.          Search by Code Type 000 and select the Apply button.            Click the selected Custom Codes and select Code IDs      4. Select the Add button, populate as below, and select save     Enable the  EX55  extension and save.      3.2 Transaction Parameters         EX55   Pick form Reserve Traceability Capture    1. Navigate to the  Transaction Parameters (Configuration)  UI and search  Pull iLPN .         2. Select  Pull iLPN Full click Program Template to add a parameter.               3. Select the ‘Add’ button to add a new transaction parameter         [Text Wrapping Break]    4. Add a new transaction parameter as below, hit the Save button         Select the  Pull iLPN Full transaction , and hit the Edit button               Enable the parameter as below, select the Save button   Repeat these Steps for Pull iLPN Partial Transaction          Post Configuration Instructions        Once the configuration has been entered, the following actions need to be taken before the configuration is active:      System Action    Required?    No Action Needed   No   Environment Cache Clear   Yes   Environment Restart   No   App Server Restart   No      Questions and Answers       This below table is used to track questions that were asked and answered regarding this enhancement. If the question resulted in any action it is listed against the question.      #    Asked By    Question    Answered By    Answer    Date Added    Action Taken",
+  "extractionMode": "provided-text",
+  "chunks": [
+    {
+      "chunkIndex": 0,
+      "startChar": 0,
+      "text": "[Document: MCLN_FS_EX55_Configuration Guide]\n\nConfiguration Document    EX 55  – Pick from Reserve Traceability Capture               Contents                                                              Configuration Explanation       This document details the configuration steps for the  EX55  – Pick from Reserve Traceability Capture .      Configuration Prerequisites          Configuration Steps         Steps for all necessary configuration can be found below.      3.1 System Codes       Global Extension       Navigate to the  System Codes  UI.          Search by Code Type 000 and select the Apply button.            Click the selected Custom Codes and select Code IDs      4. Select the Add button, populate as below, and select save     Enable the  EX55  extension and save.      3.2 Transaction Parameters         EX55   Pick form Reserve Traceability Capture    1. Navigate to the  Transaction Parameters (Configuration)  UI and search  Pull iLPN .         2. Select  Pull iLPN Full click Program Template to add a parameter.               3. Select the ‘Add’ button to add a new transaction parameter         [Text Wrapping Break]    4. Add a new transaction parameter as below, hit the Save button         Select the  Pull iLPN Full transaction , and hit the Edit button               Enable the parameter as below, select the Save button   Repeat these Steps for Pull iLPN Partial Transaction          Post Configuration Instructions        Once the configuration has been entered, the following actions need to be taken before the configuration is active:      System Action    Required?    No Action Needed   No   Environment Cache Clear   Yes   Environment Restart   No   App Server Restart   No      Questions and Answers       This below table is used to track questions that were asked and answered regarding this enhancement. If the question resulted in any action it is listed against the question.      #    Asked By    Question    Answered By    Answer    Date Added    Action Taken"
+    }
+  ],
+  "chunkCount": 1,
+  "wordCount": 260,
+  "byteSize": 1157659,
+  "reindexedAt": "2026-04-09T01:02:11.207Z"
+}

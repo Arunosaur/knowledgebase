@@ -1,0 +1,32 @@
+create table SPLIT_CUS_ITM_OP1C
+(
+  cbr_cust  VARCHAR2(8),
+  mcl_item  VARCHAR2(6) not null,
+  split_typ VARCHAR2(10),
+  div_part  NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part') not null
+)
+;
+create index FK_OP1C_OP8S_01 on SPLIT_CUS_ITM_OP1C (SPLIT_TYP)
+  compress;
+create index FK_OP1C_SAWP505E_01 on SPLIT_CUS_ITM_OP1C (MCL_ITEM)
+  compress;
+create index FK_OP1C_SYSP200C_01 on SPLIT_CUS_ITM_OP1C (DIV_PART, CBR_CUST)
+  compress;
+alter table SPLIT_CUS_ITM_OP1C
+  add constraint PK_OP1C primary key (DIV_PART, CBR_CUST, MCL_ITEM, SPLIT_TYP);
+alter table SPLIT_CUS_ITM_OP1C
+  add constraint FK_OP1C_OP8S_01 foreign key (SPLIT_TYP)
+  references SPLIT_DMN_OP8S (SPLIT_TYP) on delete cascade;
+alter table SPLIT_CUS_ITM_OP1C
+  add constraint FK_OP1C_SAWP505E_01 foreign key (MCL_ITEM)
+  references SAWP505E (CATITE) on delete cascade;
+alter table SPLIT_CUS_ITM_OP1C
+  add constraint FK_OP1C_SYSP200C_01 foreign key (DIV_PART, CBR_CUST)
+  references SYSP200C (DIV_PART, ACNOC) on delete cascade;
+alter table SPLIT_CUS_ITM_OP1C
+  add constraint MCL_CHK_01_OCT_16_225615551
+  check ("CBR_CUST" IS NOT NULL);
+alter table SPLIT_CUS_ITM_OP1C
+  add constraint MCL_CHK_01_OCT_16_225615553
+  check ("SPLIT_TYP" IS NOT NULL);
+

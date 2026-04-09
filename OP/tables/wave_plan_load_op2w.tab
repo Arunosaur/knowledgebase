@@ -1,0 +1,29 @@
+create table WAVE_PLAN_LOAD_OP2W
+(
+  div_part NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part'),
+  llr_dt   DATE,
+  load_num VARCHAR2(4),
+  seq      NUMBER,
+  stop_cnt NUMBER
+)
+;
+alter table WAVE_PLAN_LOAD_OP2W
+  add constraint PK_OP2W primary key (DIV_PART, LLR_DT, LOAD_NUM);
+alter table WAVE_PLAN_LOAD_OP2W
+  add constraint UNQ_OP2W_01 unique (DIV_PART, LLR_DT, SEQ);
+alter table WAVE_PLAN_LOAD_OP2W
+  add constraint MCL_CHK_01_OCT_16_225615359
+  check ("DIV_PART" IS NOT NULL);
+alter table WAVE_PLAN_LOAD_OP2W
+  add constraint MCL_CHK_01_OCT_16_225615360
+  check ("LLR_DT" IS NOT NULL);
+alter table WAVE_PLAN_LOAD_OP2W
+  add constraint MCL_CHK_01_OCT_16_225615361
+  check ("LOAD_NUM" IS NOT NULL);
+alter table WAVE_PLAN_LOAD_OP2W
+  add constraint MCL_CHK_01_OCT_16_225615362
+  check ("SEQ" IS NOT NULL);
+alter table WAVE_PLAN_LOAD_OP2W
+  add constraint MCL_CHK_01_OCT_16_225615363
+  check ("STOP_CNT" IS NOT NULL);
+

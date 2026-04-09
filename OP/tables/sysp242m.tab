@@ -1,0 +1,32 @@
+create table SYSP242M
+(
+  compm    VARCHAR2(3),
+  custm    VARCHAR2(8),
+  concdm   VARCHAR2(15),
+  titlem   VARCHAR2(40),
+  fnamem   VARCHAR2(40),
+  lnamem   VARCHAR2(40),
+  jobtim   VARCHAR2(40),
+  phonem   VARCHAR2(40),
+  faxm     VARCHAR2(40),
+  emailm   VARCHAR2(40),
+  tmzonm   NUMBER(3,1),
+  commem   VARCHAR2(256),
+  cadd1m   VARCHAR2(40),
+  cadd2m   VARCHAR2(40),
+  cadd3m   VARCHAR2(40),
+  citym    VARCHAR2(40),
+  statem   VARCHAR2(40),
+  zipcdm   VARCHAR2(40),
+  cntym    VARCHAR2(40),
+  cntrym   VARCHAR2(40),
+  contnm   VARCHAR2(40),
+  dtchgm   NUMBER(6),
+  tmchgm   NUMBER(6),
+  uschgm   VARCHAR2(20),
+  div_part NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+compress for all operations;
+alter table SYSP242M
+  add constraint UNQ_SYSP242M_01 unique (DIV_PART, COMPM, CUSTM);
+

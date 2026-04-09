@@ -1,0 +1,20 @@
+create table MCLP260D
+(
+  txjrd    VARCHAR2(3) not null,
+  descd    VARCHAR2(30),
+  stampd   VARCHAR2(1),
+  stredd   VARCHAR2(1),
+  stzond   VARCHAR2(3),
+  div_part NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+;
+comment on column MCLP260D.descd
+  is 'A brief description of the TAX JURISDICTION specified.';
+comment on column MCLP260D.stzond
+  is 'This is the Slot Jurisdiction to pull from.';
+alter table MCLP260D
+  add constraint PK_MCLP260D primary key (DIV_PART, TXJRD);
+alter table MCLP260D
+  add constraint MCL_CHK_01_OCT_16_22561553
+  check ("DIV_PART" IS NOT NULL);
+

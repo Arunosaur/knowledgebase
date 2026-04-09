@@ -1,0 +1,102 @@
+create table SAWP505E
+(
+  iteme      VARCHAR2(25) not null,
+  uome       VARCHAR2(3) not null,
+  cnvfce     NUMBER(13,4),
+  wghte      NUMBER(11,4),
+  wgtume     VARCHAR2(3),
+  lgthe      NUMBER(9,5),
+  hghte      NUMBER(9,5),
+  wdthe      NUMBER(9,5),
+  cubee      NUMBER(11,4),
+  dimume     VARCHAR2(3),
+  boxe       VARCHAR2(1),
+  state      VARCHAR2(1),
+  stimee     NUMBER(6),
+  sdaye      NUMBER(2),
+  smthe      NUMBER(2),
+  syere      NUMBER(4),
+  usere      VARCHAR2(20),
+  tie        NUMBER(3),
+  hie        NUMBER(3),
+  catite     VARCHAR2(6),
+  ctdsce     VARCHAR2(30),
+  nacse      VARCHAR2(3),
+  nustme     NUMBER(4),
+  mlusbe     NUMBER(4),
+  bsgrpe     VARCHAR2(3),
+  scbcte     VARCHAR2(3),
+  sizee      VARCHAR2(8),
+  shppke     NUMBER(4),
+  mulsle     NUMBER(5),
+  upccse     VARCHAR2(15),
+  upce       VARCHAR2(15),
+  fmqtye     NUMBER(4),
+  kite       VARCHAR2(1),
+  upc_inner  VARCHAR2(15),
+  cig_typ_cd VARCHAR2(3) default '000',
+  logo_sw    VARCHAR2(1) default 'N' not null
+)
+;
+comment on table SAWP505E
+  is 'Each item (INVP100A) used within eWMS must have record(s) on this table.';
+comment on column SAWP505E.iteme
+  is 'May not be blank/null.
+';
+comment on column SAWP505E.cnvfce
+  is 'May not be zero/null and must be greater than zero.
+
+If CNVFCE = 1, there must not be another record on SAWP505E which has the same ITEME and CNVFCE.
+';
+comment on column SAWP505E.wghte
+  is 'If CNVFCE = 1, may not be zero/null.
+
+If not zero/null, may not be less than zero.
+';
+comment on column SAWP505E.lgthe
+  is 'If CNVFCE = 1 may not be zero/null.
+
+If not zero/null, may not be less than zero.
+';
+comment on column SAWP505E.hghte
+  is 'If CNVFCE = 1 may not be zero/null.
+
+If not zero/null, may not be less than zero.
+';
+comment on column SAWP505E.wdthe
+  is 'If CNVFCE = 1 may not be zero/null.
+
+If not zero/null, may not be less than zero.
+';
+comment on column SAWP505E.cubee
+  is 'If CNVFCE = 1 may not be zero/null.
+
+If not zero/null, may not be less than zero.
+';
+comment on column SAWP505E.stimee
+  is 'If not zero/null, must be a valid time
+';
+comment on column SAWP505E.sdaye
+  is 'If not zero/null, must be in the range of 01 -> 31.
+';
+comment on column SAWP505E.smthe
+  is 'If not zero/null, must be in the range of 01 -> 12.
+';
+comment on column SAWP505E.syere
+  is 'If not zero/null, may not be less than zero.
+';
+comment on column SAWP505E.usere
+  is 'ID of user who created this record.
+';
+comment on column SAWP505E.tie
+  is 'Number of boxes per layer';
+alter table SAWP505E
+  add constraint PK_SAWP505E primary key (ITEME, UOME);
+alter table SAWP505E
+  add constraint UNQ_SAWP505E_01 unique (CATITE);
+alter table SAWP505E
+  add constraint MCL_CHK_01_OCT_16_22561517
+  check ("CIG_TYP_CD" IS NOT NULL);
+alter table SAWP505E
+  add check (logo_sw IN ('N','Y'));
+

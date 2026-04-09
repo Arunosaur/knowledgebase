@@ -1,0 +1,20 @@
+{
+  "id": "ke-1774200120-op-tables",
+  "type": "process",
+  "question": "What are the key order and load tables in the OP system and how do they relate to each other?",
+  "answer": "Key order and load tables in the OP system (OPCIGP database, OP schema): ORDP100A = customer order header (order-level). ORDP120B = customer order detail / line items. LOAD_DEPART_OP1F = load departure records — contains LLR date (Load Label Release date) and load number. LOAD_CLOS_CNTRL_BC2C = load close control — also contains LLR date and load number, represents the closing/billing control. DIV_MSTR_DI1D = division master, holds DC/division metadata including fin_div_cd which maps to dc_id in WMSHUB. Relationship query: SELECT * FROM ordp100a a, ordp120b b, load_depart_op1f f, load_clos_cntrl_bc2c c, div_mstr_di1d d WHERE a.div_part = b.div_part AND d.div_part = a.div_part AND f.div_part = a.div_part AND c.div_part = a.div_part AND a.load_depart_sid = f.load_depart_sid AND c.llr_dt = f.llr_dt AND c.load_num = f.load_num AND a.ordnoa = b.ordnob. Order status codes in OP: O = Open, R = Released, A = Shipped.",
+  "context": {
+    "group": "cigwms-prod",
+    "schemas": ["OP"],
+    "dcCodes": [],
+    "systems": ["op"],
+    "objects": ["ORDP100A", "ORDP120B", "LOAD_DEPART_OP1F", "LOAD_CLOS_CNTRL_BC2C", "DIV_MSTR_DI1D"]
+  },
+  "tags": ["op tables", "order header", "order detail", "load departure", "load close", "division master", "ordp100a", "ordp120b", "load_depart_op1f", "load_clos_cntrl_bc2c", "div_mstr_di1d", "order status", "llr date", "load number"],
+  "quality": 3,
+  "source": "expert-provided",
+  "capturedBy": "asrajag",
+  "approved": true,
+  "createdAt": "2026-03-21T00:00:00.000Z",
+  "updatedAt": "2026-03-21T00:00:00.000Z"
+}

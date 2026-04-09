@@ -1,0 +1,48 @@
+create table SUB_MSTR_OP5S
+(
+  div_part    NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part'),
+  cls_typ     VARCHAR2(6),
+  cls_id      VARCHAR2(10),
+  catlg_num   NUMBER,
+  sub_typ     VARCHAR2(3) not null,
+  sub_item    NUMBER,
+  qty_fctor   NUMBER(9,4),
+  start_dt    DATE,
+  end_dt      DATE,
+  user_id     VARCHAR2(8),
+  last_chg_ts DATE
+)
+compress for all operations;
+alter table SUB_MSTR_OP5S
+  add constraint PK_OP5S primary key (DIV_PART, CLS_TYP, CLS_ID, CATLG_NUM, SUB_TYP);
+alter table SUB_MSTR_OP5S
+  add constraint MCL_CHK_01_OCT_16_22561518
+  check ("DIV_PART" IS NOT NULL);
+alter table SUB_MSTR_OP5S
+  add constraint MCL_CHK_01_OCT_16_22561519
+  check ("CLS_TYP" IS NOT NULL);
+alter table SUB_MSTR_OP5S
+  add constraint MCL_CHK_01_OCT_16_22561520
+  check ("CLS_ID" IS NOT NULL);
+alter table SUB_MSTR_OP5S
+  add constraint MCL_CHK_01_OCT_16_22561521
+  check ("CATLG_NUM" IS NOT NULL);
+alter table SUB_MSTR_OP5S
+  add constraint MCL_CHK_01_OCT_16_22561523
+  check ("SUB_ITEM" IS NOT NULL);
+alter table SUB_MSTR_OP5S
+  add constraint MCL_CHK_01_OCT_16_22561524
+  check ("QTY_FCTOR" IS NOT NULL);
+alter table SUB_MSTR_OP5S
+  add constraint MCL_CHK_01_OCT_16_22561525
+  check ("START_DT" IS NOT NULL);
+alter table SUB_MSTR_OP5S
+  add constraint MCL_CHK_01_OCT_16_22561526
+  check ("END_DT" IS NOT NULL);
+alter table SUB_MSTR_OP5S
+  add constraint MCL_CHK_01_OCT_16_22561527
+  check ("USER_ID" IS NOT NULL);
+alter table SUB_MSTR_OP5S
+  add constraint MCL_CHK_01_OCT_16_22561528
+  check ("LAST_CHG_TS" IS NOT NULL);
+

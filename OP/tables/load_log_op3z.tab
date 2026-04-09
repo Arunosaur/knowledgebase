@@ -1,0 +1,36 @@
+create table LOAD_LOG_OP3Z
+(
+  div_part NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part'),
+  load_num VARCHAR2(4),
+  llr_dt   DATE,
+  typ      VARCHAR2(6),
+  rsn_id   NUMBER,
+  cust_id  VARCHAR2(8) not null,
+  cust_nm  VARCHAR2(40) not null,
+  corp_cd  NUMBER not null,
+  eta_dt   DATE not null
+)
+;
+create index FK_OP3Z_DI1D_01 on LOAD_LOG_OP3Z (DIV_PART)
+  compress;
+alter table LOAD_LOG_OP3Z
+  add constraint PK_OP3Z primary key (DIV_PART, LOAD_NUM, LLR_DT, TYP, CUST_ID);
+alter table LOAD_LOG_OP3Z
+  add constraint FK_OP3Z_DI1D_01 foreign key (DIV_PART)
+  references DIV_MSTR_DI1D (DIV_PART);
+alter table LOAD_LOG_OP3Z
+  add constraint MCL_CHK_01_OCT_16_225615487
+  check ("DIV_PART" IS NOT NULL);
+alter table LOAD_LOG_OP3Z
+  add constraint MCL_CHK_01_OCT_16_225615488
+  check ("LOAD_NUM" IS NOT NULL);
+alter table LOAD_LOG_OP3Z
+  add constraint MCL_CHK_01_OCT_16_225615489
+  check ("LLR_DT" IS NOT NULL);
+alter table LOAD_LOG_OP3Z
+  add constraint MCL_CHK_01_OCT_16_225615490
+  check ("TYP" IS NOT NULL);
+alter table LOAD_LOG_OP3Z
+  add constraint MCL_CHK_01_OCT_16_225615491
+  check ("RSN_ID" IS NOT NULL);
+

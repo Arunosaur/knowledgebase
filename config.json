@@ -1,0 +1,343 @@
+{
+  "bridge": {
+    "port": 3333,
+    "ollamaUrl": "http://localhost:11434",
+    "defaultModel": "llama3",
+    "sqlclCommand": "sql",
+    "sqlclArgs": ["-R", "2", "-mcp"],
+    "mcpClientName": "oracle-kb-bridge",
+    "mcpModelName": "bridge",
+    "poolEnabled": true,
+    "poolIdleTimeoutMs": 300000,
+    "poolMaxQueueDepth": 20,
+    "toolCallTimeoutMs": 15000,
+    "maxConcurrentConnectionsPerDC": 5,
+    "maxConcurrentConnectionsCigWMS": 5,
+    "maxConcurrentConnectionsWMSHub": 5,
+    "rateLimitPerMinute": 120,
+    "allowedOrigins": ["null", "file://", "http://localhost:3333"],
+    "authToken": "",
+    "msalClientId": "d3590ed6-52b3-4102-aeff-aad2292ab01c",
+    "msalTenantId": "common",
+    "sharepointSiteUrl": "https://mclaneco.sharepoint.com",
+    "docsIndexDir": "./docs-index",
+    "docsChunkSize": 2500,
+    "docsChunkOverlap": 300,
+    "whisperModel": "base",
+    "docsSyncConcurrency": 2,
+    "atlassianEnabled": true,
+    "atlassianDomain": "mclane.atlassian.net",
+    "atlassianEmail": "arun.rajagopalan@mclaneco.com",
+    "atlassianToken": "<set>",
+    "atlassianProjectKeys": []
+  },
+
+  "distributionCenters": [
+    {
+      "code": "06", "dcId": 606, "name": "Lakeland 606",
+      "type": "food-service", "active": true,
+      "manhattanGroup": "manhattan-main",
+      "dmSchema": "FS06_DM", "mdaSchema": "FS06_MDA",
+      "cigwmsGroup": "cigwms-prod",
+      "wmshubGroup": "wmshub-prod"
+    },
+    {
+      "code": "FE", "dcId": 290, "name": "McLane Ocala",
+      "type": "grocery", "active": true,
+      "manhattanGroup": "manhattan-main",
+      "dmSchema": "FE_DM", "mdaSchema": "FE_MDA",
+      "cigwmsGroup": "cigwms-prod",
+      "wmshubGroup": "wmshub-prod"
+    },
+    {
+      "code": "MD", "dcId": 160, "name": "Dothan",
+      "type": "grocery", "active": true,
+      "manhattanGroup": "manhattan-main",
+      "dmSchema": "MD_DM", "mdaSchema": "MD_MDA",
+      "cigwmsGroup": "cigwms-prod",
+      "wmshubGroup": "wmshub-prod"
+    },
+    {
+      "code": "MK", "dcId": 360, "name": "Cumberland",
+      "type": "grocery", "active": true,
+      "manhattanGroup": "manhattan-main",
+      "dmSchema": "MK_DM", "mdaSchema": "MK_MDA",
+      "cigwmsGroup": "cigwms-prod",
+      "wmshubGroup": "wmshub-prod"
+    },
+    {
+      "code": "MN", "dcId": 460, "name": "Minnesota",
+      "type": "grocery", "active": true,
+      "manhattanGroup": "manhattan-main",
+      "dmSchema": "MN_DM", "mdaSchema": "MN_MDA",
+      "cigwmsGroup": "cigwms-prod",
+      "wmshubGroup": "wmshub-prod"
+    },
+    {
+      "code": "MY", "dcId": 260, "name": "NE/Concord",
+      "type": "grocery", "active": true,
+      "manhattanGroup": "manhattan-main",
+      "dmSchema": "MY_DM", "mdaSchema": "MY_MDA",
+      "cigwmsGroup": "cigwms-prod",
+      "wmshubGroup": "wmshub-prod"
+    },
+    {
+      "code": "MZ", "dcId": 450, "name": "Mid-Atlantic",
+      "type": "grocery", "active": true,
+      "manhattanGroup": "manhattan-main",
+      "dmSchema": "MZ_DM", "mdaSchema": "MZ_MDA",
+      "cigwmsGroup": "cigwms-prod",
+      "wmshubGroup": "wmshub-prod"
+    },
+    {
+      "code": "NE", "dcId": 800, "name": "Northeast",
+      "type": "grocery", "active": true,
+      "manhattanGroup": "manhattan-main",
+      "dmSchema": "NE_DM", "mdaSchema": "NE_MDA",
+      "cigwmsGroup": "cigwms-prod",
+      "wmshubGroup": "wmshub-prod"
+    },
+    {
+      "code": "SE", "dcId": 400, "name": "Southeast",
+      "type": "grocery", "active": true,
+      "manhattanGroup": "manhattan-main",
+      "dmSchema": "SE_DM", "mdaSchema": "SE_MDA",
+      "cigwmsGroup": "cigwms-prod",
+      "wmshubGroup": "wmshub-prod"
+    },
+    {
+      "code": "C1", "dcId": 421, "name": "CK Otsego",
+      "type": "grocery", "active": true,
+      "manhattanGroup": "manhattan-ck",
+      "dmSchema": "C1_DM", "mdaSchema": "C1_MDA",
+      "cigwmsGroup": "cigwms-prod",
+      "wmshubGroup": "wmshub-prod"
+    },
+    {
+      "code": "C2", "dcId": 431, "name": "CK St Louis",
+      "type": "grocery", "active": true,
+      "manhattanGroup": "manhattan-ck",
+      "dmSchema": "C2_DM", "mdaSchema": "C2_MDA",
+      "cigwmsGroup": "cigwms-prod",
+      "wmshubGroup": "wmshub-prod"
+    },
+    {
+      "code": "C3", "dcId": 411, "name": "CK Columbus",
+      "type": "grocery", "active": true,
+      "manhattanGroup": "manhattan-ck",
+      "dmSchema": "C3_DM", "mdaSchema": "C3_MDA",
+      "cigwmsGroup": "cigwms-prod",
+      "wmshubGroup": "wmshub-prod"
+    },
+    {
+      "code": "WK", "dcId": 490, "name": "McLane Bluegrass",
+      "type": "grocery", "active": true,
+      "manhattanGroup": "manhattan-wk",
+      "dmSchema": "MAN490_DM", "mdaSchema": "MAN490_MDA",
+      "cigwmsGroup": "cigwms-prod",
+      "wmshubGroup": "wmshub-prod"
+    },
+    {
+      "code": "UT", "dcId": 210, "name": "McLane Salt Lake City",
+      "type": "grocery", "active": false,
+      "goLive": "2026-09",
+      "manhattanGroup": "manhattan-main",
+      "dmSchema": "UT_DM", "mdaSchema": "UT_MDA",
+      "cigwmsGroup": "cigwms-prod",
+      "wmshubGroup": "wmshub-prod"
+    },
+    {
+      "code": "GA", "dcId": 952, "name": "MIW GA",
+      "type": "grocery", "active": true,
+      "manhattanGroup": null, "dmSchema": null, "mdaSchema": null,
+      "cigwmsGroup": "cigwms-prod", "wmshubGroup": null
+    },
+    {
+      "code": "GM", "dcId": 951, "name": "McLane Interstate Warehouse",
+      "type": "grocery", "active": true,
+      "manhattanGroup": null, "dmSchema": null, "mdaSchema": null,
+      "cigwmsGroup": "cigwms-prod", "wmshubGroup": null
+    },
+    {
+      "code": "HP", "dcId": 600, "name": "High Plains",
+      "type": "grocery", "active": true,
+      "manhattanGroup": null, "dmSchema": null, "mdaSchema": null,
+      "cigwmsGroup": "cigwms-prod", "wmshubGroup": null
+    },
+    {
+      "code": "ME", "dcId": 250, "name": "Suneast",
+      "type": "grocery", "active": true,
+      "manhattanGroup": null, "dmSchema": null, "mdaSchema": null,
+      "cigwmsGroup": "cigwms-prod", "wmshubGroup": null
+    },
+    {
+      "code": "MG", "dcId": 470, "name": "McLane Ohio",
+      "type": "grocery", "active": true,
+      "manhattanGroup": null, "dmSchema": null, "mdaSchema": null,
+      "cigwmsGroup": "cigwms-prod", "wmshubGroup": null
+    },
+    {
+      "code": "MI", "dcId": 350, "name": "Midwest",
+      "type": "grocery", "active": true,
+      "manhattanGroup": null, "dmSchema": null, "mdaSchema": null,
+      "cigwmsGroup": "cigwms-prod", "wmshubGroup": null
+    },
+    {
+      "code": "MO", "dcId": 370, "name": "McLane Ozark",
+      "type": "grocery", "active": true,
+      "manhattanGroup": null, "dmSchema": null, "mdaSchema": null,
+      "cigwmsGroup": "cigwms-prod", "wmshubGroup": null
+    },
+    {
+      "code": "MP", "dcId": 500, "name": "Pacific",
+      "type": "grocery", "active": true,
+      "manhattanGroup": null, "dmSchema": null, "mdaSchema": null,
+      "cigwmsGroup": "cigwms-prod", "wmshubGroup": null
+    },
+    {
+      "code": "MS", "dcId": 850, "name": "Sunwest",
+      "type": "grocery", "active": true,
+      "manhattanGroup": null, "dmSchema": null, "mdaSchema": null,
+      "cigwmsGroup": "cigwms-prod", "wmshubGroup": null
+    },
+    {
+      "code": "MW", "dcId": 200, "name": "Western",
+      "type": "grocery", "active": true,
+      "manhattanGroup": null, "dmSchema": null, "mdaSchema": null,
+      "cigwmsGroup": "cigwms-prod", "wmshubGroup": null
+    },
+    {
+      "code": "NC", "dcId": 988, "name": "Carolina",
+      "type": "grocery", "active": true,
+      "manhattanGroup": null, "dmSchema": null, "mdaSchema": null,
+      "cigwmsGroup": "cigwms-prod", "wmshubGroup": null
+    },
+    {
+      "code": "NT", "dcId": 280, "name": "North Texas",
+      "type": "grocery", "active": true,
+      "manhattanGroup": null, "dmSchema": null, "mdaSchema": null,
+      "cigwmsGroup": "cigwms-prod", "wmshubGroup": null
+    },
+    {
+      "code": "NW", "dcId": 300, "name": "Northwest",
+      "type": "grocery", "active": true,
+      "manhattanGroup": null, "dmSchema": null, "mdaSchema": null,
+      "cigwmsGroup": "cigwms-prod", "wmshubGroup": null
+    },
+    {
+      "code": "PA", "dcId": 270, "name": "McLane PA",
+      "type": "grocery", "active": true,
+      "manhattanGroup": null, "dmSchema": null, "mdaSchema": null,
+      "cigwmsGroup": "cigwms-prod", "wmshubGroup": null
+    },
+    {
+      "code": "SO", "dcId": 150, "name": "Southern",
+      "type": "grocery", "active": true,
+      "manhattanGroup": null, "dmSchema": null, "mdaSchema": null,
+      "cigwmsGroup": "cigwms-prod", "wmshubGroup": null
+    },
+    {
+      "code": "SW", "dcId": 100, "name": "Southwest",
+      "type": "grocery", "active": true,
+      "manhattanGroup": null, "dmSchema": null, "mdaSchema": null,
+      "cigwmsGroup": "cigwms-prod", "wmshubGroup": null
+    },
+    {
+      "code": "SZ", "dcId": 550, "name": "So. Calif.",
+      "type": "grocery", "active": true,
+      "manhattanGroup": null, "dmSchema": null, "mdaSchema": null,
+      "cigwmsGroup": "cigwms-prod", "wmshubGroup": null
+    },
+    {
+      "code": "WJ", "dcId": 710, "name": "New Jersey",
+      "type": "grocery", "active": true,
+      "manhattanGroup": null, "dmSchema": null, "mdaSchema": null,
+      "cigwmsGroup": "cigwms-prod", "wmshubGroup": null
+    }
+  ],
+
+  "groups": [
+    {
+      "id": "manhattan-main",
+      "name": "Manhattan (Main)",
+      "env": "prod",
+      "description": "McLane Ocala, Dothan, Cumberland, Minnesota, NE/Concord, Mid-Atlantic, Northeast, Southeast, Lakeland 606",
+      "icon": "👥",
+      "color": "#3fb950",
+      "connectionName": "MANP",
+      "schemas": [
+        "FS06_DM", "FS06_MDA",
+        "FE_DM",   "FE_MDA",
+        "MD_DM",   "MD_MDA",
+        "MK_DM",   "MK_MDA",
+        "MN_DM",   "MN_MDA",
+        "MY_DM",   "MY_MDA",
+        "MZ_DM",   "MZ_MDA",
+        "NE_DM",   "NE_MDA",
+        "SE_DM",   "SE_MDA",
+        "MANH",    "MANH_CODE"
+      ],
+      "readOnly": true
+    },
+    {
+      "id": "manhattan-ck",
+      "name": "Manhattan (CK)",
+      "env": "prod",
+      "description": "C1-CK Otsego, C2-CK St Louis, C3-CK Columbus",
+      "icon": "👥",
+      "color": "#58a6ff",
+      "connectionName": "MAN002P",
+      "schemas": [
+        "C1_DM", "C1_MDA",
+        "C2_DM", "C2_MDA",
+        "C3_DM", "C3_MDA",
+        "MANH",  "MANH_CODE"
+      ],
+      "readOnly": true
+    },
+    {
+      "id": "manhattan-wk",
+      "name": "Manhattan (Bluegrass)",
+      "env": "prod",
+      "description": "McLane Bluegrass DC 490",
+      "icon": "👥",
+      "color": "#bc8cff",
+      "connectionName": "MAN001P",
+      "schemas": [
+        "MAN490_DM", "MAN490_MDA",
+        "MANH",      "MANH_CODE"
+      ],
+      "readOnly": true
+    },
+    {
+      "id": "wmshub-prod",
+      "name": "WMSHUB",
+      "env": "prod",
+      "description": "WMSHUB Integration Layer — all 13 DCs",
+      "icon": "🔗",
+      "color": "#39d0d8",
+      "connectionName": "OMSP",
+      "schemas": [
+        "WMSHUB", "WMSHUB_CODE",
+        "EM",    "EM_CODE"
+      ],
+      "readOnly": true
+    },
+    {
+      "id": "cigwms-prod",
+      "name": "CIG WMS / OP",
+      "env": "prod",
+      "description": "CIG Warehouse Management + OP — all DCs",
+      "icon": "💰",
+      "color": "#d29922",
+      "connectionName": "OPCIGP",
+      "schemas": [
+        "CIGWMS",    "CIGWMS_CODE",
+        "OP",        "OP_CODE",
+        "MCLANE",    "MCLANE_CODE",
+        "FRAMEWORK"
+      ],
+      "readOnly": true
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "fileId": "manhattan-main-MCLN_EX63_Radial_Putaway_Zone_Restrictions_Configuration_Guide.docx",
+  "fileName": "MCLN EX63 Radial Putaway Zone Restrictions Configuration Guide.docx",
+  "webUrl": "MCLN EX63 Radial Putaway Zone Restrictions Configuration Guide.docx",
+  "mimeType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "extension": ".docx",
+  "group": "manhattan-main",
+  "site": "local-bulk-upload",
+  "lastModified": "2026-03-19T09:36:00Z",
+  "syncedAt": "2026-03-19T05:13:16.932Z",
+  "title": "MCLN EX63 Radial Putaway Zone Restrictions Configuration Guide",
+  "fullText": "MCLN EX 6 3 Radial Putaway Zone Restrictions Configuration Guide Table of Contents TOC \\o \"1-7\" \\z \\u \\h 1 GLOBAL EXTENSION CONTROL CODE SETUP PAGEREF _Toc188180420 \\h 3 1.1 Enable System Code C-000 PAGEREF _Toc188180421 \\h 3 2. Add additional Custom Codes PAGEREF _Toc188180422 \\h 5 2.1 C-000-EX63 Enablement PAGEREF _Toc188180423 \\h 6 GLOBAL EXTENSION CONTROL CODE SETUP Enable System Code C-000 Navigate to the System Codes (Configuration) UI. If system code C-000 (Global Extension Control) does not yet exist, click Add. Populate the following information: Note: The checkbox “System code parameters exist” will auto populate upon completion of subsequent steps for adding parameters, and it is un-editable to the user. Click Save. Next, click the Code ID’s Action Button The System Code ID’s screen is displayed. Click ADD. Populate the following information provided above. Click SAVE to save the Code ID. Next, Click the Parameters Action button located on the bottom right of the screen to Navigate back to System Code Parameters screen. System Code parameters Screen is displayed. Click ADD button. Populate the following information provided above. Click SAVE. Click on the Parameters tab. Check the box to enable all custom functionality. Click SAVE. Add additiona l C ustom C odes 1. Navigate to System Codes UI in WM. We will need to add Custom code C-000- EX63 if it has not been added. 2. Search for system code C-000: Use the Custom Code drop-down option under the Record Type menu. Type in 000 for Code Type. Click apply to search. 3. Click the Checkbox to select the system code. 4. Click on the Code ID's action button in the lower right of the menu. 5. Click ADD action button. 6. Populate the fields with the information provided in the screenshot above. 7. Click SAVE. 2.1 C-000- EX63 Enablement   1. Click the Blue Parameters Tab.  2. Located next to the DETAILS tab.      3. Check the box to enable all custom functionality.  4. CLICK SAVE.\n\n0 -100840 0 0 Page PAGE 2 of NUMPAGES 5 Last Modified: DATE \\@ \"MM/dd/yyyy\" 01/23/2025 TIME \\@ \"h:mm AM/PM\" 4:24 PM MCLN EX63 Radial Putaway Zone Restrictions\n\n5958459 -264566 0 20000 0 -106430 right 235585 0 0",
+  "extractionMode": "provided-text",
+  "chunks": [
+    {
+      "chunkIndex": 0,
+      "startChar": 0,
+      "text": "[Document: MCLN EX63 Radial Putaway Zone Restrictions Configuration Guide]\n\nMCLN EX 6 3 Radial Putaway Zone Restrictions Configuration Guide Table of Contents TOC  \"1-7\"    1 GLOBAL EXTENSION CONTROL CODE SETUP  1.1 Enable System Code C-000  2. Add additional Custom Codes  2.1 C-000-EX63 Enablement  GLOBAL EXTENSION CONTROL CODE SETUP Enable System Code C-000 Navigate to the System Codes (Configuration) UI. If system code C-000 (Global Extension Control) does not yet exist, click Add. Populate the following information: Note: The checkbox “System code parameters exist” will auto populate upon completion of subsequent steps for adding parameters, and it is un-editable to the user. Click Save. Next, click the Code ID’s Action Button The System Code ID’s screen is displayed. Click ADD. Populate the following information provided above. Click SAVE to save the Code ID. Next, Click the Parameters Action button located on the bottom right of the screen to Navigate back to System Code Parameters screen. System Code parameters Screen is displayed. Click ADD button. Populate the following information provided above. Click SAVE. Click on the Parameters tab. Check the box to enable all custom functionality. Click SAVE. Add additiona l C ustom C odes 1. Navigate to System Codes UI in WM. We will need to add Custom code C-000- EX63 if it has not been added. 2. Search for system code C-000: Use the Custom Code drop-down option under the Record Type menu. Type in 000 for Code Type. Click apply to search. 3. Click the Checkbox to select the system code. 4. Click on the Code ID's action button in the lower right of the menu. 5. Click ADD action button. 6. Populate the fields with the information provided in the screenshot above. 7. Click SAVE. 2.1 C-000- EX63 Enablement   1. Click the Blue Parameters Tab.  2. Located next to the DETAILS tab.      3. Check the box to enable all custom functionality.  4. CLICK SAVE.\nPage PAGE 2 of NUMPAGES 5 Last Modified: \\@ \"h:mm AM/PM\" 4:24 PM MCLN EX63 Radial Putaway Zone Restrictions\n-106430 right 235585 0 0"
+    }
+  ],
+  "chunkCount": 1,
+  "wordCount": 365,
+  "byteSize": 584663,
+  "reindexedAt": "2026-04-09T01:02:10.976Z"
+}

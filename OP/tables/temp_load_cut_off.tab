@@ -1,0 +1,17 @@
+create global temporary table TEMP_LOAD_CUT_OFF
+(
+  load_num          VARCHAR2(4),
+  load_nm           VARCHAR2(30),
+  ord_cut_off_ts    DATE,
+  llr_cut_off_ts    DATE,
+  clos_cut_off_ts   DATE,
+  deptur_cut_off_ts DATE
+)
+on commit delete rows;
+alter table TEMP_LOAD_CUT_OFF
+  add constraint MCL_CHK_01_OCT_16_225615563
+  check ("LOAD_NUM" IS NOT NULL);
+alter table TEMP_LOAD_CUT_OFF
+  add constraint MCL_CHK_01_OCT_16_225615564
+  check ("LOAD_NM" IS NOT NULL);
+

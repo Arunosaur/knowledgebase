@@ -1,0 +1,61 @@
+create table MCLANE_MANIFEST_RPTS
+(
+  create_ts      DATE,
+  strategy_id    NUMBER(11),
+  llr_date       NUMBER(6),
+  load_num       VARCHAR2(4),
+  departure_date NUMBER(6),
+  stop_num       NUMBER(9,2),
+  eta_time       NUMBER(4),
+  eta_date       NUMBER(6),
+  cust_num       VARCHAR2(8),
+  manifest_cat   VARCHAR2(3),
+  tote_cat       VARCHAR2(3),
+  qty_alloc      NUMBER(15),
+  tote_count     NUMBER(5),
+  box_count      NUMBER(5),
+  product_weight NUMBER(15,4),
+  product_cube   NUMBER(15,4),
+  bag_count      NUMBER(5),
+  div_part       NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+compress for all operations;
+alter table MCLANE_MANIFEST_RPTS
+  add constraint PK_RPTS primary key (DIV_PART, CREATE_TS, STRATEGY_ID, LLR_DATE, LOAD_NUM, DEPARTURE_DATE, STOP_NUM, ETA_TIME, ETA_DATE, CUST_NUM, MANIFEST_CAT, TOTE_CAT);
+alter table MCLANE_MANIFEST_RPTS
+  add constraint MCL_CHK_01_OCT_16_225615167
+  check ("CREATE_TS" IS NOT NULL);
+alter table MCLANE_MANIFEST_RPTS
+  add constraint MCL_CHK_01_OCT_16_225615168
+  check ("STRATEGY_ID" IS NOT NULL);
+alter table MCLANE_MANIFEST_RPTS
+  add constraint MCL_CHK_01_OCT_16_225615169
+  check ("LLR_DATE" IS NOT NULL);
+alter table MCLANE_MANIFEST_RPTS
+  add constraint MCL_CHK_01_OCT_16_225615170
+  check ("LOAD_NUM" IS NOT NULL);
+alter table MCLANE_MANIFEST_RPTS
+  add constraint MCL_CHK_01_OCT_16_225615171
+  check ("DEPARTURE_DATE" IS NOT NULL);
+alter table MCLANE_MANIFEST_RPTS
+  add constraint MCL_CHK_01_OCT_16_225615172
+  check ("STOP_NUM" IS NOT NULL);
+alter table MCLANE_MANIFEST_RPTS
+  add constraint MCL_CHK_01_OCT_16_225615173
+  check ("ETA_TIME" IS NOT NULL);
+alter table MCLANE_MANIFEST_RPTS
+  add constraint MCL_CHK_01_OCT_16_225615174
+  check ("ETA_DATE" IS NOT NULL);
+alter table MCLANE_MANIFEST_RPTS
+  add constraint MCL_CHK_01_OCT_16_225615175
+  check ("CUST_NUM" IS NOT NULL);
+alter table MCLANE_MANIFEST_RPTS
+  add constraint MCL_CHK_01_OCT_16_225615176
+  check ("MANIFEST_CAT" IS NOT NULL);
+alter table MCLANE_MANIFEST_RPTS
+  add constraint MCL_CHK_01_OCT_16_225615177
+  check ("TOTE_CAT" IS NOT NULL);
+alter table MCLANE_MANIFEST_RPTS
+  add constraint MCL_CHK_01_OCT_16_225615178
+  check ("DIV_PART" IS NOT NULL);
+

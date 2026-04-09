@@ -1,0 +1,56 @@
+create table CUST_RTE_OVRRD_RT3C
+(
+  div_part        NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part'),
+  cust_id         VARCHAR2(8),
+  llr_dt          DATE,
+  load_num        VARCHAR2(4),
+  depart_ts       DATE,
+  stop_num        NUMBER,
+  eta_ts          DATE,
+  depart_ovrrd_sw VARCHAR2(1) default 'Y',
+  stop_ovrrd_sw   VARCHAR2(1) default 'Y',
+  eta_ovrrd_sw    VARCHAR2(1) default 'Y'
+)
+;
+alter table CUST_RTE_OVRRD_RT3C
+  add constraint PK_RT3C primary key (DIV_PART, CUST_ID, LOAD_NUM, LLR_DT);
+alter table CUST_RTE_OVRRD_RT3C
+  add constraint MCL_CHK_01_OCT_16_225615374
+  check ("DIV_PART" IS NOT NULL);
+alter table CUST_RTE_OVRRD_RT3C
+  add constraint MCL_CHK_01_OCT_16_225615375
+  check ("CUST_ID" IS NOT NULL);
+alter table CUST_RTE_OVRRD_RT3C
+  add constraint MCL_CHK_01_OCT_16_225615376
+  check ("LLR_DT" IS NOT NULL);
+alter table CUST_RTE_OVRRD_RT3C
+  add constraint MCL_CHK_01_OCT_16_225615377
+  check ("LOAD_NUM" IS NOT NULL);
+alter table CUST_RTE_OVRRD_RT3C
+  add constraint MCL_CHK_01_OCT_16_225615378
+  check ("DEPART_TS" IS NOT NULL);
+alter table CUST_RTE_OVRRD_RT3C
+  add constraint MCL_CHK_01_OCT_16_225615379
+  check ("STOP_NUM" IS NOT NULL);
+alter table CUST_RTE_OVRRD_RT3C
+  add constraint MCL_CHK_01_OCT_16_225615380
+  check ("ETA_TS" IS NOT NULL);
+alter table CUST_RTE_OVRRD_RT3C
+  add constraint MCL_CHK_01_OCT_16_225615381
+  check ("DEPART_OVRRD_SW" IS NOT NULL);
+alter table CUST_RTE_OVRRD_RT3C
+  add constraint MCL_CHK_01_OCT_16_225615382
+  check ("STOP_OVRRD_SW" IS NOT NULL);
+alter table CUST_RTE_OVRRD_RT3C
+  add constraint MCL_CHK_01_OCT_16_225615383
+  check ("ETA_OVRRD_SW" IS NOT NULL);
+alter table CUST_RTE_OVRRD_RT3C
+  add constraint RT3C_CHK1
+  check (depart_ovrrd_sw IN('Y','N'));
+alter table CUST_RTE_OVRRD_RT3C
+  add constraint RT3C_CHK2
+  check (stop_ovrrd_sw IN('Y','N'));
+alter table CUST_RTE_OVRRD_RT3C
+  add constraint RT3C_CHK3
+  check (eta_ovrrd_sw IN('Y','N'));
+

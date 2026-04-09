@@ -1,0 +1,4 @@
+create or replace library OP_ITEM_PRICE_RETAIL_AUTH_LIB
+  as '/OPCIGP/opcig/prodcode/bin/op_item_price_retail_auth_sp.so'
+/
+

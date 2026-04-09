@@ -1,0 +1,15 @@
+create table ADDL_CNTNR_ID_BC3C
+(
+  cntnr_id  VARCHAR2(20),
+  create_ts DATE
+)
+;
+alter table ADDL_CNTNR_ID_BC3C
+  add constraint PK_BC3C primary key (CNTNR_ID);
+alter table ADDL_CNTNR_ID_BC3C
+  add constraint MCL_CHK_01_OCT_16_225615206
+  check ("CNTNR_ID" IS NOT NULL);
+alter table ADDL_CNTNR_ID_BC3C
+  add constraint MCL_CHK_01_OCT_16_225615207
+  check ("CREATE_TS" IS NOT NULL);
+

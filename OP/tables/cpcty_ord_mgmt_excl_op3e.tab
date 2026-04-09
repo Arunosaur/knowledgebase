@@ -1,0 +1,15 @@
+create table CPCTY_ORD_MGMT_EXCL_OP3E
+(
+  excl_typ    VARCHAR2(6) not null,
+  val         VARCHAR2(6) not null,
+  user_id     VARCHAR2(8) not null,
+  last_chg_ts DATE not null
+)
+;
+create index FK_OP3E_OP3T_01 on CPCTY_ORD_MGMT_EXCL_OP3E (EXCL_TYP);
+alter table CPCTY_ORD_MGMT_EXCL_OP3E
+  add constraint PK_OP3E primary key (EXCL_TYP, VAL);
+alter table CPCTY_ORD_MGMT_EXCL_OP3E
+  add constraint FK_OP3E_OP3T_01 foreign key (EXCL_TYP)
+  references CPCTY_ORD_MGMT_EXCL_TYP_OP3T (EXCL_TYP);
+

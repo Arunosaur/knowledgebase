@@ -1,0 +1,46 @@
+create table MCLP100A
+(
+  cstgpa         VARCHAR2(10) not null,
+  rndpra         NUMBER(3),
+  group_name     VARCHAR2(25) default ' ',
+  cntnr_trckg_sw VARCHAR2(1) default 'N',
+  cube_by_hc_sw  VARCHAR2(1) default 'N',
+  split_po_cd    VARCHAR2(1) default 'N',
+  fc_plt_rnd_pct NUMBER default 0,
+  div_part       NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part'),
+  dist_only_sw   VARCHAR2(1) default 'N' not null
+)
+;
+alter table MCLP100A
+  add constraint PK_MCLP100A primary key (DIV_PART, CSTGPA);
+alter table MCLP100A
+  add constraint CHECK_SPLIT_PO_CD
+  check (split_po_cd in ('N', 'Y', 'R', 'X'));
+alter table MCLP100A
+  add constraint CHK_MCLP100A_DIST_ONLY_SW
+  check (dist_only_sw in ('N','Y'));
+alter table MCLP100A
+  add constraint MCLP100A_CNTNR_TRCKG_SW
+  check (cntnr_trckg_sw IN ('N', 'Y'));
+alter table MCLP100A
+  add constraint MCL_CHK_01_OCT_16_225615119
+  check ("GROUP_NAME" IS NOT NULL);
+alter table MCLP100A
+  add constraint MCL_CHK_01_OCT_16_225615120
+  check ("CNTNR_TRCKG_SW" IS NOT NULL);
+alter table MCLP100A
+  add constraint MCL_CHK_01_OCT_16_225615121
+  check ("CUBE_BY_HC_SW" IS NOT NULL);
+alter table MCLP100A
+  add constraint MCL_CHK_01_OCT_16_225615122
+  check ("SPLIT_PO_CD" IS NOT NULL);
+alter table MCLP100A
+  add constraint MCL_CHK_01_OCT_16_225615123
+  check ("FC_PLT_RND_PCT" IS NOT NULL);
+alter table MCLP100A
+  add constraint MCL_CHK_01_OCT_16_225615124
+  check ("DIV_PART" IS NOT NULL);
+alter table MCLP100A
+  add constraint MCL_CHK_01_OCT_16_225615125
+  check (cube_by_hc_sw IN ('Y', 'N'));
+

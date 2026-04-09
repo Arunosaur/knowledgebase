@@ -1,0 +1,7 @@
+create sequence OP1A_TRAN_ID_SEQ
+minvalue 1
+maxvalue 9999999999999999999999999999
+start with 12345844319
+increment by 1
+cache 100000;
+

@@ -1,0 +1,24 @@
+create table SAWP300C
+(
+  zonec    VARCHAR2(3),
+  aislc    VARCHAR2(3),
+  binc     VARCHAR2(3),
+  levlc    VARCHAR2(3),
+  lclasc   VARCHAR2(1),
+  descc    VARCHAR2(40),
+  occupc   VARCHAR2(1),
+  froznc   VARCHAR2(1),
+  equmnc   VARCHAR2(1),
+  typloc   VARCHAR2(1),
+  stypc    VARCHAR2(3),
+  seqc     NUMBER(9,2),
+  div_part NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+compress for all operations;
+comment on table SAWP300C
+  is 'Usage: Each location used in eWMS must have a record on this table.
+';
+alter table SAWP300C
+  add constraint MCL_CHK_01_OCT_16_225615156
+  check ("DIV_PART" IS NOT NULL);
+

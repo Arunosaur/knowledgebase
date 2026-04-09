@@ -1,0 +1,39 @@
+create table SUB_PRCS_ORD_SRC
+(
+  prcs_id       VARCHAR2(32),
+  prcs_sbtyp_cd VARCHAR2(3),
+  ord_src       VARCHAR2(8),
+  div_part      NUMBER(3) default SYS_CONTEXT('USERINFO', 'DIV_PART')
+)
+;
+comment on column SUB_PRCS_ORD_SRC.prcs_id
+  is 'Process Id';
+comment on column SUB_PRCS_ORD_SRC.prcs_sbtyp_cd
+  is 'Process Sub Type';
+comment on column SUB_PRCS_ORD_SRC.ord_src
+  is 'Order Source';
+create index FK_SUB_PRCS_OR_PRCS_SBTYP_01 on SUB_PRCS_ORD_SRC (DIV_PART, PRCS_SBTYP_CD)
+  compress;
+create index FK_SUB_PRCS_OR_PRCS_TYP_DE_01 on SUB_PRCS_ORD_SRC (DIV_PART, PRCS_ID)
+  compress;
+alter table SUB_PRCS_ORD_SRC
+  add constraint PK_SUB_PRCS_ORD_SRC primary key (DIV_PART, PRCS_ID, PRCS_SBTYP_CD, ORD_SRC);
+alter table SUB_PRCS_ORD_SRC
+  add constraint FK_SUB_PRCS_OR_PRCS_SBTYP_01 foreign key (DIV_PART, PRCS_SBTYP_CD)
+  references PRCS_SBTYP (DIV_PART, PRCS_SBTYP_CD) on delete cascade;
+alter table SUB_PRCS_ORD_SRC
+  add constraint FK_SUB_PRCS_OR_PRCS_TYP_DE_01 foreign key (DIV_PART, PRCS_ID)
+  references PRCS_TYP_DESCR (DIV_PART, PRCS_ID) on delete cascade;
+alter table SUB_PRCS_ORD_SRC
+  add constraint MCL_CHK_01_OCT_16_225615546
+  check ("PRCS_ID" IS NOT NULL);
+alter table SUB_PRCS_ORD_SRC
+  add constraint MCL_CHK_01_OCT_16_225615547
+  check ("PRCS_SBTYP_CD" IS NOT NULL);
+alter table SUB_PRCS_ORD_SRC
+  add constraint MCL_CHK_01_OCT_16_225615548
+  check ("ORD_SRC" IS NOT NULL);
+alter table SUB_PRCS_ORD_SRC
+  add constraint MCL_CHK_01_OCT_16_225615549
+  check ("DIV_PART" IS NOT NULL);
+

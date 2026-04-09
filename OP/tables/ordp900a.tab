@@ -1,0 +1,57 @@
+create table ORDP900A
+(
+  ordnoa      NUMBER(11),
+  custa       VARCHAR2(8),
+  cpoa        VARCHAR2(30),
+  shpja       NUMBER(5),
+  dsorda      VARCHAR2(1),
+  pshipa      VARCHAR2(1),
+  orrtea      VARCHAR2(4),
+  stopsa      NUMBER(9,2),
+  ldtypa      VARCHAR2(3),
+  trndta      NUMBER(6),
+  trntma      NUMBER(6),
+  ipdtsa      VARCHAR2(8),
+  cspasa      VARCHAR2(25),
+  stata       VARCHAR2(3),
+  telsla      VARCHAR2(20),
+  hdexpa      VARCHAR2(3),
+  uschga      VARCHAR2(20),
+  mntusa      VARCHAR2(20),
+  connba      VARCHAR2(25),
+  ctofda      NUMBER(6),
+  ctofta      NUMBER(6),
+  etadta      NUMBER(6),
+  etatma      NUMBER(6),
+  rsncda      VARCHAR2(15),
+  legrfa      VARCHAR2(25),
+  ord_rcvd_ts DATE default SYSDATE,
+  excptn_sw   VARCHAR2(1) default 'N',
+  div_part    NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part'),
+  archive_ts  DATE default sysdate not null
+)
+compress for all operations;
+comment on column ORDP900A.excptn_sw
+  is 'Exception Switch';
+comment on column ORDP900A.archive_ts
+  is 'The datetime the record was last archived';
+create index N_ORDP900A_01 on ORDP900A (DIV_PART, CUSTA, ETADTA)
+  compress;
+alter table ORDP900A
+  add constraint PK_ORDP900A primary key (DIV_PART, ORDNOA);
+alter table ORDP900A
+  add constraint MCL_CHK_01_OCT_16_225615240
+  check ("ORDNOA" IS NOT NULL);
+alter table ORDP900A
+  add constraint MCL_CHK_01_OCT_16_225615241
+  check ("ORD_RCVD_TS" IS NOT NULL);
+alter table ORDP900A
+  add constraint MCL_CHK_01_OCT_16_225615242
+  check ("EXCPTN_SW" IS NOT NULL);
+alter table ORDP900A
+  add constraint MCL_CHK_01_OCT_16_225615251
+  check ("DIV_PART" IS NOT NULL);
+alter table ORDP900A
+  add constraint ORDP900A_CHK2
+  check (EXCPTN_SW in('Y', 'N'));
+

@@ -1,0 +1,22 @@
+create table ORDP940C
+(
+  statc    VARCHAR2(1),
+  ordnoc   NUMBER(11),
+  seqc     NUMBER(7,2),
+  commc    VARCHAR2(256),
+  prtc     VARCHAR2(1),
+  div_part NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+compress for all operations;
+alter table ORDP940C
+  add constraint PK_ORDP940C primary key (DIV_PART, ORDNOC, SEQC);
+alter table ORDP940C
+  add constraint MCL_CHK_01_OCT_16_225615224
+  check ("ORDNOC" IS NOT NULL);
+alter table ORDP940C
+  add constraint MCL_CHK_01_OCT_16_225615250
+  check ("SEQC" IS NOT NULL);
+alter table ORDP940C
+  add constraint MCL_CHK_01_OCT_16_225615252
+  check ("DIV_PART" IS NOT NULL);
+

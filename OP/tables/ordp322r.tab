@@ -1,0 +1,37 @@
+create table ORDP322R
+(
+  compr    VARCHAR2(3),
+  custr    VARCHAR2(8),
+  shptor   VARCHAR2(15),
+  concdr   VARCHAR2(15),
+  titler   VARCHAR2(40),
+  fnamer   VARCHAR2(40),
+  lnamer   VARCHAR2(40),
+  jobtir   VARCHAR2(40),
+  phoner   VARCHAR2(40),
+  faxr     VARCHAR2(40),
+  emailr   VARCHAR2(40),
+  tmzonr   NUMBER(3,1),
+  commer   VARCHAR2(256),
+  conamr   VARCHAR2(40),
+  cadd1r   VARCHAR2(40),
+  cadd2r   VARCHAR2(40),
+  cadd3r   VARCHAR2(40),
+  cityr    VARCHAR2(40),
+  stater   VARCHAR2(40),
+  zipcdr   VARCHAR2(40),
+  cntyr    VARCHAR2(40),
+  cntryr   VARCHAR2(40),
+  statr    VARCHAR2(1),
+  dtchgr   NUMBER(6),
+  tmchgr   NUMBER(6),
+  uschgr   VARCHAR2(20),
+  div_part NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+compress for all operations;
+alter table ORDP322R
+  add constraint UNQ_ORDP322R_01 unique (DIV_PART, CUSTR, SHPTOR);
+alter table ORDP322R
+  add constraint MCL_CHK_01_OCT_16_225615631
+  check ("DIV_PART" IS NOT NULL);
+

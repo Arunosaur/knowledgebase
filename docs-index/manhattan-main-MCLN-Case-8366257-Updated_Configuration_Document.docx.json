@@ -1,0 +1,25 @@
+{
+  "fileId": "manhattan-main-MCLN-Case-8366257-Updated_Configuration_Document.docx",
+  "fileName": "MCLN-Case-8366257-Updated Configuration Document.docx",
+  "webUrl": "MCLN-Case-8366257-Updated Configuration Document.docx",
+  "mimeType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "extension": ".docx",
+  "group": "manhattan-main",
+  "site": "local-bulk-upload",
+  "lastModified": "2026-03-19T09:36:00Z",
+  "syncedAt": "2026-03-19T05:08:35.626Z",
+  "title": "MCLN-Case-8366257-Updated Configuration Document",
+  "fullText": "Updating the DB password, the pkms.env file needs to be updated accordingly in the backend. This updated pkms.env file will override the old one. All the values in the pkms.env file will be fetched from the template  in this path  apps/scope/products/wm/tools/setup/templates. Steps: Go to apps/scope/products/wm/tools/setup/templates Vi pkms.env.linux.template . Go to below steps in this template Change all the highlighted values as above. Please change in insert mode and save & exit. Please verify once it's updated so that next time it will fetch the value s from the template. Note: please restart the WM, once it's updated so that it will fetch the new value and it will clear cache as well. Once you updated in this template, for next time, and no other updates will be required after the DB update process and its does not overwrite them. After updating this value, if you encounter any logon issues, kindly share the MMC HLL for further analysis. please make the MMC logs level to high as follows before proceeding with updating the password. Select only WM*   Click on the right top and select admin -> set log level.     Select (debug) and set it.",
+  "extractionMode": "provided-text",
+  "chunks": [
+    {
+      "chunkIndex": 0,
+      "startChar": 0,
+      "text": "[Document: MCLN-Case-8366257-Updated Configuration Document]\n\nUpdating the DB password, the pkms.env file needs to be updated accordingly in the backend. This updated pkms.env file will override the old one. All the values in the pkms.env file will be fetched from the template  in this path  apps/scope/products/wm/tools/setup/templates. Steps: Go to apps/scope/products/wm/tools/setup/templates Vi pkms.env.linux.template . Go to below steps in this template Change all the highlighted values as above. Please change in insert mode and save & exit. Please verify once it's updated so that next time it will fetch the value s from the template. Note: please restart the WM, once it's updated so that it will fetch the new value and it will clear cache as well. Once you updated in this template, for next time, and no other updates will be required after the DB update process and its does not overwrite them. After updating this value, if you encounter any logon issues, kindly share the MMC HLL for further analysis. please make the MMC logs level to high as follows before proceeding with updating the password. Select only WM*   Click on the right top and select admin -> set log level.     Select (debug) and set it."
+    }
+  ],
+  "chunkCount": 1,
+  "wordCount": 193,
+  "byteSize": 852003,
+  "reindexedAt": "2026-04-09T01:02:10.406Z"
+}

@@ -1,0 +1,26 @@
+create table PRCS_GRP
+(
+  grp_id   VARCHAR2(16),
+  prcs_id  VARCHAR2(32),
+  div_part NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part') not null
+)
+;
+create index FK_PRCS_GRP_GRP_INFO_01 on PRCS_GRP (DIV_PART, GRP_ID)
+  compress;
+create index FK_PRCS_GRP_PRCS_TYP_DESCR_01 on PRCS_GRP (DIV_PART, PRCS_ID)
+  compress;
+alter table PRCS_GRP
+  add constraint PK_PRCS_GRP primary key (DIV_PART, GRP_ID, PRCS_ID);
+alter table PRCS_GRP
+  add constraint FK_PRCS_GRP_GRP_INFO_01 foreign key (DIV_PART, GRP_ID)
+  references GRP_INFO (DIV_PART, GRP_ID) on delete cascade;
+alter table PRCS_GRP
+  add constraint FK_PRCS_GRP_PRCS_TYP_DESCR_01 foreign key (DIV_PART, PRCS_ID)
+  references PRCS_TYP_DESCR (DIV_PART, PRCS_ID) on delete cascade;
+alter table PRCS_GRP
+  add constraint MCL_CHK_01_OCT_16_225615364
+  check ("GRP_ID" IS NOT NULL);
+alter table PRCS_GRP
+  add constraint MCL_CHK_01_OCT_16_225615365
+  check ("PRCS_ID" IS NOT NULL);
+

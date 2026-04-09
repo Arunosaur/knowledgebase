@@ -1,0 +1,24 @@
+create table RPT_NAME_AP7R
+(
+  rpt_nm      VARCHAR2(20),
+  descr       VARCHAR2(40),
+  user_id     VARCHAR2(8),
+  last_chg_ts DATE default sysdate,
+  div_part    NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+;
+alter table RPT_NAME_AP7R
+  add constraint PK_AP7R primary key (DIV_PART, RPT_NM);
+alter table RPT_NAME_AP7R
+  add constraint MCL_CHK_01_OCT_16_225615275
+  check ("RPT_NM" IS NOT NULL);
+alter table RPT_NAME_AP7R
+  add constraint MCL_CHK_01_OCT_16_225615276
+  check ("DESCR" IS NOT NULL);
+alter table RPT_NAME_AP7R
+  add constraint MCL_CHK_01_OCT_16_225615278
+  check ("LAST_CHG_TS" IS NOT NULL);
+alter table RPT_NAME_AP7R
+  add constraint MCL_CHK_01_OCT_16_225615279
+  check ("DIV_PART" IS NOT NULL);
+

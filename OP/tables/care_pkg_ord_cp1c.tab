@@ -1,0 +1,51 @@
+create table CARE_PKG_ORD_CP1C
+(
+  div_part     NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part'),
+  cust_id      VARCHAR2(8),
+  llr_dt       DATE,
+  store_typ_cd VARCHAR2(3),
+  conf_num     VARCHAR2(15),
+  load_num     VARCHAR2(4),
+  stop_num     NUMBER,
+  po_num       VARCHAR2(30),
+  ord_num      NUMBER,
+  stat_cd      VARCHAR2(3),
+  user_id      VARCHAR2(8) default user,
+  last_chg_ts  DATE default sysdate
+)
+;
+alter table CARE_PKG_ORD_CP1C
+  add constraint PK_CP1C primary key (DIV_PART, CUST_ID, LLR_DT);
+alter table CARE_PKG_ORD_CP1C
+  add constraint UNQ_CP1C_01 unique (DIV_PART, CONF_NUM);
+alter table CARE_PKG_ORD_CP1C
+  add constraint MCL_CHK_01_OCT_16_225615280
+  check ("DIV_PART" IS NOT NULL);
+alter table CARE_PKG_ORD_CP1C
+  add constraint MCL_CHK_01_OCT_16_225615281
+  check ("CUST_ID" IS NOT NULL);
+alter table CARE_PKG_ORD_CP1C
+  add constraint MCL_CHK_01_OCT_16_225615282
+  check ("LLR_DT" IS NOT NULL);
+alter table CARE_PKG_ORD_CP1C
+  add constraint MCL_CHK_01_OCT_16_225615283
+  check ("STORE_TYP_CD" IS NOT NULL);
+alter table CARE_PKG_ORD_CP1C
+  add constraint MCL_CHK_01_OCT_16_225615284
+  check ("CONF_NUM" IS NOT NULL);
+alter table CARE_PKG_ORD_CP1C
+  add constraint MCL_CHK_01_OCT_16_225615286
+  check ("STOP_NUM" IS NOT NULL);
+alter table CARE_PKG_ORD_CP1C
+  add constraint MCL_CHK_01_OCT_16_225615289
+  check ("STAT_CD" IS NOT NULL);
+alter table CARE_PKG_ORD_CP1C
+  add constraint MCL_CHK_01_OCT_16_225615290
+  check ("USER_ID" IS NOT NULL);
+alter table CARE_PKG_ORD_CP1C
+  add constraint MCL_CHK_01_OCT_16_225615291
+  check ("LAST_CHG_TS" IS NOT NULL);
+alter table CARE_PKG_ORD_CP1C
+  add constraint MCL_CHK_01_OCT_16_225615292
+  check (stat_cd in ('NEW','STG','MOV','ERR','CMP'));
+

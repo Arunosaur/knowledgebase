@@ -1,0 +1,19 @@
+create table PRCS_SBTYP
+(
+  prcs_sbtyp_cd VARCHAR2(3),
+  descr         VARCHAR2(256),
+  div_part      NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+;
+alter table PRCS_SBTYP
+  add constraint PK_PRCS_SBTYP primary key (DIV_PART, PRCS_SBTYP_CD);
+alter table PRCS_SBTYP
+  add constraint MCL_CHK_01_OCT_16_225615338
+  check ("PRCS_SBTYP_CD" IS NOT NULL);
+alter table PRCS_SBTYP
+  add constraint MCL_CHK_01_OCT_16_225615339
+  check ("DESCR" IS NOT NULL);
+alter table PRCS_SBTYP
+  add constraint MCL_CHK_01_OCT_16_225615340
+  check ("DIV_PART" IS NOT NULL);
+

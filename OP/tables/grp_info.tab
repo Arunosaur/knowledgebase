@@ -1,0 +1,19 @@
+create table GRP_INFO
+(
+  grp_id   VARCHAR2(16),
+  descr    VARCHAR2(64),
+  div_part NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+;
+alter table GRP_INFO
+  add constraint PK_GRP_INFO primary key (DIV_PART, GRP_ID);
+alter table GRP_INFO
+  add constraint MCL_CHK_01_OCT_16_225615346
+  check ("GRP_ID" IS NOT NULL);
+alter table GRP_INFO
+  add constraint MCL_CHK_01_OCT_16_225615347
+  check ("DESCR" IS NOT NULL);
+alter table GRP_INFO
+  add constraint MCL_CHK_01_OCT_16_225615348
+  check ("DIV_PART" IS NOT NULL);
+

@@ -1,0 +1,63 @@
+create table MCLP370C
+(
+  loadc            VARCHAR2(4),
+  stopc            NUMBER(9,2),
+  manctc           VARCHAR2(3),
+  custc            VARCHAR2(8),
+  nutotc           NUMBER(9),
+  totctc           VARCHAR2(3),
+  totsmc           NUMBER(14,4),
+  bagsmc           NUMBER(9),
+  boxsmc           NUMBER(14,4),
+  palsmc           NUMBER(9),
+  cpasmc           NUMBER(9),
+  depdtc           NUMBER(6),
+  llr_date         NUMBER(6),
+  load_status      VARCHAR2(1) default 'R',
+  last_ts_chg      DATE default sysdate,
+  user_id          VARCHAR2(8),
+  test_bil_load_sw VARCHAR2(1) default 'N',
+  release_ts       DATE default SYSDATE,
+  div_part         NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part'),
+  peco_pallet_cnt  NUMBER default 0 not null
+)
+compress for all operations;
+comment on column MCLP370C.custc
+  is 'This is the CBR Customer Number.';
+create index N_MCLP370C_01 on MCLP370C (LOADC, STOPC, LLR_DATE);
+alter table MCLP370C
+  add constraint UNQ_MCLP370C_01 unique (DIV_PART, LLR_DATE, LOADC, STOPC, DEPDTC, MANCTC, TOTCTC, RELEASE_TS);
+alter table MCLP370C
+  add constraint MCLP370C_CHK_1
+  check (test_bil_load_sw in ('Y', 'N'));
+alter table MCLP370C
+  add constraint MCL_CHK_01_OCT_16_225615190
+  check ("LOADC" IS NOT NULL);
+alter table MCLP370C
+  add constraint MCL_CHK_01_OCT_16_225615191
+  check ("STOPC" IS NOT NULL);
+alter table MCLP370C
+  add constraint MCL_CHK_01_OCT_16_225615192
+  check ("MANCTC" IS NOT NULL);
+alter table MCLP370C
+  add constraint MCL_CHK_01_OCT_16_225615193
+  check ("DEPDTC" IS NOT NULL);
+alter table MCLP370C
+  add constraint MCL_CHK_01_OCT_16_225615194
+  check ("LLR_DATE" IS NOT NULL);
+alter table MCLP370C
+  add constraint MCL_CHK_01_OCT_16_225615195
+  check ("LOAD_STATUS" IS NOT NULL);
+alter table MCLP370C
+  add constraint MCL_CHK_01_OCT_16_225615196
+  check ("LAST_TS_CHG" IS NOT NULL);
+alter table MCLP370C
+  add constraint MCL_CHK_01_OCT_16_225615197
+  check ("TEST_BIL_LOAD_SW" IS NOT NULL);
+alter table MCLP370C
+  add constraint MCL_CHK_01_OCT_16_225615198
+  check ("RELEASE_TS" IS NOT NULL);
+alter table MCLP370C
+  add constraint MCL_CHK_01_OCT_16_225615199
+  check ("DIV_PART" IS NOT NULL);
+

@@ -1,0 +1,29 @@
+create table SPLIT_DIV_VND_OP3S
+(
+  cbr_vndr_id VARCHAR2(10),
+  split_typ   VARCHAR2(10),
+  div_part    NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+;
+create index FK_OP3S_MCLP130D_01 on SPLIT_DIV_VND_OP3S (DIV_PART)
+  compress;
+create index FK_OP3S_OP8S_01 on SPLIT_DIV_VND_OP3S (SPLIT_TYP)
+  compress;
+alter table SPLIT_DIV_VND_OP3S
+  add constraint PK_OP3S primary key (DIV_PART, CBR_VNDR_ID, SPLIT_TYP);
+alter table SPLIT_DIV_VND_OP3S
+  add constraint FK_OP3S_MCLP130D_01 foreign key (DIV_PART)
+  references MCLP130D (DIV_PART) on delete cascade;
+alter table SPLIT_DIV_VND_OP3S
+  add constraint FK_OP3S_OP8S_01 foreign key (SPLIT_TYP)
+  references SPLIT_DMN_OP8S (SPLIT_TYP) on delete cascade;
+alter table SPLIT_DIV_VND_OP3S
+  add constraint MCL_CHK_01_OCT_16_225615496
+  check ("CBR_VNDR_ID" IS NOT NULL);
+alter table SPLIT_DIV_VND_OP3S
+  add constraint MCL_CHK_01_OCT_16_225615497
+  check ("SPLIT_TYP" IS NOT NULL);
+alter table SPLIT_DIV_VND_OP3S
+  add constraint MCL_CHK_01_OCT_16_225615499
+  check ("DIV_PART" IS NOT NULL);
+

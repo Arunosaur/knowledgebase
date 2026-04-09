@@ -1,0 +1,27 @@
+create table SPLIT_ORD_OP2S
+(
+  ord_num     NUMBER(11) not null,
+  ord_ln      NUMBER(7,2),
+  split_typ   VARCHAR2(10),
+  org_ord_num NUMBER(11),
+  org_ord_ln  NUMBER(7,2),
+  div_part    NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part') not null
+)
+;
+create index FK_OP2S_OP8S_01 on SPLIT_ORD_OP2S (SPLIT_TYP)
+  compress;
+alter table SPLIT_ORD_OP2S
+  add constraint PK_OP2S primary key (DIV_PART, ORD_NUM, ORD_LN);
+alter table SPLIT_ORD_OP2S
+  add constraint MCL_CHK_01_OCT_16_225615227
+  check ("ORD_LN" IS NOT NULL);
+alter table SPLIT_ORD_OP2S
+  add constraint MCL_CHK_01_OCT_16_225615228
+  check ("SPLIT_TYP" IS NOT NULL);
+alter table SPLIT_ORD_OP2S
+  add constraint MCL_CHK_01_OCT_16_225615229
+  check ("ORG_ORD_NUM" IS NOT NULL);
+alter table SPLIT_ORD_OP2S
+  add constraint MCL_CHK_01_OCT_16_225615230
+  check ("ORG_ORD_LN" IS NOT NULL);
+

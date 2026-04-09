@@ -1,0 +1,49 @@
+create table REROUTE_LOG_RT2R
+(
+  old_div_part    NUMBER(3),
+  new_div_part    NUMBER(3),
+  old_cust_id     VARCHAR2(8),
+  new_cust_id     VARCHAR2(8),
+  old_load_num    VARCHAR2(4),
+  new_load_num    VARCHAR2(4),
+  old_llr_dt      DATE,
+  new_llr_dt      DATE,
+  old_stop_num    NUMBER,
+  new_stop_num    NUMBER,
+  old_llr_day     VARCHAR2(3),
+  new_llr_day     VARCHAR2(3),
+  old_llr_time    NUMBER,
+  new_llr_time    NUMBER,
+  old_depart_day  VARCHAR2(3),
+  new_depart_day  VARCHAR2(3),
+  old_depart_time NUMBER,
+  new_depart_time NUMBER,
+  old_eta_day     VARCHAR2(3),
+  new_eta_day     VARCHAR2(3),
+  old_eta_time    NUMBER,
+  new_eta_time    NUMBER,
+  old_eff_ts      DATE,
+  new_eff_ts      DATE,
+  old_end_ts      DATE,
+  new_end_ts      DATE,
+  typ             VARCHAR2(3),
+  create_ts       TIMESTAMP(6),
+  service_name    VARCHAR2(30),
+  user_id         VARCHAR2(30),
+  os_user_id      VARCHAR2(30)
+)
+partition by range (CREATE_TS) interval (NUMTODSINTERVAL(45, 'DAY'))
+(
+  partition BASE_PARTITION values less than (TIMESTAMP' 2000-01-01 00:00:00')
+    tablespace OP_TABLES,
+  partition SYS_P28156 values less than (TIMESTAMP' 2017-04-01 00:00:00')
+    tablespace OP_TABLES,
+  partition SYS_P28157 values less than (TIMESTAMP' 2017-05-16 00:00:00')
+    tablespace OP_TABLES
+);
+create index N_RT2R_01 on REROUTE_LOG_RT2R (CREATE_TS, OLD_DIV_PART, OLD_CUST_ID)
+  nologging  local;
+alter table REROUTE_LOG_RT2R
+  add constraint CHK_TYP
+  check (typ IN ('INS','DEL','UPD'));
+

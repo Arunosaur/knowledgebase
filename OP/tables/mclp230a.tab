@@ -1,0 +1,15 @@
+create table MCLP230A
+(
+  sbcata        VARCHAR2(3) not null,
+  desca         VARCHAR2(30),
+  cntnr_itm_typ NUMBER(1) default 0
+)
+;
+comment on column MCLP230A.desca
+  is 'A brief description of the SCOREBOARD ZONE CATEGORY specified.';
+alter table MCLP230A
+  add constraint PK_MCLP230A primary key (SBCATA);
+alter table MCLP230A
+  add constraint MCLP230A_CHK_CNTNR_ITM_TYP
+  check (cntnr_itm_typ between 0 and 3);
+

@@ -1,0 +1,22 @@
+create table DIV_ITEM_FCAST_OP2F
+(
+  div_part   NUMBER(3),
+  catlg_num  NUMBER,
+  item_fcast NUMBER(9,1)
+)
+;
+alter table DIV_ITEM_FCAST_OP2F
+  add constraint PK_OP2F primary key (DIV_PART, CATLG_NUM);
+alter table DIV_ITEM_FCAST_OP2F
+  add constraint FK_OP2F_01 foreign key (DIV_PART)
+  references DIV_MSTR_DI1D (DIV_PART);
+alter table DIV_ITEM_FCAST_OP2F
+  add constraint MCL_CHK_01_OCT_16_225615216
+  check ("DIV_PART" IS NOT NULL);
+alter table DIV_ITEM_FCAST_OP2F
+  add constraint MCL_CHK_01_OCT_16_225615221
+  check ("CATLG_NUM" IS NOT NULL);
+alter table DIV_ITEM_FCAST_OP2F
+  add constraint MCL_CHK_01_OCT_16_225615223
+  check ("ITEM_FCAST" IS NOT NULL);
+

@@ -1,0 +1,57 @@
+{
+  "id": "ke-1774099260-open",
+  "type": "qa",
+  "question": "What is considered an open shipment in Manhattan WMS?",
+  "answer": "For shipment-level operational questions in Manhattan WMS, an open shipment is good enough to define as SHIPMENT_STATUS < 80 unless the user asks for a narrower business definition. That includes draft, planned, loading, pending, available, assigned, tendered, countered, accepted, and in-transit shipments. It excludes delivered, complete, paid, pending cancel, and canceled shipments.",
+  "context": {
+    "group": "manhattan-main",
+    "schemas": [
+      "FE_DM",
+      "MD_DM",
+      "MK_DM",
+      "MN_DM",
+      "MY_DM",
+      "MZ_DM",
+      "NE_DM",
+      "SE_DM",
+      "FS06_DM"
+    ],
+    "dcCodes": [
+      "FE",
+      "MD",
+      "MK",
+      "MN",
+      "MY",
+      "MZ",
+      "NE",
+      "SE",
+      "FS06"
+    ],
+    "systems": [
+      "manhattan"
+    ],
+    "objects": [
+      "SHIPMENT",
+      "SHIPMENT_STATUS"
+    ]
+  },
+  "tags": [
+    "open shipment",
+    "shipment_status",
+    "status < 80",
+    "draft",
+    "planned",
+    "in transit",
+    "delivered",
+    "complete",
+    "canceled",
+    "manhattan"
+  ],
+  "quality": 3,
+  "source": "ai-verified",
+  "capturedBy": "asrajag",
+  "capturedAt": "2026-03-21T00:00:00.000Z",
+  "updatedAt": "2026-03-21T00:00:00.000Z",
+  "approved": true,
+  "notes": "Validated from SHIPMENT_STATUS lookup table in Manhattan schemas."
+}

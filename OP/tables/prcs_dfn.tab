@@ -1,0 +1,44 @@
+create table PRCS_DFN
+(
+  prcs_id                  VARCHAR2(32),
+  max_exec_time_in_mins    NUMBER(3) default 0,
+  num_of_notifctn          NUMBER(2) default 0,
+  intrvl_in_mins           NUMBER(3) default 0,
+  last_run_ts              DATE default SYSDATE,
+  cut_off_adjstmnt_in_mins NUMBER(3) default 0,
+  prcs_sbtyp_cd            VARCHAR2(3),
+  div_part                 NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+;
+create index FK_PRCS_DFN_PRCS_SBTYP_01 on PRCS_DFN (DIV_PART, PRCS_SBTYP_CD)
+  compress;
+alter table PRCS_DFN
+  add constraint PK_PRCS_DFN primary key (DIV_PART, PRCS_ID);
+alter table PRCS_DFN
+  add constraint FK_PRCS_DFN_PRCS_SBTYP_01 foreign key (DIV_PART, PRCS_SBTYP_CD)
+  references PRCS_SBTYP (DIV_PART, PRCS_SBTYP_CD) on delete cascade;
+alter table PRCS_DFN
+  add constraint FK_PRCS_DFN_PRCS_TYP_DESCR_01 foreign key (DIV_PART, PRCS_ID)
+  references PRCS_TYP_DESCR (DIV_PART, PRCS_ID) on delete cascade;
+alter table PRCS_DFN
+  add constraint MCL_CHK_01_OCT_16_225615349
+  check ("PRCS_ID" IS NOT NULL);
+alter table PRCS_DFN
+  add constraint MCL_CHK_01_OCT_16_225615350
+  check ("MAX_EXEC_TIME_IN_MINS" IS NOT NULL);
+alter table PRCS_DFN
+  add constraint MCL_CHK_01_OCT_16_225615351
+  check ("NUM_OF_NOTIFCTN" IS NOT NULL);
+alter table PRCS_DFN
+  add constraint MCL_CHK_01_OCT_16_225615352
+  check ("INTRVL_IN_MINS" IS NOT NULL);
+alter table PRCS_DFN
+  add constraint MCL_CHK_01_OCT_16_225615353
+  check ("LAST_RUN_TS" IS NOT NULL);
+alter table PRCS_DFN
+  add constraint MCL_CHK_01_OCT_16_225615354
+  check ("CUT_OFF_ADJSTMNT_IN_MINS" IS NOT NULL);
+alter table PRCS_DFN
+  add constraint MCL_CHK_01_OCT_16_225615355
+  check ("DIV_PART" IS NOT NULL);
+

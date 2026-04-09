@@ -1,0 +1,28 @@
+create table CARE_PKG_ITEM_CP1I
+(
+  div_part     NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part'),
+  store_typ_cd VARCHAR2(3),
+  catlg_num    NUMBER not null,
+  qty          NUMBER,
+  user_id      VARCHAR2(8) default user,
+  last_chg_ts  DATE default sysdate
+)
+;
+alter table CARE_PKG_ITEM_CP1I
+  add constraint PK_CP1I primary key (DIV_PART, STORE_TYP_CD, CATLG_NUM);
+alter table CARE_PKG_ITEM_CP1I
+  add constraint MCL_CHK_01_OCT_16_22561556
+  check ("DIV_PART" IS NOT NULL);
+alter table CARE_PKG_ITEM_CP1I
+  add constraint MCL_CHK_01_OCT_16_22561557
+  check ("STORE_TYP_CD" IS NOT NULL);
+alter table CARE_PKG_ITEM_CP1I
+  add constraint MCL_CHK_01_OCT_16_22561559
+  check ("QTY" IS NOT NULL);
+alter table CARE_PKG_ITEM_CP1I
+  add constraint MCL_CHK_01_OCT_16_22561560
+  check ("USER_ID" IS NOT NULL);
+alter table CARE_PKG_ITEM_CP1I
+  add constraint MCL_CHK_01_OCT_16_22561561
+  check ("LAST_CHG_TS" IS NOT NULL);
+

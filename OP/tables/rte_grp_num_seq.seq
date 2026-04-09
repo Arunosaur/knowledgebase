@@ -1,0 +1,7 @@
+create sequence RTE_GRP_NUM_SEQ
+minvalue 1
+maxvalue 9999999999999999999999999999
+start with 829592
+increment by 1
+cache 100;
+

@@ -1,0 +1,31 @@
+create table STOP_ETA_OP1G
+(
+  load_depart_sid NUMBER,
+  cust_id         VARCHAR2(8),
+  stop_num        NUMBER,
+  eta_ts          DATE,
+  div_part        NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part') not null
+)
+compress for all operations;
+create index FK_OP1G_OP1F_01 on STOP_ETA_OP1G (DIV_PART, LOAD_DEPART_SID)
+  compress;
+create index N_OP1G_01 on STOP_ETA_OP1G (DIV_PART, CUST_ID, LOAD_DEPART_SID, STOP_NUM)
+  compress;
+alter table STOP_ETA_OP1G
+  add constraint PK_OP1G primary key (DIV_PART, LOAD_DEPART_SID, CUST_ID);
+alter table STOP_ETA_OP1G
+  add constraint FK_OP1G_OP1F_01 foreign key (DIV_PART, LOAD_DEPART_SID)
+  references LOAD_DEPART_OP1F (DIV_PART, LOAD_DEPART_SID) on delete cascade;
+alter table STOP_ETA_OP1G
+  add constraint MCL_CHK_01_OCT_16_225615208
+  check ("LOAD_DEPART_SID" IS NOT NULL);
+alter table STOP_ETA_OP1G
+  add constraint MCL_CHK_01_OCT_16_225615209
+  check ("CUST_ID" IS NOT NULL);
+alter table STOP_ETA_OP1G
+  add constraint MCL_CHK_01_OCT_16_225615210
+  check ("STOP_NUM" IS NOT NULL);
+alter table STOP_ETA_OP1G
+  add constraint MCL_CHK_01_OCT_16_225615211
+  check ("ETA_TS" IS NOT NULL);
+

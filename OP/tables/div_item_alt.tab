@@ -1,0 +1,55 @@
+create table DIV_ITEM_ALT
+(
+  item_num    VARCHAR2(25),
+  item_uom    VARCHAR2(3),
+  alt_typ     VARCHAR2(3) not null,
+  alt_item    VARCHAR2(9),
+  alt_uom     VARCHAR2(3),
+  qty_fctr    NUMBER(5),
+  priorty     NUMBER(3),
+  last_chg_ts DATE default SYSDATE,
+  div_part    NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+;
+create index FK_DIV_ITEM_ALT_ALT_TYP_01 on DIV_ITEM_ALT (ALT_TYP)
+  compress;
+create index FK_DIV_ITEM_ALT_MCLP110B_01 on DIV_ITEM_ALT (DIV_PART, ALT_ITEM, ALT_UOM)
+  compress;
+create index FK_DIV_ITEM_ALT_MCLP110B_02 on DIV_ITEM_ALT (DIV_PART, ITEM_NUM, ITEM_UOM)
+  compress;
+alter table DIV_ITEM_ALT
+  add constraint PK_DIV_ITEM_ALT primary key (DIV_PART, ITEM_NUM, ITEM_UOM, ALT_TYP);
+alter table DIV_ITEM_ALT
+  add constraint FK_DIV_ITEM_ALT_ALT_TYP_01 foreign key (ALT_TYP)
+  references ALT_TYP (ALT_TYP);
+alter table DIV_ITEM_ALT
+  add constraint FK_DIV_ITEM_ALT_MCLP110B_01 foreign key (DIV_PART, ALT_ITEM, ALT_UOM)
+  references MCLP110B (DIV_PART, ITEMB, UOMB) on delete cascade;
+alter table DIV_ITEM_ALT
+  add constraint FK_DIV_ITEM_ALT_MCLP110B_02 foreign key (DIV_PART, ITEM_NUM, ITEM_UOM)
+  references MCLP110B (DIV_PART, ITEMB, UOMB) on delete cascade;
+alter table DIV_ITEM_ALT
+  add constraint MCL_CHK_01_OCT_16_225615394
+  check ("ITEM_NUM" IS NOT NULL);
+alter table DIV_ITEM_ALT
+  add constraint MCL_CHK_01_OCT_16_225615395
+  check ("ITEM_UOM" IS NOT NULL);
+alter table DIV_ITEM_ALT
+  add constraint MCL_CHK_01_OCT_16_225615397
+  check ("ALT_ITEM" IS NOT NULL);
+alter table DIV_ITEM_ALT
+  add constraint MCL_CHK_01_OCT_16_225615398
+  check ("ALT_UOM" IS NOT NULL);
+alter table DIV_ITEM_ALT
+  add constraint MCL_CHK_01_OCT_16_225615399
+  check ("QTY_FCTR" IS NOT NULL);
+alter table DIV_ITEM_ALT
+  add constraint MCL_CHK_01_OCT_16_225615400
+  check ("PRIORTY" IS NOT NULL);
+alter table DIV_ITEM_ALT
+  add constraint MCL_CHK_01_OCT_16_225615401
+  check ("LAST_CHG_TS" IS NOT NULL);
+alter table DIV_ITEM_ALT
+  add constraint MCL_CHK_01_OCT_16_225615402
+  check ("DIV_PART" IS NOT NULL);
+

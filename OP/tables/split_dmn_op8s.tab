@@ -1,0 +1,18 @@
+create table SPLIT_DMN_OP8S
+(
+  split_typ VARCHAR2(10),
+  descr     VARCHAR2(40),
+  priorty   NUMBER
+)
+;
+create index N_OP8S_01 on SPLIT_DMN_OP8S (SPLIT_TYP, PRIORTY)
+  compress;
+alter table SPLIT_DMN_OP8S
+  add constraint PK_OP8S primary key (SPLIT_TYP);
+alter table SPLIT_DMN_OP8S
+  add constraint MCL_CHK_01_OCT_16_225615474
+  check ("SPLIT_TYP" IS NOT NULL);
+alter table SPLIT_DMN_OP8S
+  add constraint MCL_CHK_01_OCT_16_225615476
+  check ("PRIORTY" IS NOT NULL);
+

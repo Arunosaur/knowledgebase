@@ -1,0 +1,56 @@
+create table MCLP110B
+(
+  itemb                 VARCHAR2(25) not null,
+  uomb                  VARCHAR2(3) not null,
+  ordtpb                VARCHAR2(1),
+  nonstb                VARCHAR2(1),
+  transb                VARCHAR2(1),
+  buyerb                VARCHAR2(8),
+  hivalb                VARCHAR2(1),
+  statb                 VARCHAR2(3),
+  disdtb                NUMBER(6),
+  sitemb                VARCHAR2(25),
+  suomb                 VARCHAR2(3),
+  slow_mvng_item_sw     VARCHAR2(1) default 'N',
+  min_prvntv_rplnsh_qty NUMBER(7) default 0,
+  min_reqd_rplnsh_qty   NUMBER(7) default 0,
+  max_ord_qty           NUMBER(7),
+  mfst_catg             NUMBER(3) default 0,
+  cwt_sw                VARCHAR2(1) default 'N',
+  div_part              NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+compress for all operations;
+comment on column MCLP110B.itemb
+  is 'This is the CBR Item Number.';
+comment on column MCLP110B.uomb
+  is 'This is the Item Unit of Measure.';
+comment on column MCLP110B.ordtpb
+  is 'This is for distribution only.';
+create index N_MCLP110B_01 on MCLP110B (DIV_PART, ITEMB, UOMB, SUOMB)
+  compress;
+create index N_MCLP110B_02 on MCLP110B (ITEMB, UOMB, DIV_PART)
+  compress;
+alter table MCLP110B
+  add constraint PK_MCLP110B primary key (DIV_PART, ITEMB, UOMB);
+alter table MCLP110B
+  add constraint MCLP110B_CHK_1
+  check (slow_mvng_item_sw in ('Y', 'N'));
+alter table MCLP110B
+  add constraint MCL_CHK_01_OCT_16_225615180
+  check ("MIN_PRVNTV_RPLNSH_QTY" IS NOT NULL);
+alter table MCLP110B
+  add constraint MCL_CHK_01_OCT_16_225615181
+  check ("MIN_REQD_RPLNSH_QTY" IS NOT NULL);
+alter table MCLP110B
+  add constraint MCL_CHK_01_OCT_16_225615182
+  check ("MFST_CATG" IS NOT NULL);
+alter table MCLP110B
+  add constraint MCL_CHK_01_OCT_16_225615183
+  check ("CWT_SW" IS NOT NULL);
+alter table MCLP110B
+  add constraint MCL_CHK_01_OCT_16_225615184
+  check ("DIV_PART" IS NOT NULL);
+alter table MCLP110B
+  add constraint MCL_CHK_01_OCT_16_225615185
+  check (cwt_sw in ('N', 'Y'));
+

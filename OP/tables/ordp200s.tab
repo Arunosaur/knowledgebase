@@ -1,0 +1,96 @@
+create table ORDP200S
+(
+  cdelcs   VARCHAR2(1),
+  comps    VARCHAR2(3),
+  custs    VARCHAR2(8),
+  brns     VARCHAR2(3),
+  shps     VARCHAR2(4),
+  shpnms   VARCHAR2(40),
+  sortas   VARCHAR2(15),
+  adress   VARCHAR2(40),
+  adrs2s   VARCHAR2(40),
+  adrs3s   VARCHAR2(40),
+  citys    VARCHAR2(40),
+  contys   VARCHAR2(40),
+  states   VARCHAR2(2),
+  zipcds   VARCHAR2(15),
+  cntrys   VARCHAR2(40),
+  telnos   VARCHAR2(30),
+  buyers   VARCHAR2(30),
+  carr1s   VARCHAR2(4),
+  carr2s   VARCHAR2(4),
+  carr3s   VARCHAR2(4),
+  pwhses   VARCHAR2(5),
+  pwhs2s   VARCHAR2(5),
+  pwhs3s   VARCHAR2(52),
+  opndms   NUMBER(2),
+  opndds   NUMBER(2),
+  opndys   NUMBER(4),
+  clsdms   NUMBER(2),
+  clsdds   NUMBER(2),
+  clsdys   NUMBER(4),
+  lmntms   NUMBER(2),
+  lmntds   NUMBER(2),
+  lmntys   NUMBER(4),
+  regns    VARCHAR2(5),
+  orrtes   VARCHAR2(4),
+  stops    NUMBER(9,2),
+  shelfs   NUMBER(5),
+  shptos   VARCHAR2(15),
+  titles   VARCHAR2(40),
+  lnames   VARCHAR2(40),
+  conams   VARCHAR2(40),
+  faxs     VARCHAR2(40),
+  emails   VARCHAR2(40),
+  mdelcs   NUMBER(13,2),
+  mordcs   NUMBER(13,2),
+  taxcds   VARCHAR2(15),
+  dfwds    VARCHAR2(15),
+  dortys   VARCHAR2(15),
+  dshcos   VARCHAR2(1),
+  dshvis   VARCHAR2(15),
+  dwhpus   VARCHAR2(1),
+  dfregs   VARCHAR2(15),
+  dslsrs   VARCHAR2(15),
+  dwhses   VARCHAR2(5),
+  dalbos   VARCHAR2(1),
+  dporqs   VARCHAR2(1),
+  dcntcs   VARCHAR2(15),
+  dtchgs   NUMBER(6),
+  tmchgs   NUMBER(6),
+  uschgs   VARCHAR2(20),
+  div_part NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+compress for all operations;
+comment on column ORDP200S.shpnms
+  is 'This is the SHIP-TO NAME.';
+comment on column ORDP200S.pwhses
+  is 'This is the Primary Shipping Location.';
+comment on column ORDP200S.pwhs2s
+  is 'This is the secondary shipping location.';
+comment on column ORDP200S.pwhs3s
+  is 'This is the third choice shipping location.';
+comment on column ORDP200S.opndms
+  is 'This is the month when the account was opened.';
+comment on column ORDP200S.opndds
+  is 'This is the day when the account was opened.';
+comment on column ORDP200S.opndys
+  is 'This is the year when the account was opened.';
+comment on column ORDP200S.clsdms
+  is 'This is the month when the account gets closed.';
+comment on column ORDP200S.clsdds
+  is 'This is the day when the account gets closed.';
+comment on column ORDP200S.clsdys
+  is 'This is the year when the account gets closed.';
+comment on column ORDP200S.lmntms
+  is 'This is the record of the month when the last maintenance was performed.';
+comment on column ORDP200S.lmntds
+  is 'This is the record of the day when the last maintenance was performed.';
+comment on column ORDP200S.lmntys
+  is 'This is the record of the year when the last maintenance was performed.';
+create index IDX_ORDP200S_VPD_DIV_PART on ORDP200S (DIV_PART)
+  compress;
+alter table ORDP200S
+  add constraint MCL_CHK_01_OCT_16_225615629
+  check ("DIV_PART" IS NOT NULL);
+

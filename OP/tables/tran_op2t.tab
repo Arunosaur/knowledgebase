@@ -1,0 +1,155 @@
+create table TRAN_OP2T
+(
+  tran_id   NUMBER,
+  part_id   NUMBER,
+  rlse_id   NUMBER,
+  tran_typ  NUMBER,
+  create_ts DATE default SYSDATE,
+  pgm_id    VARCHAR2(20) default 'EMTPY',
+  div_part  NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+partition by range (DIV_PART)
+(
+  partition DIV_PART01 values less than (2)
+    tablespace OP_TABLES,
+  partition DIV_PART02 values less than (3)
+    tablespace OP_TABLES,
+  partition DIV_PART03 values less than (4)
+    tablespace OP_TABLES,
+  partition DIV_PART04 values less than (5)
+    tablespace OP_TABLES,
+  partition DIV_PART05 values less than (6)
+    tablespace OP_TABLES,
+  partition DIV_PART06 values less than (7)
+    tablespace OP_TABLES,
+  partition DIV_PART07 values less than (8)
+    tablespace OP_TABLES,
+  partition DIV_PART08 values less than (9)
+    tablespace OP_TABLES,
+  partition DIV_PART09 values less than (10)
+    tablespace OP_TABLES,
+  partition DIV_PART10 values less than (11)
+    tablespace OP_TABLES,
+  partition DIV_PART11 values less than (12)
+    tablespace OP_TABLES,
+  partition DIV_PART12 values less than (13)
+    tablespace OP_TABLES,
+  partition DIV_PART13 values less than (14)
+    tablespace OP_TABLES,
+  partition DIV_PART14 values less than (15)
+    tablespace OP_TABLES,
+  partition DIV_PART15 values less than (16)
+    tablespace OP_TABLES,
+  partition DIV_PART16 values less than (17)
+    tablespace OP_TABLES,
+  partition DIV_PART17 values less than (18)
+    tablespace OP_TABLES,
+  partition DIV_PART18 values less than (19)
+    tablespace OP_TABLES,
+  partition DIV_PART19 values less than (20)
+    tablespace OP_TABLES,
+  partition DIV_PART20 values less than (21)
+    tablespace OP_TABLES,
+  partition DIV_PART21 values less than (22)
+    tablespace OP_TABLES,
+  partition DIV_PART22 values less than (23)
+    tablespace OP_TABLES,
+  partition DIV_PART23 values less than (24)
+    tablespace OP_TABLES,
+  partition DIV_PART24 values less than (25)
+    tablespace OP_TABLES,
+  partition DIV_PART25 values less than (26)
+    tablespace OP_TABLES,
+  partition DIV_PART26 values less than (27)
+    tablespace OP_TABLES,
+  partition DIV_PART27 values less than (28)
+    tablespace OP_TABLES,
+  partition DIV_PART28 values less than (29)
+    tablespace OP_TABLES,
+  partition DIV_PART29 values less than (30)
+    tablespace OP_TABLES,
+  partition DIV_PART30 values less than (31)
+    tablespace OP_TABLES,
+  partition DIV_PART31 values less than (32)
+    tablespace OP_TABLES,
+  partition DIV_PART32 values less than (33)
+    tablespace OP_TABLES,
+  partition DIV_PART33 values less than (34)
+    tablespace OP_TABLES,
+  partition DIV_PART34 values less than (35)
+    tablespace OP_TABLES,
+  partition DIV_PART35 values less than (36)
+    tablespace OP_TABLES,
+  partition DIV_PART36 values less than (37)
+    tablespace OP_TABLES,
+  partition DIV_PART37 values less than (38)
+    tablespace OP_TABLES,
+  partition DIV_PART38 values less than (39)
+    tablespace OP_TABLES,
+  partition DIV_PART39 values less than (40)
+    tablespace OP_TABLES,
+  partition DIV_PART40 values less than (41)
+    tablespace OP_TABLES,
+  partition DIV_PART41 values less than (42)
+    tablespace OP_TABLES,
+  partition DIV_PART42 values less than (43)
+    tablespace OP_TABLES,
+  partition DIV_PART43 values less than (44)
+    tablespace OP_TABLES,
+  partition DIV_PART44 values less than (45)
+    tablespace OP_TABLES,
+  partition DIV_PART45 values less than (46)
+    tablespace OP_TABLES,
+  partition DIV_PART46 values less than (47)
+    tablespace OP_TABLES,
+  partition DIV_PART47 values less than (48)
+    tablespace OP_TABLES,
+  partition DIV_PART48 values less than (49)
+    tablespace OP_TABLES,
+  partition DIV_PART49 values less than (50)
+    tablespace OP_TABLES,
+  partition DIV_PART50 values less than (51)
+    tablespace OP_TABLES,
+  partition DIV_PART51 values less than (52)
+    tablespace OP_TABLES,
+  partition DIV_OVERFLOW values less than (MAXVALUE)
+    tablespace OP_TABLES
+);
+create index FK_OP2T_OP1Z__XXRDXX_01912_004 on TRAN_OP2T (DIV_PART, RLSE_ID)
+  compress  nologging  local;
+create index N_OP2T_01_XXRDXX_01912_002 on TRAN_OP2T (DIV_PART, PART_ID, RLSE_ID, TRAN_ID)
+  compress  nologging  local;
+create index N_OP2T_02 on TRAN_OP2T (RLSE_ID, PART_ID, DIV_PART)
+  nologging  local;
+create unique index PK_OP2T_XXRDXX_01912_003 on TRAN_OP2T (DIV_PART, TRAN_ID)
+  compress 1;
+alter table TRAN_OP2T
+  add constraint PK_OP2T primary key (DIV_PART, TRAN_ID);
+alter table TRAN_OP2T
+  add constraint UNQ_OP2T_01 unique (DIV_PART, RLSE_ID, TRAN_TYP, TRAN_ID);
+alter index UNQ_OP2T_01 nologging;
+alter table TRAN_OP2T
+  add constraint FK_OP2T_OP1Z_01 foreign key (DIV_PART, RLSE_ID)
+  references RLSE_OP1Z (DIV_PART, RLSE_ID) on delete cascade;
+alter table TRAN_OP2T
+  add constraint MCL_CHK_CREATE_TS_OP2T
+  check ("CREATE_TS" IS NOT NULL);
+alter table TRAN_OP2T
+  add constraint MCL_CHK_DIV_PART_OP2T
+  check ("DIV_PART" IS NOT NULL);
+alter table TRAN_OP2T
+  add constraint MCL_CHK_PART_ID_OP2T
+  check ("PART_ID" IS NOT NULL);
+alter table TRAN_OP2T
+  add constraint MCL_CHK_PGM_ID_OP2T
+  check ("PGM_ID" IS NOT NULL);
+alter table TRAN_OP2T
+  add constraint MCL_CHK_RLSE_ID_OP2T
+  check ("RLSE_ID" IS NOT NULL);
+alter table TRAN_OP2T
+  add constraint MCL_CHK_TRAN_ID_OP2T
+  check ("TRAN_ID" IS NOT NULL);
+alter table TRAN_OP2T
+  add constraint MCL_CHK_TRAN_TYP_OP2T
+  check ("TRAN_TYP" IS NOT NULL);
+

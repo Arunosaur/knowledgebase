@@ -1,0 +1,27 @@
+create table MCLANE_SUBRCB_CODES
+(
+  subrcb_cd        NUMBER(3),
+  subrcb_desc      VARCHAR2(30),
+  allocate_prcs_sw VARCHAR2(1),
+  user_id          VARCHAR2(8),
+  last_chg_ts      DATE default sysdate
+)
+;
+alter table MCLANE_SUBRCB_CODES
+  add constraint PK_MCLANE_SUBRCB_CODES primary key (SUBRCB_CD);
+alter table MCLANE_SUBRCB_CODES
+  add constraint MCL_CHK_01_OCT_16_225615452
+  check ("SUBRCB_CD" IS NOT NULL);
+alter table MCLANE_SUBRCB_CODES
+  add constraint MCL_CHK_01_OCT_16_225615453
+  check ("SUBRCB_DESC" IS NOT NULL);
+alter table MCLANE_SUBRCB_CODES
+  add constraint MCL_CHK_01_OCT_16_225615454
+  check ("ALLOCATE_PRCS_SW" IS NOT NULL);
+alter table MCLANE_SUBRCB_CODES
+  add constraint MCL_CHK_01_OCT_16_225615455
+  check ("USER_ID" IS NOT NULL);
+alter table MCLANE_SUBRCB_CODES
+  add constraint MCL_CHK_01_OCT_16_225615456
+  check ("LAST_CHG_TS" IS NOT NULL);
+

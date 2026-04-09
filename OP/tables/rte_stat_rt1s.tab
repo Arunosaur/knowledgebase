@@ -1,0 +1,48 @@
+create table RTE_STAT_RT1S
+(
+  rte_grp_num    NUMBER not null,
+  shp_dt         DATE,
+  stop_num       NUMBER not null,
+  mcl_cust       VARCHAR2(6),
+  create_user_id VARCHAR2(30),
+  orig_wt        NUMBER,
+  orig_cube      NUMBER,
+  end_dt         DATE,
+  new_llr_dt     DATE,
+  new_load_num   VARCHAR2(4),
+  new_stop_num   NUMBER,
+  new_eta_dt     DATE,
+  stat_cd        VARCHAR2(3) default 'SNT',
+  last_chg_ts    DATE default SYSDATE,
+  user_id        VARCHAR2(30) default user
+)
+;
+create index FK_RT1S_RT2G_01 on RTE_STAT_RT1S (RTE_GRP_NUM)
+  compress;
+alter table RTE_STAT_RT1S
+  add constraint PK_RT1S primary key (RTE_GRP_NUM, SHP_DT, STOP_NUM, MCL_CUST);
+alter table RTE_STAT_RT1S
+  add constraint FK_RT1S_RT2G_01 foreign key (RTE_GRP_NUM)
+  references RTE_GRP_RT2G (RTE_GRP_NUM) on delete cascade;
+alter table RTE_STAT_RT1S
+  add constraint MCL_CHK_01_OCT_16_225615510
+  check ("SHP_DT" IS NOT NULL);
+alter table RTE_STAT_RT1S
+  add constraint MCL_CHK_01_OCT_16_225615538
+  check ("MCL_CUST" IS NOT NULL);
+alter table RTE_STAT_RT1S
+  add constraint MCL_CHK_01_OCT_16_225615540
+  check ("ORIG_WT" IS NOT NULL);
+alter table RTE_STAT_RT1S
+  add constraint MCL_CHK_01_OCT_16_225615541
+  check ("ORIG_CUBE" IS NOT NULL);
+alter table RTE_STAT_RT1S
+  add constraint MCL_CHK_01_OCT_16_225615542
+  check ("STAT_CD" IS NOT NULL);
+alter table RTE_STAT_RT1S
+  add constraint MCL_CHK_01_OCT_16_225615543
+  check ("LAST_CHG_TS" IS NOT NULL);
+alter table RTE_STAT_RT1S
+  add constraint MCL_CHK_01_OCT_16_225615544
+  check ("USER_ID" IS NOT NULL);
+

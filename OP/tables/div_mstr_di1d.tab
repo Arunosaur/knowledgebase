@@ -1,0 +1,39 @@
+create table DIV_MSTR_DI1D
+(
+  div_part   NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part'),
+  div_id     VARCHAR2(2),
+  div_nm     VARCHAR2(32),
+  shp_pt_id  NUMBER(3),
+  fin_div_cd NUMBER default 0
+)
+;
+alter table DIV_MSTR_DI1D
+  add constraint PK_DI1D primary key (DIV_PART);
+alter table DIV_MSTR_DI1D
+  add constraint UNQ_DI1D_01 unique (DIV_ID);
+alter table DIV_MSTR_DI1D
+  add constraint UNQ_DI1D_02 unique (DIV_NM);
+alter table DIV_MSTR_DI1D
+  add constraint UNQ_DI1D_03 unique (DIV_PART, DIV_ID);
+alter table DIV_MSTR_DI1D
+  add constraint UNQ_DI1D_04 unique (DIV_ID, DIV_PART);
+alter table DIV_MSTR_DI1D
+  add constraint UNQ_DI1D_05 unique (SHP_PT_ID, DIV_PART);
+alter table DIV_MSTR_DI1D
+  add constraint UNQ_DI1D_06 unique (SHP_PT_ID);
+alter table DIV_MSTR_DI1D
+  add constraint MCL_CHK_01_OCT_16_225615305
+  check ("DIV_PART" IS NOT NULL);
+alter table DIV_MSTR_DI1D
+  add constraint MCL_CHK_01_OCT_16_225615306
+  check ("DIV_ID" IS NOT NULL);
+alter table DIV_MSTR_DI1D
+  add constraint MCL_CHK_01_OCT_16_225615307
+  check ("DIV_NM" IS NOT NULL);
+alter table DIV_MSTR_DI1D
+  add constraint MCL_CHK_22_FEB_18_1
+  check ("SHP_PT_ID" IS NOT NULL);
+alter table DIV_MSTR_DI1D
+  add constraint MCL_CHK_22_FEB_18_2
+  check ("FIN_DIV_CD" IS NOT NULL);
+

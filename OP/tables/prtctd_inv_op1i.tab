@@ -1,0 +1,68 @@
+create table PRTCTD_INV_OP1I
+(
+  prtctd_id    NUMBER(8),
+  zone_id      VARCHAR2(3),
+  tax_jrsdctn  VARCHAR2(3),
+  grp_id       VARCHAR2(8),
+  ord_item_num VARCHAR2(6),
+  eff_dt       DATE,
+  end_dt       DATE,
+  ord_typ_cd   VARCHAR2(1),
+  orig_qty     NUMBER(9),
+  prtctd_qty   NUMBER(9),
+  create_user  VARCHAR2(8),
+  create_ts    DATE default SYSDATE,
+  user_id      VARCHAR2(8),
+  last_chg_ts  DATE default SYSDATE,
+  stat_cd      VARCHAR2(3),
+  div_part     NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+;
+alter table PRTCTD_INV_OP1I
+  add constraint PK_OP1I primary key (DIV_PART, PRTCTD_ID);
+alter table PRTCTD_INV_OP1I
+  add constraint MCL_CHK_01_OCT_16_22561565
+  check ("PRTCTD_ID" IS NOT NULL);
+alter table PRTCTD_INV_OP1I
+  add constraint MCL_CHK_01_OCT_16_22561566
+  check ("ZONE_ID" IS NOT NULL);
+alter table PRTCTD_INV_OP1I
+  add constraint MCL_CHK_01_OCT_16_22561567
+  check ("GRP_ID" IS NOT NULL);
+alter table PRTCTD_INV_OP1I
+  add constraint MCL_CHK_01_OCT_16_22561568
+  check ("ORD_ITEM_NUM" IS NOT NULL);
+alter table PRTCTD_INV_OP1I
+  add constraint MCL_CHK_01_OCT_16_22561569
+  check ("EFF_DT" IS NOT NULL);
+alter table PRTCTD_INV_OP1I
+  add constraint MCL_CHK_01_OCT_16_22561571
+  check ("ORD_TYP_CD" IS NOT NULL);
+alter table PRTCTD_INV_OP1I
+  add constraint MCL_CHK_01_OCT_16_22561572
+  check ("ORIG_QTY" IS NOT NULL);
+alter table PRTCTD_INV_OP1I
+  add constraint MCL_CHK_01_OCT_16_22561574
+  check ("CREATE_USER" IS NOT NULL);
+alter table PRTCTD_INV_OP1I
+  add constraint MCL_CHK_01_OCT_16_22561575
+  check ("CREATE_TS" IS NOT NULL);
+alter table PRTCTD_INV_OP1I
+  add constraint MCL_CHK_01_OCT_16_22561576
+  check ("USER_ID" IS NOT NULL);
+alter table PRTCTD_INV_OP1I
+  add constraint MCL_CHK_01_OCT_16_22561577
+  check ("LAST_CHG_TS" IS NOT NULL);
+alter table PRTCTD_INV_OP1I
+  add constraint MCL_CHK_01_OCT_16_22561578
+  check ("STAT_CD" IS NOT NULL);
+alter table PRTCTD_INV_OP1I
+  add constraint MCL_CHK_01_OCT_16_22561579
+  check ("DIV_PART" IS NOT NULL);
+alter table PRTCTD_INV_OP1I
+  add constraint PRTCTD_INV_OP1I_CHK_1
+  check (ord_typ_cd in ('D', 'R'));
+alter table PRTCTD_INV_OP1I
+  add constraint PRTCTD_INV_OP1I_CHK_2
+  check (stat_cd in ('ACT', 'INA'));
+

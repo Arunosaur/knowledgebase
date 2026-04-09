@@ -1,0 +1,25 @@
+{
+  "fileId": "manhattan-main-MCLN_PULL_ZONE_and_PICK_DETRM_ZONE_on_oLPNs_UI.docx",
+  "fileName": "MCLN PULL_ZONE and PICK_DETRM_ZONE on oLPNs UI.docx",
+  "webUrl": "MCLN PULL_ZONE and PICK_DETRM_ZONE on oLPNs UI.docx",
+  "mimeType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "extension": ".docx",
+  "group": "manhattan-main",
+  "site": "local-bulk-upload",
+  "lastModified": "2026-03-19T09:36:00Z",
+  "syncedAt": "2026-03-19T05:08:35.617Z",
+  "title": "MCLN PULL_ZONE and PICK_DETRM_ZONE on oLPNs UI",
+  "fullText": "center 83548 Adding Reserve PULL_ZONE and PICK_DETERMINATION_ZONE to oLPNs UI Table of Contents Contents This document details the configuration steps needed to add PULL_ZONE and PICK_DETRM_ZONE to oLPNs UI as part of SF Case: 9052956 - Add PULL_ZONE and PICK_DETERM_ZONE to oLPNs UI . Allowing this to also populate on the FIRST ZONE column for oLPNs not utilizing zone picking. *N ote, there is no system code enablement for this change. * TOC \\o \\z \\u \\h 1. Item Inventory by Location UI Changes PAGEREF _Toc197591377 \\h 3 1. oLPN UI Changes Open Filter Layout UI . Search LPN_OUTBOUND i n object Type. Select ‘Add’ Copy details below . PICK_DETRM_ZONE PULL_ZONE Save. Open Labor Dev Tools UI. Whap319 to login. Ctrl-F Clear Filter Layout Cache Open oLPNs UI to see changes.\n\n2329180 -237044 Page PAGE \\* MERGEFORMAT 1 o f = NUMPAGES 3 3 0 0 Page PAGE \\* MERGEFORMAT 1 o f = NUMPAGES 3 3 -663484 9524819 © 2014 Manhattan Associates, Inc. All rights reserved. 0 0 © 2014 Manhattan Associates, Inc. All rights reserved.\n\nPAGE \\* MERGEFORMAT 1\n\n2329180 -237044 Page PAGE \\* MERGEFORMAT 1 o f = NUMPAGES 3 3 0 0 Page PAGE \\* MERGEFORMAT 1 o f = NUMPAGES 3 3 -663484 9524819 © 2014 Manhattan Associates, Inc. All rights reserved. 0 0 © 2014 Manhattan Associates, Inc. All rights reserved.\n\n1\n\n5441406 -30480 -391885 10705",
+  "extractionMode": "provided-text",
+  "chunks": [
+    {
+      "chunkIndex": 0,
+      "startChar": 0,
+      "text": "[Document: MCLN PULL_ZONE and PICK_DETRM_ZONE on oLPNs UI]\n\ncenter 83548 Adding Reserve PULL_ZONE and PICK_DETERMINATION_ZONE to oLPNs UI Table of Contents Contents This document details the configuration steps needed to add PULL_ZONE and PICK_DETRM_ZONE to oLPNs UI as part of SF Case: 9052956 - Add PULL_ZONE and PICK_DETERM_ZONE to oLPNs UI . Allowing this to also populate on the FIRST ZONE column for oLPNs not utilizing zone picking. *N ote, there is no system code enablement for this change. * TOC     1. Item Inventory by Location UI Changes  1. oLPN UI Changes Open Filter Layout UI . Search LPN_OUTBOUND i n object Type. Select ‘Add’ Copy details below . PICK_DETRM_ZONE PULL_ZONE Save. Open Labor Dev Tools UI. Whap319 to login. Ctrl-F Clear Filter Layout Cache Open oLPNs UI to see changes.\n\n2329180 -237044 Page PAGE \\* MERGEFORMAT 1 o f = NUMPAGES 3 3 0 0 Page PAGE \\* MERGEFORMAT 1 o f = NUMPAGES 3 3 -663484 9524819 © 2014 Manhattan Associates, Inc. All rights reserved. 0 0 © 2014 Manhattan Associates, Inc. All rights reserved.\n\nPAGE \\* MERGEFORMAT 1\n\n2329180 -237044 Page PAGE \\* MERGEFORMAT 1 o f = NUMPAGES 3 3 0 0 Page PAGE \\* MERGEFORMAT 1 o f = NUMPAGES 3 3 -663484 9524819 © 2014 Manhattan Associates, Inc. All rights reserved. 0 0 © 2014 Manhattan Associates, Inc. All rights reserved."
+    }
+  ],
+  "chunkCount": 1,
+  "wordCount": 232,
+  "byteSize": 233209,
+  "reindexedAt": "2026-04-09T01:02:11.220Z"
+}

@@ -1,0 +1,25 @@
+{
+  "fileId": "manhattan-main-Case_6574024-Configuration_document_Audit_OB_pallet_SDN-215.docx",
+  "fileName": "Case#6574024-Configuration document Audit OB pallet SDN-215.docx",
+  "webUrl": "Case#6574024-Configuration document Audit OB pallet SDN-215.docx",
+  "mimeType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "extension": ".docx",
+  "group": "manhattan-main",
+  "site": "local-bulk-upload",
+  "lastModified": "2026-03-19T09:35:00Z",
+  "syncedAt": "2026-03-19T05:07:33.214Z",
+  "title": "Case#6574024-Configuration document Audit OB pallet SDN-215",
+  "fullText": "1.Go to facilities UI: 2.Click Apply 3.select and click edit 4. Click warehouse details 5.Click outbound tab and choose Quality audit logging as” Record all oLPN details ” 6. Click save at bottom",
+  "extractionMode": "provided-text",
+  "chunks": [
+    {
+      "chunkIndex": 0,
+      "startChar": 0,
+      "text": "[Document: Case#6574024-Configuration document Audit OB pallet SDN-215]\n\n1.Go to facilities UI: 2.Click Apply 3.select and click edit 4. Click warehouse details 5.Click outbound tab and choose Quality audit logging as” Record all oLPN details ” 6. Click save at bottom"
+    }
+  ],
+  "chunkCount": 1,
+  "wordCount": 33,
+  "byteSize": 525743,
+  "reindexedAt": "2026-04-09T01:02:10.373Z"
+}

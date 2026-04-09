@@ -1,0 +1,28 @@
+create table ORDP140C
+(
+  statc    VARCHAR2(1),
+  ordnoc   NUMBER(11),
+  seqc     NUMBER(7,2),
+  commc    VARCHAR2(256),
+  prtc     VARCHAR2(3),
+  div_part NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+compress for all operations;
+comment on column ORDP140C.statc
+  is 'Order Status';
+comment on column ORDP140C.ordnoc
+  is 'Order Number';
+comment on column ORDP140C.seqc
+  is 'Sequence Number';
+comment on column ORDP140C.commc
+  is 'This contain the Comment Data.';
+comment on column ORDP140C.prtc
+  is 'Print Code';
+create unique index UNQ_ORDP140C_02 on ORDP140C (DIV_PART, SEQC, ORDNOC)
+  compress 2;
+alter table ORDP140C
+  add constraint UNQ_ORDP140C_01 unique (DIV_PART, ORDNOC, SEQC);
+alter table ORDP140C
+  add constraint MCL_CHK_01_OCT_16_225615215
+  check ("DIV_PART" IS NOT NULL);
+

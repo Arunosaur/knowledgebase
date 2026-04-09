@@ -1,0 +1,19 @@
+create table CNTCT_INFO
+(
+  cntct_id   NUMBER(3) not null,
+  email_addr VARCHAR2(40),
+  descr      VARCHAR2(128),
+  frst_nm    VARCHAR2(20),
+  last_nm    VARCHAR2(20),
+  div_part   NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+;
+alter table CNTCT_INFO
+  add constraint PK_CNTCT_INFO primary key (DIV_PART, CNTCT_ID);
+alter table CNTCT_INFO
+  add constraint MCL_CHK_01_OCT_16_225615333
+  check ("FRST_NM" IS NOT NULL);
+alter table CNTCT_INFO
+  add constraint MCL_CHK_01_OCT_16_225615335
+  check ("DIV_PART" IS NOT NULL);
+

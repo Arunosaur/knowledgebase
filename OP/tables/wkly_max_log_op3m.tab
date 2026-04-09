@@ -1,0 +1,37 @@
+create table WKLY_MAX_LOG_OP3M
+(
+  cust_item_sid NUMBER not null,
+  rlse_ts       DATE,
+  ord_num       NUMBER,
+  ord_ln        NUMBER(7,2),
+  qty_typ       VARCHAR2(3),
+  qty           NUMBER,
+  div_part      NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+compress for all operations;
+create index FK_OP3M_OP1M_01 on WKLY_MAX_LOG_OP3M (DIV_PART, CUST_ITEM_SID)
+  compress;
+alter table WKLY_MAX_LOG_OP3M
+  add constraint PK_OP3M primary key (DIV_PART, CUST_ITEM_SID, RLSE_TS, ORD_NUM, ORD_LN, QTY_TYP);
+alter table WKLY_MAX_LOG_OP3M
+  add constraint FK_OP3M_OP1M_01 foreign key (DIV_PART, CUST_ITEM_SID)
+  references WKLY_MAX_CUST_ITEM_OP1M (DIV_PART, CUST_ITEM_SID) on delete cascade;
+alter table WKLY_MAX_LOG_OP3M
+  add constraint MCL_CHK_01_OCT_16_225615268
+  check ("RLSE_TS" IS NOT NULL);
+alter table WKLY_MAX_LOG_OP3M
+  add constraint MCL_CHK_01_OCT_16_225615269
+  check ("ORD_NUM" IS NOT NULL);
+alter table WKLY_MAX_LOG_OP3M
+  add constraint MCL_CHK_01_OCT_16_225615270
+  check ("ORD_LN" IS NOT NULL);
+alter table WKLY_MAX_LOG_OP3M
+  add constraint MCL_CHK_01_OCT_16_225615271
+  check ("QTY_TYP" IS NOT NULL);
+alter table WKLY_MAX_LOG_OP3M
+  add constraint MCL_CHK_01_OCT_16_225615272
+  check ("QTY" IS NOT NULL);
+alter table WKLY_MAX_LOG_OP3M
+  add constraint MCL_CHK_01_OCT_16_225615273
+  check ("DIV_PART" IS NOT NULL);
+

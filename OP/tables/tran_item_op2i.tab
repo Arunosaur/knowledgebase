@@ -1,0 +1,176 @@
+create table TRAN_ITEM_OP2I
+(
+  tran_id          NUMBER,
+  part_id          NUMBER,
+  catlg_num        NUMBER,
+  inv_zone         VARCHAR2(3),
+  inv_aisle        CHAR(2),
+  inv_bin          CHAR(3),
+  inv_lvl          CHAR(2),
+  pick_zone        VARCHAR2(10),
+  pick_aisle       CHAR(2),
+  pick_bin         CHAR(3),
+  pick_lvl         CHAR(2),
+  qty              NUMBER,
+  cig_sel_cd       VARCHAR2(3),
+  hand_stamp_sw    VARCHAR2(1),
+  div_part         NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part'),
+  cust_tax_jrsdctn INTEGER
+)
+partition by range (DIV_PART)
+(
+  partition DIV_PART01 values less than (2)
+    tablespace OP_TABLES,
+  partition DIV_PART02 values less than (3)
+    tablespace OP_TABLES,
+  partition DIV_PART03 values less than (4)
+    tablespace OP_TABLES,
+  partition DIV_PART04 values less than (5)
+    tablespace OP_TABLES,
+  partition DIV_PART05 values less than (6)
+    tablespace OP_TABLES,
+  partition DIV_PART06 values less than (7)
+    tablespace OP_TABLES,
+  partition DIV_PART07 values less than (8)
+    tablespace OP_TABLES,
+  partition DIV_PART08 values less than (9)
+    tablespace OP_TABLES,
+  partition DIV_PART09 values less than (10)
+    tablespace OP_TABLES,
+  partition DIV_PART10 values less than (11)
+    tablespace OP_TABLES,
+  partition DIV_PART11 values less than (12)
+    tablespace OP_TABLES,
+  partition DIV_PART12 values less than (13)
+    tablespace OP_TABLES,
+  partition DIV_PART13 values less than (14)
+    tablespace OP_TABLES,
+  partition DIV_PART14 values less than (15)
+    tablespace OP_TABLES,
+  partition DIV_PART15 values less than (16)
+    tablespace OP_TABLES,
+  partition DIV_PART16 values less than (17)
+    tablespace OP_TABLES,
+  partition DIV_PART17 values less than (18)
+    tablespace OP_TABLES,
+  partition DIV_PART18 values less than (19)
+    tablespace OP_TABLES,
+  partition DIV_PART19 values less than (20)
+    tablespace OP_TABLES,
+  partition DIV_PART20 values less than (21)
+    tablespace OP_TABLES,
+  partition DIV_PART21 values less than (22)
+    tablespace OP_TABLES,
+  partition DIV_PART22 values less than (23)
+    tablespace OP_TABLES,
+  partition DIV_PART23 values less than (24)
+    tablespace OP_TABLES,
+  partition DIV_PART24 values less than (25)
+    tablespace OP_TABLES,
+  partition DIV_PART25 values less than (26)
+    tablespace OP_TABLES,
+  partition DIV_PART26 values less than (27)
+    tablespace OP_TABLES,
+  partition DIV_PART27 values less than (28)
+    tablespace OP_TABLES,
+  partition DIV_PART28 values less than (29)
+    tablespace OP_TABLES,
+  partition DIV_PART29 values less than (30)
+    tablespace OP_TABLES,
+  partition DIV_PART30 values less than (31)
+    tablespace OP_TABLES,
+  partition DIV_PART31 values less than (32)
+    tablespace OP_TABLES,
+  partition DIV_PART32 values less than (33)
+    tablespace OP_TABLES,
+  partition DIV_PART33 values less than (34)
+    tablespace OP_TABLES,
+  partition DIV_PART34 values less than (35)
+    tablespace OP_TABLES,
+  partition DIV_PART35 values less than (36)
+    tablespace OP_TABLES,
+  partition DIV_PART36 values less than (37)
+    tablespace OP_TABLES,
+  partition DIV_PART37 values less than (38)
+    tablespace OP_TABLES,
+  partition DIV_PART38 values less than (39)
+    tablespace OP_TABLES,
+  partition DIV_PART39 values less than (40)
+    tablespace OP_TABLES,
+  partition DIV_PART40 values less than (41)
+    tablespace OP_TABLES,
+  partition DIV_PART41 values less than (42)
+    tablespace OP_TABLES,
+  partition DIV_PART42 values less than (43)
+    tablespace OP_TABLES,
+  partition DIV_PART43 values less than (44)
+    tablespace OP_TABLES,
+  partition DIV_PART44 values less than (45)
+    tablespace OP_TABLES,
+  partition DIV_PART45 values less than (46)
+    tablespace OP_TABLES,
+  partition DIV_PART46 values less than (47)
+    tablespace OP_TABLES,
+  partition DIV_PART47 values less than (48)
+    tablespace OP_TABLES,
+  partition DIV_PART48 values less than (49)
+    tablespace OP_TABLES,
+  partition DIV_PART49 values less than (50)
+    tablespace OP_TABLES,
+  partition DIV_PART50 values less than (51)
+    tablespace OP_TABLES,
+  partition DIV_PART51 values less than (52)
+    tablespace OP_TABLES,
+  partition DIV_OVERFLOW values less than (MAXVALUE)
+    tablespace OP_TABLES
+);
+create index FK_OP2I_OP2T_01 on TRAN_ITEM_OP2I (DIV_PART, TRAN_ID)
+  compress  nologging  local;
+create index N_OP2I_01 on TRAN_ITEM_OP2I (DIV_PART, PART_ID, TRAN_ID, CATLG_NUM)
+  compress  nologging  local;
+alter table TRAN_ITEM_OP2I
+  add constraint PK_OP2I primary key (DIV_PART, TRAN_ID, CATLG_NUM, INV_ZONE);
+alter index PK_OP2I nologging;
+alter table TRAN_ITEM_OP2I
+  add constraint FK_OP2I_OP2T_01 foreign key (DIV_PART, TRAN_ID)
+  references TRAN_OP2T (DIV_PART, TRAN_ID) on delete cascade;
+alter table TRAN_ITEM_OP2I
+  add constraint MCL_CHK_01_OCT_16_225615582
+  check ("TRAN_ID" IS NOT NULL);
+alter table TRAN_ITEM_OP2I
+  add constraint MCL_CHK_01_OCT_16_225615583
+  check ("PART_ID" IS NOT NULL);
+alter table TRAN_ITEM_OP2I
+  add constraint MCL_CHK_01_OCT_16_225615584
+  check ("CATLG_NUM" IS NOT NULL);
+alter table TRAN_ITEM_OP2I
+  add constraint MCL_CHK_01_OCT_16_225615585
+  check ("INV_ZONE" IS NOT NULL);
+alter table TRAN_ITEM_OP2I
+  add constraint MCL_CHK_01_OCT_16_225615586
+  check ("INV_AISLE" IS NOT NULL);
+alter table TRAN_ITEM_OP2I
+  add constraint MCL_CHK_01_OCT_16_225615587
+  check ("INV_BIN" IS NOT NULL);
+alter table TRAN_ITEM_OP2I
+  add constraint MCL_CHK_01_OCT_16_225615588
+  check ("INV_LVL" IS NOT NULL);
+alter table TRAN_ITEM_OP2I
+  add constraint MCL_CHK_01_OCT_16_225615589
+  check ("PICK_ZONE" IS NOT NULL);
+alter table TRAN_ITEM_OP2I
+  add constraint MCL_CHK_01_OCT_16_225615590
+  check ("PICK_AISLE" IS NOT NULL);
+alter table TRAN_ITEM_OP2I
+  add constraint MCL_CHK_01_OCT_16_225615591
+  check ("PICK_BIN" IS NOT NULL);
+alter table TRAN_ITEM_OP2I
+  add constraint MCL_CHK_01_OCT_16_225615592
+  check ("PICK_LVL" IS NOT NULL);
+alter table TRAN_ITEM_OP2I
+  add constraint MCL_CHK_01_OCT_16_225615593
+  check ("QTY" IS NOT NULL);
+alter table TRAN_ITEM_OP2I
+  add constraint MCL_CHK_01_OCT_16_225615594
+  check ("DIV_PART" IS NOT NULL);
+

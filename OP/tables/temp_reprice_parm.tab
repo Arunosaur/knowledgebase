@@ -1,0 +1,13 @@
+create global temporary table TEMP_REPRICE_PARM
+(
+  reprice_typ  VARCHAR2(4),
+  catlg_item   VARCHAR2(6),
+  cbr_item     VARCHAR2(25),
+  cbr_item_uom VARCHAR2(3),
+  load_num     VARCHAR2(4),
+  stop_num     NUMBER(9,2),
+  ord_num      NUMBER(11),
+  ord_ln_num   NUMBER(7,2)
+)
+on commit preserve rows;
+

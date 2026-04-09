@@ -1,0 +1,11 @@
+create table CPCTY_ORD_MGMT_EXCL_TYP_OP3T
+(
+  excl_typ    VARCHAR2(6) not null,
+  descr       VARCHAR2(80),
+  user_id     VARCHAR2(8) not null,
+  last_chg_ts DATE not null
+)
+;
+alter table CPCTY_ORD_MGMT_EXCL_TYP_OP3T
+  add constraint PK_OP3T primary key (EXCL_TYP);
+

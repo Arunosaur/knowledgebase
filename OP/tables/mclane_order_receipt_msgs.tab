@@ -1,0 +1,35 @@
+create table MCLANE_ORDER_RECEIPT_MSGS
+(
+  msg_seq    NUMBER,
+  msg_type   VARCHAR2(3),
+  msg_id     VARCHAR2(30),
+  msg_status VARCHAR2(1),
+  long_msg   CLOB,
+  div_part   NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+;
+create index N_MCLANE_ORDER_RECEIPT_MSGS_01 on MCLANE_ORDER_RECEIPT_MSGS (DIV_PART, MSG_TYPE, MSG_STATUS, MSG_SEQ);
+alter table MCLANE_ORDER_RECEIPT_MSGS
+  add constraint PK_MSGS primary key (DIV_PART, MSG_SEQ);
+alter table MCLANE_ORDER_RECEIPT_MSGS
+  add constraint MCL_CHK_01_OCT_16_22561533
+  check ("MSG_ID" IS NOT NULL);
+alter table MCLANE_ORDER_RECEIPT_MSGS
+  add constraint MCL_CHK_01_OCT_16_22561534
+  check ("MSG_STATUS" IS NOT NULL);
+alter table MCLANE_ORDER_RECEIPT_MSGS
+  add constraint MCL_CHK_01_OCT_16_22561535
+  check ("DIV_PART" IS NOT NULL);
+alter table MCLANE_ORDER_RECEIPT_MSGS
+  add constraint MCL_CHK_01_OCT_16_225615502
+  check ("MSG_SEQ" IS NOT NULL);
+alter table MCLANE_ORDER_RECEIPT_MSGS
+  add constraint MCL_CHK_01_OCT_16_225615503
+  check ("MSG_TYPE" IS NOT NULL);
+alter table MCLANE_ORDER_RECEIPT_MSGS
+  add constraint OR_MSGS_STATUS_CHK
+  check (MSG_STATUS IN('C', 'O', 'F', 'E'));
+alter table MCLANE_ORDER_RECEIPT_MSGS
+  add constraint OR_MSGS_TYPE_CHK
+  check (MSG_TYPE IN ('REG', 'DIS', 'CSR'));
+

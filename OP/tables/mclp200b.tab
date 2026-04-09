@@ -1,0 +1,26 @@
+create table MCLP200B
+(
+  totctb      VARCHAR2(3) not null,
+  descb       VARCHAR2(30),
+  innerb      NUMBER(7,3),
+  outerb      NUMBER(7,3),
+  totidb      VARCHAR2(3),
+  tmnctb      VARCHAR2(3),
+  totcnb      NUMBER(4),
+  pccntb      VARCHAR2(1),
+  boxb        VARCHAR2(1),
+  totcub      VARCHAR2(1),
+  max_bag_qty NUMBER(3),
+  div_part    NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part') not null
+)
+;
+comment on table MCLP200B
+  is 'Usage: Defines totes to system	
+';
+comment on column MCLP200B.descb
+  is 'A brief description of the TOTE CODE specified.';
+comment on column MCLP200B.pccntb
+  is 'This is a flag to indicate use piece count.';
+alter table MCLP200B
+  add constraint PK_MCLP200B primary key (DIV_PART, TOTCTB);
+

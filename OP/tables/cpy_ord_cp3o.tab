@@ -1,0 +1,15 @@
+create table CPY_ORD_CP3O
+(
+  conf_num     VARCHAR2(25),
+  orig_ord_num NUMBER(11)
+)
+;
+alter table CPY_ORD_CP3O
+  add constraint PK_CP3O primary key (CONF_NUM);
+alter table CPY_ORD_CP3O
+  add constraint MCL_CHK_01_OCT_16_225615389
+  check ("CONF_NUM" IS NOT NULL);
+alter table CPY_ORD_CP3O
+  add constraint MCL_CHK_01_OCT_16_225615403
+  check ("ORIG_ORD_NUM" IS NOT NULL);
+

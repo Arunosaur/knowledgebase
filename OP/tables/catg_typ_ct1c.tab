@@ -1,0 +1,11 @@
+create table CATG_TYP_CT1C
+(
+  catg_typ_cd VARCHAR2(3) not null,
+  descr       VARCHAR2(20) not null,
+  user_id     VARCHAR2(8) not null,
+  last_chg_ts DATE not null
+)
+;
+alter table CATG_TYP_CT1C
+  add constraint PK_CT1C primary key (CATG_TYP_CD);
+

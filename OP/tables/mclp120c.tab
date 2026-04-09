@@ -1,0 +1,47 @@
+create table MCLP120C
+(
+  loadc            VARCHAR2(4),
+  llrcdc           VARCHAR2(3),
+  llrctc           NUMBER(4),
+  llrwkc           NUMBER(1),
+  lopwdc           VARCHAR2(3),
+  lopwtc           NUMBER(4),
+  destc            VARCHAR2(30),
+  traszc           NUMBER(2),
+  tratyc           VARCHAR2(8),
+  accubc           NUMBER(4),
+  acwgtc           NUMBER(5),
+  depdac           VARCHAR2(3),
+  deptmc           NUMBER(4),
+  depwkc           NUMBER(1),
+  trresc           VARCHAR2(20),
+  ldordc           VARCHAR2(3),
+  ldortc           NUMBER(4),
+  ldorwc           NUMBER(1),
+  lpwdc            VARCHAR2(3),
+  lpwtc            NUMBER(4),
+  lpwwc            NUMBER(1),
+  lbsgpc           VARCHAR2(1),
+  lccdc            VARCHAR2(3),
+  lcctc            NUMBER(4),
+  lccwc            NUMBER(1),
+  comhrc           NUMBER(4),
+  aadisc           VARCHAR2(1),
+  test_bil_load_sw VARCHAR2(1) default 'N',
+  div_part         NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+;
+comment on column MCLP120C.llrcdc
+  is 'This is the day of the week on which there is a label release cutoff.';
+alter table MCLP120C
+  add constraint UNQ_MCLP120C_01 unique (DIV_PART, LOADC);
+alter table MCLP120C
+  add constraint MCLP120C_CHK_1
+  check (test_bil_load_sw in ('Y', 'N'));
+alter table MCLP120C
+  add constraint MCL_CHK_01_OCT_16_225615387
+  check ("TEST_BIL_LOAD_SW" IS NOT NULL);
+alter table MCLP120C
+  add constraint MCL_CHK_01_OCT_16_225615388
+  check ("DIV_PART" IS NOT NULL);
+

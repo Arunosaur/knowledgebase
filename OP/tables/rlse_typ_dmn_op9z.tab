@@ -1,0 +1,22 @@
+create table RLSE_TYP_DMN_OP9Z
+(
+  typ_id    VARCHAR2(10) not null,
+  seq       NUMBER default -1,
+  descr     VARCHAR2(80),
+  parnt_typ VARCHAR2(10)
+)
+;
+create index FK_OP9Z_OP9Z_01 on RLSE_TYP_DMN_OP9Z (PARNT_TYP)
+  compress;
+alter table RLSE_TYP_DMN_OP9Z
+  add constraint PK_OP9Z primary key (TYP_ID);
+alter table RLSE_TYP_DMN_OP9Z
+  add constraint FK_OP9Z_OP9Z_01 foreign key (PARNT_TYP)
+  references RLSE_TYP_DMN_OP9Z (TYP_ID);
+alter table RLSE_TYP_DMN_OP9Z
+  add constraint MCL_CHK_01_OCT_16_225615357
+  check ("SEQ" IS NOT NULL);
+alter table RLSE_TYP_DMN_OP9Z
+  add constraint MCL_CHK_01_OCT_16_225615358
+  check ("DESCR" IS NOT NULL);
+

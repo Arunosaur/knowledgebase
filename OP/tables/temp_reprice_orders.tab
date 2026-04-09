@@ -1,0 +1,37 @@
+create global temporary table TEMP_REPRICE_ORDERS
+(
+  cursor_name      VARCHAR2(15),
+  order_item       VARCHAR2(6),
+  ordp120b_rowid   VARCHAR2(30),
+  ordp100a_rowid   VARCHAR2(30),
+  sawp505e_rowid   VARCHAR2(30),
+  mclp130d_rowid   VARCHAR2(30),
+  whsp120b_rowid   VARCHAR2(30),
+  mclp110b_rowid   VARCHAR2(30),
+  mclp140a_rowid   VARCHAR2(30),
+  whsp100a_rowid   VARCHAR2(30),
+  table_source     VARCHAR2(20),
+  ord_num          NUMBER(11),
+  ord_line_num     NUMBER(7,2),
+  inv_date         VARCHAR2(8),
+  item_pass_area_x VARCHAR2(25),
+  item_pass_area   VARCHAR2(20),
+  cbr_cust         VARCHAR2(8),
+  mclane_cust      VARCHAR2(6),
+  catlg_item       VARCHAR2(6),
+  cbr_item         VARCHAR2(9),
+  cbr_item_uom     VARCHAR2(3),
+  hard_rtl_ind     VARCHAR2(1),
+  rtl_amount       NUMBER(9,2),
+  mult_for_rtl     NUMBER(5),
+  hard_price_ind   VARCHAR2(1),
+  passed_price     NUMBER(9,2),
+  load_type        VARCHAR2(3),
+  ord_type         VARCHAR2(3),
+  gmp_ind          VARCHAR2(3),
+  display_ind      VARCHAR2(1),
+  sub_ind          VARCHAR2(1),
+  distrib_id       VARCHAR2(10)
+)
+on commit preserve rows;
+

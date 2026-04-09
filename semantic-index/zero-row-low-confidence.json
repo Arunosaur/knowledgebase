@@ -1,0 +1,16 @@
+{
+  "count": 1,
+  "items": [
+    {
+      "intentId": "si-shipment-consolidation",
+      "intent": "Track packing consolidation performance by task and location",
+      "source": "package-source-analysis",
+      "confidence": 0.6,
+      "dataEvidence": "data-active",
+      "table": "PKT_CONSOL_LOCN",
+      "ownersWithZeroRows": [
+        "FS06_DM"
+      ]
+    }
+  ]
+}

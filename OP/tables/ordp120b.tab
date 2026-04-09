@@ -1,0 +1,243 @@
+create table ORDP120B
+(
+  statb     VARCHAR2(1),
+  ordnob    NUMBER(11) not null,
+  lineb     NUMBER(7,2) not null,
+  itemnb    VARCHAR2(25),
+  ordqtb    NUMBER(13,4),
+  alcqtb    NUMBER(13,4),
+  pckqtb    NUMBER(13,4),
+  shpidb    VARCHAR2(20),
+  orgqtb    NUMBER(13,4),
+  sllumb    VARCHAR2(3),
+  cusitb    VARCHAR2(25),
+  zipcdb    VARCHAR2(15),
+  orditb    VARCHAR2(6),
+  itpasb    VARCHAR2(20),
+  rtfixb    VARCHAR2(1),
+  prfixb    VARCHAR2(1),
+  hdrtab    NUMBER(9,2),
+  hdrtmb    NUMBER(5),
+  hdprcb    NUMBER(9,2),
+  actqtb    NUMBER(13,4),
+  bymaxb    VARCHAR2(1),
+  manctb    VARCHAR2(3),
+  totctb    VARCHAR2(3),
+  authb     VARCHAR2(1),
+  ntshpb    VARCHAR2(8),
+  prstdb    NUMBER(6),
+  prsttb    NUMBER(6),
+  maxqtb    NUMBER(9),
+  qtmulb    NUMBER(9),
+  invctb    NUMBER(3),
+  labctb    NUMBER(3),
+  subrcb    NUMBER(3),
+  repckb    VARCHAR2(1),
+  orgitb    VARCHAR2(25),
+  excptn_sw VARCHAR2(1) default 'N',
+  div_part  NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+partition by range (DIV_PART)
+(
+  partition DIV_PART01 values less than (2)
+    tablespace OP_TABLES,
+  partition DIV_PART02 values less than (3)
+    tablespace OP_TABLES,
+  partition DIV_PART03 values less than (4)
+    tablespace OP_TABLES,
+  partition DIV_PART04 values less than (5)
+    tablespace OP_TABLES,
+  partition DIV_PART05 values less than (6)
+    tablespace OP_TABLES,
+  partition DIV_PART06 values less than (7)
+    tablespace OP_TABLES,
+  partition DIV_PART07 values less than (8)
+    tablespace OP_TABLES,
+  partition DIV_PART08 values less than (9)
+    tablespace OP_TABLES,
+  partition DIV_PART09 values less than (10)
+    tablespace OP_TABLES,
+  partition DIV_PART10 values less than (11)
+    tablespace OP_TABLES,
+  partition DIV_PART11 values less than (12)
+    tablespace OP_TABLES,
+  partition DIV_PART12 values less than (13)
+    tablespace OP_TABLES,
+  partition DIV_PART13 values less than (14)
+    tablespace OP_TABLES,
+  partition DIV_PART14 values less than (15)
+    tablespace OP_TABLES,
+  partition DIV_PART15 values less than (16)
+    tablespace OP_TABLES,
+  partition DIV_PART16 values less than (17)
+    tablespace OP_TABLES,
+  partition DIV_PART17 values less than (18)
+    tablespace OP_TABLES,
+  partition DIV_PART18 values less than (19)
+    tablespace OP_TABLES,
+  partition DIV_PART19 values less than (20)
+    tablespace OP_TABLES,
+  partition DIV_PART20 values less than (21)
+    tablespace OP_TABLES,
+  partition DIV_PART21 values less than (22)
+    tablespace OP_TABLES,
+  partition DIV_PART22 values less than (23)
+    tablespace OP_TABLES,
+  partition DIV_PART23 values less than (24)
+    tablespace OP_TABLES,
+  partition DIV_PART24 values less than (25)
+    tablespace OP_TABLES,
+  partition DIV_PART25 values less than (26)
+    tablespace OP_TABLES,
+  partition DIV_PART26 values less than (27)
+    tablespace OP_TABLES,
+  partition DIV_PART27 values less than (28)
+    tablespace OP_TABLES,
+  partition DIV_PART28 values less than (29)
+    tablespace OP_TABLES,
+  partition DIV_PART29 values less than (30)
+    tablespace OP_TABLES,
+  partition DIV_PART30 values less than (31)
+    tablespace OP_TABLES,
+  partition DIV_PART31 values less than (32)
+    tablespace OP_TABLES,
+  partition DIV_PART32 values less than (33)
+    tablespace OP_TABLES,
+  partition DIV_PART33 values less than (34)
+    tablespace OP_TABLES,
+  partition DIV_PART34 values less than (35)
+    tablespace OP_TABLES,
+  partition DIV_PART35 values less than (36)
+    tablespace OP_TABLES,
+  partition DIV_PART36 values less than (37)
+    tablespace OP_TABLES,
+  partition DIV_PART37 values less than (38)
+    tablespace OP_TABLES,
+  partition DIV_PART38 values less than (39)
+    tablespace OP_TABLES,
+  partition DIV_PART39 values less than (40)
+    tablespace OP_TABLES,
+  partition DIV_PART40 values less than (41)
+    tablespace OP_TABLES,
+  partition DIV_PART41 values less than (42)
+    tablespace OP_TABLES,
+  partition DIV_PART42 values less than (43)
+    tablespace OP_TABLES,
+  partition DIV_PART43 values less than (44)
+    tablespace OP_TABLES,
+  partition DIV_PART44 values less than (45)
+    tablespace OP_TABLES,
+  partition DIV_PART45 values less than (46)
+    tablespace OP_TABLES,
+  partition DIV_PART46 values less than (47)
+    tablespace OP_TABLES,
+  partition DIV_PART47 values less than (48)
+    tablespace OP_TABLES,
+  partition DIV_PART48 values less than (49)
+    tablespace OP_TABLES,
+  partition DIV_PART49 values less than (50)
+    tablespace OP_TABLES,
+  partition DIV_PART50 values less than (51)
+    tablespace OP_TABLES,
+  partition DIV_PART51 values less than (52)
+    tablespace OP_TABLES,
+  partition DIV_OVERFLOW values less than (MAXVALUE)
+    tablespace OP_TABLES
+);
+comment on table ORDP120B
+  is 'These are the orders that have passed validations.';
+comment on column ORDP120B.statb
+  is 'This is the Order Line Status.';
+comment on column ORDP120B.itemnb
+  is 'Item Number';
+comment on column ORDP120B.ordqtb
+  is 'Ordered Quantity Stock';
+comment on column ORDP120B.alcqtb
+  is 'Allocated Quantity';
+comment on column ORDP120B.pckqtb
+  is 'Picked Quantity';
+comment on column ORDP120B.shpidb
+  is 'Shipment ID';
+comment on column ORDP120B.orgqtb
+  is 'Original Quantity';
+comment on column ORDP120B.sllumb
+  is 'Selling Unit Of Measure';
+comment on column ORDP120B.cusitb
+  is 'Customer Item Number';
+comment on column ORDP120B.zipcdb
+  is 'Ship To Zip Code';
+comment on column ORDP120B.orditb
+  is 'Ordered Item Number';
+comment on column ORDP120B.itpasb
+  is 'Item Pass Through';
+comment on column ORDP120B.rtfixb
+  is 'Retail is Fixed';
+comment on column ORDP120B.prfixb
+  is 'Price Is Fixed';
+comment on column ORDP120B.hdrtab
+  is 'Hard Retail Amount';
+comment on column ORDP120B.hdrtmb
+  is 'Hard Retail Multiple';
+comment on column ORDP120B.hdprcb
+  is 'Hard Price Amount';
+comment on column ORDP120B.actqtb
+  is 'Actual Quantity';
+comment on column ORDP120B.bymaxb
+  is 'This is the Bypass Maximum Quantity Validation.';
+comment on column ORDP120B.manctb
+  is 'Manifest Category';
+comment on column ORDP120B.totctb
+  is 'Tote Category';
+comment on column ORDP120B.authb
+  is 'Authorize Flag';
+comment on column ORDP120B.ntshpb
+  is 'Reason Not Shipped';
+comment on column ORDP120B.prstdb
+  is 'This is the Date when Price is Stamped.';
+comment on column ORDP120B.prsttb
+  is 'This is the Time when Price is Stamped.';
+comment on column ORDP120B.maxqtb
+  is 'This is the Maximum Quantity to use for Validation.';
+comment on column ORDP120B.qtmulb
+  is 'Quantity Multiple';
+comment on column ORDP120B.invctb
+  is 'Invoice Category';
+comment on column ORDP120B.labctb
+  is 'Label Category';
+comment on column ORDP120B.subrcb
+  is 'Subline Details';
+comment on column ORDP120B.repckb
+  is 'Replacement Check Done?';
+comment on column ORDP120B.orgitb
+  is 'Original Ordered Item';
+comment on column ORDP120B.excptn_sw
+  is 'Exception Switch';
+create index N_ORDP120B_01 on ORDP120B (DIV_PART, SLLUMB, ITEMNB, ORDNOB, SUBRCB, EXCPTN_SW)
+  nologging  local;
+create index N_ORDP120B_02 on ORDP120B (DIV_PART, EXCPTN_SW, ORDNOB)
+  nologging  local;
+create index N_ORDP120B_03 on ORDP120B (DIV_PART, ORDNOB, ORDQTB)
+  nologging  local;
+create index N_ORDP120B_04 on ORDP120B (ITEMNB, SLLUMB, EXCPTN_SW)
+  nologging;
+create index N_ORDP120B_05 on ORDP120B (ORDNOB, LINEB)
+  nologging  local;
+create index N_ORDP120B_06 on ORDP120B (EXCPTN_SW, TOTCTB, MANCTB, DIV_PART, ORDNOB, LINEB)
+  nologging  local;
+create index N_ORDP120B_07 on ORDP120B (EXCPTN_SW, SUBRCB)
+  nologging;
+create index N_ORDP120B_10 on ORDP120B (ORDITB, ORDNOB, DIV_PART)
+  nologging  local;
+alter table ORDP120B
+  add constraint PK_ORDP120B primary key (DIV_PART, ORDNOB, LINEB);
+alter index PK_ORDP120B nologging;
+alter table ORDP120B
+  add constraint MCL_CHK_01_OCT_16_225615574
+  check ("EXCPTN_SW" IS NOT NULL);
+alter table ORDP120B
+  add constraint MCL_CHK_01_OCT_16_225615575
+  check ("DIV_PART" IS NOT NULL);
+alter table ORDP120B
+  add constraint ORDP120B_CHK1
+  check (EXCPTN_SW in('Y', 'N'));
+

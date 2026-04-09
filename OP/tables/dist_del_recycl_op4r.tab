@@ -1,0 +1,18 @@
+create table DIST_DEL_RECYCL_OP4R
+(
+  div_part  NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part') not null,
+  ord_num   NUMBER not null,
+  create_ts DATE
+)
+;
+create index FK_OP4R_DI1D_01 on DIST_DEL_RECYCL_OP4R (DIV_PART)
+  compress;
+alter table DIST_DEL_RECYCL_OP4R
+  add constraint PK_OP4R primary key (DIV_PART, ORD_NUM);
+alter table DIST_DEL_RECYCL_OP4R
+  add constraint FK_OP4R_DI1D_01 foreign key (DIV_PART)
+  references DIV_MSTR_DI1D (DIV_PART);
+alter table DIST_DEL_RECYCL_OP4R
+  add constraint MCL_CHK_01_OCT_16_225615255
+  check ("CREATE_TS" IS NOT NULL);
+

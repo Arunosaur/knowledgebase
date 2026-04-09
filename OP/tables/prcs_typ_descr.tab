@@ -1,0 +1,27 @@
+create table PRCS_TYP_DESCR
+(
+  prcs_id     VARCHAR2(32),
+  prcs_typ    VARCHAR2(3),
+  descr       VARCHAR2(256),
+  last_chg_ts DATE,
+  div_part    NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+;
+alter table PRCS_TYP_DESCR
+  add constraint PK_PRCS_TYP_DESCR primary key (DIV_PART, PRCS_ID);
+alter table PRCS_TYP_DESCR
+  add constraint MCL_CHK_01_OCT_16_225615317
+  check ("PRCS_ID" IS NOT NULL);
+alter table PRCS_TYP_DESCR
+  add constraint MCL_CHK_01_OCT_16_225615318
+  check ("PRCS_TYP" IS NOT NULL);
+alter table PRCS_TYP_DESCR
+  add constraint MCL_CHK_01_OCT_16_225615319
+  check ("DESCR" IS NOT NULL);
+alter table PRCS_TYP_DESCR
+  add constraint MCL_CHK_01_OCT_16_225615320
+  check ("LAST_CHG_TS" IS NOT NULL);
+alter table PRCS_TYP_DESCR
+  add constraint MCL_CHK_01_OCT_16_225615321
+  check ("DIV_PART" IS NOT NULL);
+

@@ -1,0 +1,52 @@
+create table GOV_CNTL_CUST_P640A
+(
+  gov_cntl_id NUMBER(9) not null,
+  cust_num    VARCHAR2(8),
+  prd_beg_ts  DATE default SYSDATE not null,
+  shp_pts     NUMBER(15,4),
+  tot_pts     NUMBER(15,4),
+  status      NUMBER(3) default 0,
+  div_part    NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+;
+comment on column GOV_CNTL_CUST_P640A.gov_cntl_id
+  is 'Government Control Identifier';
+comment on column GOV_CNTL_CUST_P640A.cust_num
+  is 'Mclane Customer Number';
+comment on column GOV_CNTL_CUST_P640A.shp_pts
+  is 'Points Accumulated for Shipped Government Control Product';
+comment on column GOV_CNTL_CUST_P640A.tot_pts
+  is 'Total Points Accumulated for Attempted Allocation of Government Control Product';
+comment on column GOV_CNTL_CUST_P640A.status
+  is 'Status: 0 (Initial Setup), 1 (Active), 2 (Inactive)';
+create index FK_GOV_CNTL_CU_GOV_CNTL_P6_01 on GOV_CNTL_CUST_P640A (DIV_PART, GOV_CNTL_ID)
+  compress;
+create index FK_GOV_CNTL_CU_SYSP200C_01 on GOV_CNTL_CUST_P640A (DIV_PART, CUST_NUM)
+  compress;
+alter table GOV_CNTL_CUST_P640A
+  add constraint PK_GOV_CNTL_CUST_P640A primary key (DIV_PART, GOV_CNTL_ID, CUST_NUM, PRD_BEG_TS);
+alter table GOV_CNTL_CUST_P640A
+  add constraint FK_GOV_CNTL_CU_GOV_CNTL_P6_01 foreign key (DIV_PART, GOV_CNTL_ID)
+  references GOV_CNTL_P600A (DIV_PART, GOV_CNTL_ID) on delete cascade;
+alter table GOV_CNTL_CUST_P640A
+  add constraint FK_GOV_CNTL_CU_SYSP200C_01 foreign key (DIV_PART, CUST_NUM)
+  references SYSP200C (DIV_PART, ACNOC) on delete cascade;
+alter table GOV_CNTL_CUST_P640A
+  add constraint GOV_CNTL_CUST_P640A_CHK1
+  check (STATUS in(0, 1, 2));
+alter table GOV_CNTL_CUST_P640A
+  add constraint MCL_CHK_01_OCT_16_225615604
+  check ("CUST_NUM" IS NOT NULL);
+alter table GOV_CNTL_CUST_P640A
+  add constraint MCL_CHK_01_OCT_16_225615606
+  check ("SHP_PTS" IS NOT NULL);
+alter table GOV_CNTL_CUST_P640A
+  add constraint MCL_CHK_01_OCT_16_225615607
+  check ("TOT_PTS" IS NOT NULL);
+alter table GOV_CNTL_CUST_P640A
+  add constraint MCL_CHK_01_OCT_16_225615608
+  check ("STATUS" IS NOT NULL);
+alter table GOV_CNTL_CUST_P640A
+  add constraint MCL_CHK_01_OCT_16_225615609
+  check ("DIV_PART" IS NOT NULL);
+

@@ -1,0 +1,41 @@
+create table RLSE_LOG_OP2Z
+(
+  rlse_id       NUMBER,
+  typ_id        VARCHAR2(10),
+  create_ts     DATE default sysdate,
+  val           VARCHAR2(30) default '~',
+  seq_of_events NUMBER,
+  div_part      NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+compress for all operations;
+create index FK_OP2Z_OP1Z_01 on RLSE_LOG_OP2Z (DIV_PART, RLSE_ID)
+  compress;
+create index FK_OP2Z_OP9Z_01 on RLSE_LOG_OP2Z (TYP_ID)
+  compress;
+create index N_OP2Z_01 on RLSE_LOG_OP2Z (DIV_PART, TYP_ID, RLSE_ID, VAL)
+  compress;
+alter table RLSE_LOG_OP2Z
+  add constraint FK_OP2Z_OP1Z_01 foreign key (DIV_PART, RLSE_ID)
+  references RLSE_OP1Z (DIV_PART, RLSE_ID);
+alter table RLSE_LOG_OP2Z
+  add constraint FK_OP2Z_OP9Z_01 foreign key (TYP_ID)
+  references RLSE_TYP_DMN_OP9Z (TYP_ID);
+alter table RLSE_LOG_OP2Z
+  add constraint MCL_CHK_01_OCT_16_225615635
+  check ("RLSE_ID" IS NOT NULL);
+alter table RLSE_LOG_OP2Z
+  add constraint MCL_CHK_01_OCT_16_225615636
+  check ("TYP_ID" IS NOT NULL);
+alter table RLSE_LOG_OP2Z
+  add constraint MCL_CHK_01_OCT_16_225615637
+  check ("CREATE_TS" IS NOT NULL);
+alter table RLSE_LOG_OP2Z
+  add constraint MCL_CHK_01_OCT_16_225615638
+  check ("VAL" IS NOT NULL);
+alter table RLSE_LOG_OP2Z
+  add constraint MCL_CHK_01_OCT_16_225615639
+  check ("SEQ_OF_EVENTS" IS NOT NULL);
+alter table RLSE_LOG_OP2Z
+  add constraint MCL_CHK_01_OCT_16_225615640
+  check ("DIV_PART" IS NOT NULL);
+

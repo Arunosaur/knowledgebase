@@ -1,0 +1,29 @@
+create global temporary table EOE_SUM_RPT_TEMP
+(
+  grp_num         NUMBER(3),
+  cust_num        VARCHAR2(6),
+  load_typ        VARCHAR2(3),
+  ord_num         NUMBER(11),
+  cust_name       VARCHAR2(40),
+  load            VARCHAR2(4),
+  stop_num        NUMBER(3),
+  order_stat      VARCHAR2(4),
+  trans_date      NUMBER(6),
+  eta             VARCHAR2(10),
+  num_ord_lines   NUMBER(7,2),
+  order_src       VARCHAR2(8),
+  confirm_num     VARCHAR2(25),
+  fax_num         VARCHAR2(20),
+  phone_num       VARCHAR2(20),
+  order_typ       VARCHAR2(3),
+  no_ord_flg      VARCHAR2(1),
+  bucket1         NUMBER(6),
+  bucket2         NUMBER(6),
+  bucket3         NUMBER(6),
+  bucket4         NUMBER(6),
+  bucket5         NUMBER(6),
+  bucket6         NUMBER(6),
+  orig_order_stat VARCHAR2(1)
+)
+on commit preserve rows;
+

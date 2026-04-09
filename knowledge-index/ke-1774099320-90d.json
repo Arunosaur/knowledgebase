@@ -1,0 +1,43 @@
+{
+  "id": "ke-1774099320-90d",
+  "type": "qa",
+  "question": "What default date range should be used for transactional WMS questions when the user does not specify one?",
+  "answer": "For transactional WMS data questions, unless the user explicitly specifies a different time range, default the answer to data created or updated in the last 90 days. This rule exists because WMS operational tables are highly transactional, and open-ended historical queries can misrepresent current activity. For shipment questions, pair that default recency rule with the business meaning of CREATION_TYPE and SHIPMENT_STATUS when relevant.",
+  "context": {
+    "group": "manhattan-main",
+    "schemas": [
+      "FE_DM",
+      "MD_DM",
+      "MK_DM",
+      "MN_DM",
+      "MY_DM",
+      "MZ_DM",
+      "NE_DM",
+      "SE_DM",
+      "FS06_DM"
+    ],
+    "dcCodes": [],
+    "systems": [
+      "manhattan",
+      "wmshub",
+      "cigwms"
+    ],
+    "objects": []
+  },
+  "tags": [
+    "90 days",
+    "last 90 days",
+    "created or updated",
+    "transactional data",
+    "default date range",
+    "wms",
+    "shipment"
+  ],
+  "quality": 3,
+  "source": "ai-verified",
+  "capturedBy": "asrajag",
+  "capturedAt": "2026-03-21T00:00:00.000Z",
+  "updatedAt": "2026-03-21T00:00:00.000Z",
+  "approved": true,
+  "notes": "User-approved business rule for default transactional recency in WMS IQ answers."
+}

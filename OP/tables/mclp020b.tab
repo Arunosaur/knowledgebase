@@ -1,0 +1,33 @@
+create table MCLP020B
+(
+  custb       VARCHAR2(8),
+  mccusb      VARCHAR2(6),
+  corpb       NUMBER(3),
+  storeb      VARCHAR2(6),
+  prof_assgn  NUMBER(2) default 0,
+  last_chg_ts DATE default sysdate,
+  user_id     VARCHAR2(8),
+  div_part    NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+;
+comment on table MCLP020B
+  is 'Usage: Ties CBR Customer # to McLane Customer Number	
+';
+comment on column MCLP020B.custb
+  is 'This is the CBR Customer Number.';
+comment on column MCLP020B.mccusb
+  is 'This is the Old Customer Number.';
+create unique index N_MCLP020B_01 on MCLP020B (DIV_PART, CORPB, CUSTB)
+  compress 2;
+alter table MCLP020B
+  add constraint PK_MCLP020B primary key (DIV_PART, CUSTB);
+alter table MCLP020B
+  add constraint MCL_CHK_01_OCT_16_22561513
+  check ("CUSTB" IS NOT NULL);
+alter table MCLP020B
+  add constraint MCL_CHK_01_OCT_16_22561515
+  check ("LAST_CHG_TS" IS NOT NULL);
+alter table MCLP020B
+  add constraint MCL_CHK_01_OCT_16_22561516
+  check ("DIV_PART" IS NOT NULL);
+

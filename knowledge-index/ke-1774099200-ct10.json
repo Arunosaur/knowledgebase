@@ -1,0 +1,56 @@
+{
+  "id": "ke-1774099200-ct10",
+  "type": "qa",
+  "question": "What does CREATION_TYPE mean in the SHIPMENT table?",
+  "answer": "In Manhattan WMS shipment data, CREATION_TYPE distinguishes shipment direction. CREATION_TYPE = 10 is an inbound PO or ASN (purchase order / advance ship notice). CREATION_TYPE = 40 is an outbound customer order. Terminology rules: when a user says 'orders' without qualification, treat it as customer orders (outbound, CREATION_TYPE = 40). When a user says 'purchase order', 'PO', or 'ASN', treat it as inbound (CREATION_TYPE = 10). When a user says 'returns' or 'return orders', that is a return shipment — CREATION_TYPE value for returns is not yet confirmed in the data, so do not apply a CREATION_TYPE filter in that case. Confirmed by direct Oracle query: SE_DM.SHIPMENT has 24,863 rows with type 10 (inbound) and 3,613 rows with type 40 (outbound); no other CREATION_TYPE values observed.",
+  "context": {
+    "group": "manhattan-main",
+    "schemas": [
+      "FE_DM",
+      "MD_DM",
+      "MK_DM",
+      "MN_DM",
+      "MY_DM",
+      "MZ_DM",
+      "NE_DM",
+      "SE_DM",
+      "FS06_DM"
+    ],
+    "dcCodes": [
+      "FE",
+      "MD",
+      "MK",
+      "MN",
+      "MY",
+      "MZ",
+      "NE",
+      "SE",
+      "FS06"
+    ],
+    "systems": [
+      "manhattan"
+    ],
+    "objects": [
+      "SHIPMENT"
+    ]
+  },
+  "tags": [
+    "creation_type",
+    "shipment",
+    "inbound",
+    "outbound",
+    "po",
+    "asn",
+    "customer orders",
+    "incoming orders",
+    "outgoing orders",
+    "manhattan"
+  ],
+  "quality": 3,
+  "source": "ai-verified",
+  "capturedBy": "asrajag",
+  "capturedAt": "2026-03-21T00:00:00.000Z",
+  "updatedAt": "2026-03-21T00:00:00.000Z",
+  "approved": true,
+  "notes": "Validated by direct SQL query against Manhattan SHIPMENT tables: CREATION_TYPE 10 = PO/ASN incoming, 40 = customer-order outgoing."
+}

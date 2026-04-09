@@ -1,0 +1,19 @@
+create table RTE_GRP_RT2G
+(
+  rte_grp_num NUMBER,
+  rte_grp     VARCHAR2(25),
+  create_dt   DATE,
+  div_part    NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+;
+alter table RTE_GRP_RT2G
+  add constraint PK_RT2G primary key (RTE_GRP_NUM);
+alter table RTE_GRP_RT2G
+  add constraint UNQ_RT2G_01 unique (DIV_PART, RTE_GRP, CREATE_DT);
+alter table RTE_GRP_RT2G
+  add constraint MCL_CHK_01_OCT_16_225615313
+  check ("RTE_GRP_NUM" IS NOT NULL);
+alter table RTE_GRP_RT2G
+  add constraint MCL_CHK_01_OCT_16_225615315
+  check ("CREATE_DT" IS NOT NULL);
+

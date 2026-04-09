@@ -1,0 +1,20 @@
+create table VNDR_CMP_ITEM_OP1L
+(
+  prof_id    NUMBER,
+  catlg_num  NUMBER not null,
+  parnt_item NUMBER,
+  priorty    NUMBER
+)
+;
+alter table VNDR_CMP_ITEM_OP1L
+  add constraint PK_OP1L primary key (PROF_ID, CATLG_NUM);
+alter table VNDR_CMP_ITEM_OP1L
+  add constraint MCL_CHK_01_OCT_16_225615302
+  check ("PROF_ID" IS NOT NULL);
+alter table VNDR_CMP_ITEM_OP1L
+  add constraint MCL_CHK_01_OCT_16_225615304
+  check ("PARNT_ITEM" IS NOT NULL);
+alter table VNDR_CMP_ITEM_OP1L
+  add constraint MCL_CHK_01_OCT_16_225615309
+  check ("PRIORTY" IS NOT NULL);
+

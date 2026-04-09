@@ -1,0 +1,30 @@
+create table SYSP996A
+(
+  ordnoa     NUMBER(11),
+  linea      NUMBER(7,2),
+  acnoa      VARCHAR2(8),
+  usera      VARCHAR2(15),
+  tblnma     VARCHAR2(40),
+  fldnma     VARCHAR2(40),
+  florga     VARCHAR2(40),
+  flchga     VARCHAR2(40),
+  actna      VARCHAR2(2),
+  rsncda     VARCHAR2(15),
+  datea      NUMBER(6),
+  timea      NUMBER(6),
+  autbya     VARCHAR2(50),
+  rsntxa     VARCHAR2(50),
+  div_part   NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part'),
+  aud_trl_id NUMBER generated always as identity (cycle nocache order)
+)
+compress for all operations;
+comment on column SYSP996A.aud_trl_id
+  is 'An unique identifier of the exception log record.';
+create index IDX_SYSP996A_VPD_DIV_PART on SYSP996A (DIV_PART)
+  compress;
+alter table SYSP996A
+  add constraint PK_SYSP996A primary key (AUD_TRL_ID);
+alter table SYSP996A
+  add constraint MCL_CHK_01_OCT_16_225615157
+  check ("DIV_PART" IS NOT NULL);
+

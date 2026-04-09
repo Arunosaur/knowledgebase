@@ -1,0 +1,42 @@
+create table OP_DMN_CD_TYP
+(
+  dmn_typ     VARCHAR2(6),
+  dmn_cd      VARCHAR2(3),
+  descr       VARCHAR2(40),
+  userid      VARCHAR2(8),
+  last_chg_ts TIMESTAMP(6)
+)
+;
+comment on column OP_DMN_CD_TYP.dmn_typ
+  is 'Domain Type';
+comment on column OP_DMN_CD_TYP.dmn_cd
+  is 'Domain Code';
+comment on column OP_DMN_CD_TYP.descr
+  is 'Domain Description';
+comment on column OP_DMN_CD_TYP.userid
+  is 'User Id';
+comment on column OP_DMN_CD_TYP.last_chg_ts
+  is 'Last change timestamp';
+create index FK_OP_DMN_CD_T_OP_DMN_TYP_01 on OP_DMN_CD_TYP (DMN_TYP)
+  compress;
+alter table OP_DMN_CD_TYP
+  add constraint PK_OP_DMN_CD_TYP primary key (DMN_TYP, DMN_CD);
+alter table OP_DMN_CD_TYP
+  add constraint FK_OP_DMN_CD_T_OP_DMN_TYP_01 foreign key (DMN_TYP)
+  references OP_DMN_TYP (DMN_TYP) on delete cascade;
+alter table OP_DMN_CD_TYP
+  add constraint MCL_CHK_01_OCT_16_225615297
+  check ("DMN_TYP" IS NOT NULL);
+alter table OP_DMN_CD_TYP
+  add constraint MCL_CHK_01_OCT_16_225615298
+  check ("DMN_CD" IS NOT NULL);
+alter table OP_DMN_CD_TYP
+  add constraint MCL_CHK_01_OCT_16_225615299
+  check ("DESCR" IS NOT NULL);
+alter table OP_DMN_CD_TYP
+  add constraint MCL_CHK_01_OCT_16_225615300
+  check ("USERID" IS NOT NULL);
+alter table OP_DMN_CD_TYP
+  add constraint MCL_CHK_01_OCT_16_225615301
+  check ("LAST_CHG_TS" IS NOT NULL);
+

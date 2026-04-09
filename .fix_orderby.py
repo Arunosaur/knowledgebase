@@ -1,0 +1,30 @@
+#!/usr/bin/env python3
+import json
+
+intent_file = '/Users/asrajag/Workspace/oracle/knowledgeBase/semantic-index/intents.json'
+
+with open(intent_file, 'r') as f:
+    intents = json.load(f)
+
+for i, entry in enumerate(intents):
+    if entry.get('id') == 'si-shipment-max-units-dc':
+        # Use COUNT(*) directly in ORDER BY (avoid alias reference in ORDER BY)
+        entry['sqlTemplate'] = (
+            "SELECT sh.shipment_id, sh.shipment_status, "
+            "COUNT(*) AS total_orders, sh.create_date_time "
+            "FROM {schema}.shipment sh "
+            "JOIN {schema}.orders ord ON sh.tc_shipment_id = ord.tc_shipment_id "
+            "WHERE sh.shipment_status < 80 "
+            "GROUP BY sh.shipment_id, sh.shipment_status, sh.create_date_time "
+            "ORDER BY COUNT(*) DESC"
+        )
+        intents[i] = entry
+        print(f"✓ Updated: ORDER BY COUNT(*) DESC (no alias)")
+        print(f"  {entry['sqlTemplate'][:100]}...")
+        break
+
+with open(intent_file, 'w') as f:
+    json.dump(intents, f, indent=2)
+    f.write('\n')
+
+print("✓ Saved")

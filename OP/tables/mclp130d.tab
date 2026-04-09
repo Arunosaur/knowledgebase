@@ -1,0 +1,40 @@
+create table MCLP130D
+(
+  prcdtd           NUMBER(6),
+  prctmd           NUMBER(6),
+  disdad           NUMBER(3),
+  ddisld           VARCHAR2(4),
+  dregld           VARCHAR2(4),
+  dlosld           VARCHAR2(4),
+  nordid           VARCHAR2(25),
+  nordud           VARCHAR2(3),
+  uspznd           VARCHAR2(3),
+  usbznd           VARCHAR2(3),
+  dysold           NUMBER(3),
+  mnmxqd           NUMBER(3),
+  dvmxqd           NUMBER(9),
+  mdupld           NUMBER(3),
+  dbtmzd           VARCHAR2(3),
+  dvtmzd           VARCHAR2(3),
+  dislad           NUMBER(3) default 7,
+  llr_future_hrs   NUMBER(3),
+  hrs_since_prc_ts NUMBER(3),
+  cig_slow_slot_cd VARCHAR2(3) default 'UNK',
+  div_part         NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+;
+alter table MCLP130D
+  add constraint PK_MCLP130D primary key (DIV_PART);
+alter table MCLP130D
+  add constraint MCLP130D_CHK_1
+  check (DISLAD between 1 and 999);
+alter table MCLP130D
+  add constraint MCLP130D_CHK_2
+  check (cig_slow_slot_cd in ('UNK', 'USB', 'USP'));
+alter table MCLP130D
+  add constraint MCL_CHK_01_OCT_16_225615311
+  check ("CIG_SLOW_SLOT_CD" IS NOT NULL);
+alter table MCLP130D
+  add constraint MCL_CHK_01_OCT_16_225615312
+  check ("DIV_PART" IS NOT NULL);
+

@@ -1,0 +1,9 @@
+create sequence MQ_PUT_ID_SEQ
+minvalue 1
+maxvalue 2000000000
+start with 719521737
+increment by 1
+cache 100000
+cycle
+order;
+

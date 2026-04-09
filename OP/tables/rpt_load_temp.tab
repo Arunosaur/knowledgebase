@@ -1,0 +1,6 @@
+create global temporary table RPT_LOAD_TEMP
+(
+  load VARCHAR2(4)
+)
+on commit delete rows;
+

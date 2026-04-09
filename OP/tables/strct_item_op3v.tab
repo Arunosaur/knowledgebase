@@ -1,0 +1,16 @@
+create table STRCT_ITEM_OP3V
+(
+  cbr_vndr_id NUMBER not null,
+  item_num    VARCHAR2(9) not null,
+  uom         VARCHAR2(3) not null,
+  div_part    NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part') not null
+)
+;
+create index FK_OP3V_OP1V_01 on STRCT_ITEM_OP3V (DIV_PART, CBR_VNDR_ID)
+  compress;
+alter table STRCT_ITEM_OP3V
+  add constraint PK_OP3V primary key (DIV_PART, CBR_VNDR_ID, ITEM_NUM, UOM);
+alter table STRCT_ITEM_OP3V
+  add constraint FK_OP3V_OP1V_01 foreign key (DIV_PART, CBR_VNDR_ID)
+  references VNDR_MSTR_OP1V (DIV_PART, CBR_VNDR_ID) on delete cascade;
+

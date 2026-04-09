@@ -1,0 +1,41 @@
+create table PRTCTD_ALLOC_LOG_OP1A
+(
+  tran_id     NUMBER(11) not null,
+  prtctd_id   NUMBER(8),
+  ord_num     NUMBER(11),
+  ln_num      NUMBER(7,2),
+  qty         NUMBER(13,4),
+  last_chg_ts DATE default SYSDATE,
+  stat_cd     VARCHAR2(3) default 'RLS',
+  div_part    NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+;
+create index FK_OP1A_OP1I_01 on PRTCTD_ALLOC_LOG_OP1A (DIV_PART, PRTCTD_ID)
+  compress;
+alter table PRTCTD_ALLOC_LOG_OP1A
+  add constraint PK_OP1A primary key (DIV_PART, TRAN_ID);
+alter table PRTCTD_ALLOC_LOG_OP1A
+  add constraint FK_OP1A_OP1I_01 foreign key (DIV_PART, PRTCTD_ID)
+  references PRTCTD_INV_OP1I (DIV_PART, PRTCTD_ID) on delete cascade;
+alter table PRTCTD_ALLOC_LOG_OP1A
+  add constraint MCL_CHK_01_OCT_16_225615133
+  check ("PRTCTD_ID" IS NOT NULL);
+alter table PRTCTD_ALLOC_LOG_OP1A
+  add constraint MCL_CHK_01_OCT_16_225615134
+  check ("ORD_NUM" IS NOT NULL);
+alter table PRTCTD_ALLOC_LOG_OP1A
+  add constraint MCL_CHK_01_OCT_16_225615135
+  check ("LN_NUM" IS NOT NULL);
+alter table PRTCTD_ALLOC_LOG_OP1A
+  add constraint MCL_CHK_01_OCT_16_225615136
+  check ("QTY" IS NOT NULL);
+alter table PRTCTD_ALLOC_LOG_OP1A
+  add constraint MCL_CHK_01_OCT_16_225615138
+  check ("STAT_CD" IS NOT NULL);
+alter table PRTCTD_ALLOC_LOG_OP1A
+  add constraint MCL_CHK_01_OCT_16_225615139
+  check ("DIV_PART" IS NOT NULL);
+alter table PRTCTD_ALLOC_LOG_OP1A
+  add constraint PRCTD_ALLOC_LOG_OP1A_CHK1
+  check (STAT_CD in(     'PCK', 'RLS', 'BKR', 'BKS'));
+

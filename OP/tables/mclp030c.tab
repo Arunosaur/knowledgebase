@@ -1,0 +1,17 @@
+create table MCLP030C
+(
+  custc       VARCHAR2(8) not null,
+  taxjrc      VARCHAR2(3),
+  tax_city_cd NUMBER(3),
+  tax_cnty_cd NUMBER(3),
+  div_part    NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+compress for all operations;
+comment on column MCLP030C.custc
+  is 'This is the CBR Customer Number.';
+alter table MCLP030C
+  add constraint PK_MCLP030C primary key (DIV_PART, CUSTC);
+alter table MCLP030C
+  add constraint MCL_CHK_01_OCT_16_225615632
+  check ("DIV_PART" IS NOT NULL);
+

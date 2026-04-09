@@ -1,0 +1,47 @@
+create table MCLANE_MQ_PUT
+(
+  mq_put_id      NUMBER,
+  mq_msg_id      VARCHAR2(10),
+  mq_msg_status  VARCHAR2(3),
+  create_ts      DATE default sysdate,
+  last_chg_ts    DATE default sysdate,
+  mq_msg_data    VARCHAR2(400),
+  mq_corr_put_id NUMBER default 0,
+  div_part       NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+compress for all operations;
+create index FK_MCLANE_MQ_P_MCLANE_MQ_G_01 on MCLANE_MQ_PUT (DIV_PART, MQ_MSG_ID)
+  compress;
+alter table MCLANE_MQ_PUT
+  add constraint UNQ_MCLANE_MQ_PUT_01 unique (DIV_PART, MQ_PUT_ID);
+alter table MCLANE_MQ_PUT
+  add constraint FK_MCLANE_MQ_P_MCLANE_MQ_G_01 foreign key (DIV_PART, MQ_MSG_ID)
+  references MCLANE_MQ_GP_CONTROL (DIV_PART, MQ_MSG_ID);
+alter table MCLANE_MQ_PUT
+  add constraint MCL_CHK_01_OCT_16_225615159
+  check ("MQ_PUT_ID" IS NOT NULL);
+alter table MCLANE_MQ_PUT
+  add constraint MCL_CHK_01_OCT_16_225615160
+  check ("MQ_MSG_ID" IS NOT NULL);
+alter table MCLANE_MQ_PUT
+  add constraint MCL_CHK_01_OCT_16_225615161
+  check ("MQ_MSG_STATUS" IS NOT NULL);
+alter table MCLANE_MQ_PUT
+  add constraint MCL_CHK_01_OCT_16_225615162
+  check ("CREATE_TS" IS NOT NULL);
+alter table MCLANE_MQ_PUT
+  add constraint MCL_CHK_01_OCT_16_225615163
+  check ("LAST_CHG_TS" IS NOT NULL);
+alter table MCLANE_MQ_PUT
+  add constraint MCL_CHK_01_OCT_16_225615164
+  check ("MQ_MSG_DATA" IS NOT NULL);
+alter table MCLANE_MQ_PUT
+  add constraint MCL_CHK_01_OCT_16_225615165
+  check ("MQ_CORR_PUT_ID" IS NOT NULL);
+alter table MCLANE_MQ_PUT
+  add constraint MCL_CHK_01_OCT_16_225615166
+  check ("DIV_PART" IS NOT NULL);
+alter table MCLANE_MQ_PUT
+  add constraint MQ_PUT_MQ_MSG_STATUS_CK
+  check (mq_msg_status in ('OPN', 'CMP', 'PRB', 'WRK'));
+

@@ -1,0 +1,33 @@
+create table GOV_CNTL_ITEM_P660A
+(
+  gov_cntl_id NUMBER(9) not null,
+  item_num    VARCHAR2(25) not null,
+  uom         VARCHAR2(3) not null,
+  gov_cntl_pt NUMBER(15,4),
+  div_part    NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+;
+comment on column GOV_CNTL_ITEM_P660A.gov_cntl_id
+  is 'Government Control Identifier';
+comment on column GOV_CNTL_ITEM_P660A.item_num
+  is 'Item Number';
+comment on column GOV_CNTL_ITEM_P660A.uom
+  is 'Unit Of Measure';
+comment on column GOV_CNTL_ITEM_P660A.gov_cntl_pt
+  is 'Point Value of Item';
+create index FK_GOV_CNTL_IT_GOV_CNTL_P6_01 on GOV_CNTL_ITEM_P660A (DIV_PART, GOV_CNTL_ID)
+  compress;
+create index FK_GOV_CNTL_IT_SAWP505E_01 on GOV_CNTL_ITEM_P660A (ITEM_NUM, UOM)
+  compress;
+alter table GOV_CNTL_ITEM_P660A
+  add constraint PK_GOV_CNTL_ITEM_P660A primary key (DIV_PART, GOV_CNTL_ID, ITEM_NUM, UOM);
+alter table GOV_CNTL_ITEM_P660A
+  add constraint FK_GOV_CNTL_IT_SAWP505E_01 foreign key (ITEM_NUM, UOM)
+  references SAWP505E (ITEME, UOME) on delete cascade;
+alter table GOV_CNTL_ITEM_P660A
+  add constraint MCL_CHK_01_OCT_16_225615612
+  check ("GOV_CNTL_PT" IS NOT NULL);
+alter table GOV_CNTL_ITEM_P660A
+  add constraint MCL_CHK_01_OCT_16_225615613
+  check ("DIV_PART" IS NOT NULL);
+

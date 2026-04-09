@@ -1,0 +1,22 @@
+create table CUST_RTE_REQ_OP4C
+(
+  cust_rte_req_sid NUMBER generated always as identity,
+  div_part         NUMBER not null,
+  llr_dt           DATE not null,
+  load_num         VARCHAR2(4) not null,
+  cust_id          VARCHAR2(8) not null,
+  new_llr_dt       DATE not null,
+  new_load_num     VARCHAR2(4) not null,
+  new_depart_ts    DATE not null,
+  new_stop_num     NUMBER not null,
+  new_eta_ts       DATE not null,
+  ord_num_list     CLOB,
+  stat_cd          VARCHAR2(3) not null,
+  err_msg          VARCHAR2(80),
+  create_ts        DATE not null,
+  last_chg_ts      DATE not null
+)
+;
+alter table CUST_RTE_REQ_OP4C
+  add constraint PK_OP4C primary key (CUST_RTE_REQ_SID);
+

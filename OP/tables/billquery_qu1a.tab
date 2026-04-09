@@ -1,0 +1,24 @@
+create table BILLQUERY_QU1A
+(
+  query_name  VARCHAR2(30),
+  query_txt   VARCHAR2(600),
+  user_id     VARCHAR2(30) default USER,
+  last_chg_ts DATE default SYSDATE,
+  div_part    NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+;
+alter table BILLQUERY_QU1A
+  add constraint PK_QU1A primary key (DIV_PART, QUERY_NAME);
+alter table BILLQUERY_QU1A
+  add constraint MCL_CHK_01_OCT_16_22561584
+  check ("QUERY_NAME" IS NOT NULL);
+alter table BILLQUERY_QU1A
+  add constraint MCL_CHK_01_OCT_16_22561595
+  check ("USER_ID" IS NOT NULL);
+alter table BILLQUERY_QU1A
+  add constraint MCL_CHK_01_OCT_16_22561596
+  check ("LAST_CHG_TS" IS NOT NULL);
+alter table BILLQUERY_QU1A
+  add constraint MCL_CHK_01_OCT_16_22561597
+  check ("DIV_PART" IS NOT NULL);
+

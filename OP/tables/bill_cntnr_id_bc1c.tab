@@ -1,0 +1,138 @@
+create table BILL_CNTNR_ID_BC1C
+(
+  ord_num       NUMBER(11),
+  ord_ln_num    NUMBER(7,2) not null,
+  orig_cntnr_id VARCHAR2(20),
+  orig_qty      NUMBER(9),
+  adj_cntnr_id  VARCHAR2(20),
+  adj_qty       NUMBER(9),
+  div_part      NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part'),
+  create_dt     DATE default SYSDATE not null
+)
+partition by range (DIV_PART)
+(
+  partition DIV_PART01 values less than (2)
+    tablespace OP_TABLES,
+  partition DIV_PART02 values less than (3)
+    tablespace OP_TABLES,
+  partition DIV_PART03 values less than (4)
+    tablespace OP_TABLES,
+  partition DIV_PART04 values less than (5)
+    tablespace OP_TABLES,
+  partition DIV_PART05 values less than (6)
+    tablespace OP_TABLES,
+  partition DIV_PART06 values less than (7)
+    tablespace OP_TABLES,
+  partition DIV_PART07 values less than (8)
+    tablespace OP_TABLES,
+  partition DIV_PART08 values less than (9)
+    tablespace OP_TABLES,
+  partition DIV_PART09 values less than (10)
+    tablespace OP_TABLES,
+  partition DIV_PART10 values less than (11)
+    tablespace OP_TABLES,
+  partition DIV_PART11 values less than (12)
+    tablespace OP_TABLES,
+  partition DIV_PART12 values less than (13)
+    tablespace OP_TABLES,
+  partition DIV_PART13 values less than (14)
+    tablespace OP_TABLES,
+  partition DIV_PART14 values less than (15)
+    tablespace OP_TABLES,
+  partition DIV_PART15 values less than (16)
+    tablespace OP_TABLES,
+  partition DIV_PART16 values less than (17)
+    tablespace OP_TABLES,
+  partition DIV_PART17 values less than (18)
+    tablespace OP_TABLES,
+  partition DIV_PART18 values less than (19)
+    tablespace OP_TABLES,
+  partition DIV_PART19 values less than (20)
+    tablespace OP_TABLES,
+  partition DIV_PART20 values less than (21)
+    tablespace OP_TABLES,
+  partition DIV_PART21 values less than (22)
+    tablespace OP_TABLES,
+  partition DIV_PART22 values less than (23)
+    tablespace OP_TABLES,
+  partition DIV_PART23 values less than (24)
+    tablespace OP_TABLES,
+  partition DIV_PART24 values less than (25)
+    tablespace OP_TABLES,
+  partition DIV_PART25 values less than (26)
+    tablespace OP_TABLES,
+  partition DIV_PART26 values less than (27)
+    tablespace OP_TABLES,
+  partition DIV_PART27 values less than (28)
+    tablespace OP_TABLES,
+  partition DIV_PART28 values less than (29)
+    tablespace OP_TABLES,
+  partition DIV_PART29 values less than (30)
+    tablespace OP_TABLES,
+  partition DIV_PART30 values less than (31)
+    tablespace OP_TABLES,
+  partition DIV_PART31 values less than (32)
+    tablespace OP_TABLES,
+  partition DIV_PART32 values less than (33)
+    tablespace OP_TABLES,
+  partition DIV_PART33 values less than (34)
+    tablespace OP_TABLES,
+  partition DIV_PART34 values less than (35)
+    tablespace OP_TABLES,
+  partition DIV_PART35 values less than (36)
+    tablespace OP_TABLES,
+  partition DIV_PART36 values less than (37)
+    tablespace OP_TABLES,
+  partition DIV_PART37 values less than (38)
+    tablespace OP_TABLES,
+  partition DIV_PART38 values less than (39)
+    tablespace OP_TABLES,
+  partition DIV_PART39 values less than (40)
+    tablespace OP_TABLES,
+  partition DIV_PART40 values less than (41)
+    tablespace OP_TABLES,
+  partition DIV_PART41 values less than (42)
+    tablespace OP_TABLES,
+  partition DIV_PART42 values less than (43)
+    tablespace OP_TABLES,
+  partition DIV_PART43 values less than (44)
+    tablespace OP_TABLES,
+  partition DIV_PART44 values less than (45)
+    tablespace OP_TABLES,
+  partition DIV_PART45 values less than (46)
+    tablespace OP_TABLES,
+  partition DIV_PART46 values less than (47)
+    tablespace OP_TABLES,
+  partition DIV_PART47 values less than (48)
+    tablespace OP_TABLES,
+  partition DIV_PART48 values less than (49)
+    tablespace OP_TABLES,
+  partition DIV_PART49 values less than (50)
+    tablespace OP_TABLES,
+  partition DIV_PART50 values less than (51)
+    tablespace OP_TABLES,
+  partition DIV_PART51 values less than (52)
+    tablespace OP_TABLES,
+  partition DIV_OVERFLOW values less than (MAXVALUE)
+    tablespace OP_TABLES
+);
+comment on column BILL_CNTNR_ID_BC1C.create_dt
+  is 'The datetime the record was first added to the system';
+create index MCL_BC1C_IDX_01 on BILL_CNTNR_ID_BC1C (DIV_PART, ORIG_CNTNR_ID)
+  nologging  local;
+alter table BILL_CNTNR_ID_BC1C
+  add constraint PK_BC1C primary key (DIV_PART, ORD_NUM, ORD_LN_NUM, ORIG_CNTNR_ID);
+alter index PK_BC1C nologging;
+alter table BILL_CNTNR_ID_BC1C
+  add constraint MCL_CHK_01_OCT_16_225615569
+  check ("ORD_NUM" IS NOT NULL);
+alter table BILL_CNTNR_ID_BC1C
+  add constraint MCL_CHK_01_OCT_16_225615571
+  check ("ORIG_CNTNR_ID" IS NOT NULL);
+alter table BILL_CNTNR_ID_BC1C
+  add constraint MCL_CHK_01_OCT_16_225615572
+  check ("ORIG_QTY" IS NOT NULL);
+alter table BILL_CNTNR_ID_BC1C
+  add constraint MCL_CHK_01_OCT_16_225615573
+  check ("DIV_PART" IS NOT NULL);
+

@@ -1,0 +1,23 @@
+create table SPLIT_STA_ITM_OP1S
+(
+  state_cd  VARCHAR2(3) not null,
+  mcl_item  VARCHAR2(6) not null,
+  split_typ VARCHAR2(10)
+)
+;
+create index FK_OP1S_OP8S_01 on SPLIT_STA_ITM_OP1S (SPLIT_TYP)
+  compress;
+create index FK_OP1S_SAWP505E_01 on SPLIT_STA_ITM_OP1S (MCL_ITEM)
+  compress;
+alter table SPLIT_STA_ITM_OP1S
+  add constraint PK_OP1S primary key (STATE_CD, MCL_ITEM, SPLIT_TYP);
+alter table SPLIT_STA_ITM_OP1S
+  add constraint FK_OP1S_OP8S_01 foreign key (SPLIT_TYP)
+  references SPLIT_DMN_OP8S (SPLIT_TYP) on delete cascade;
+alter table SPLIT_STA_ITM_OP1S
+  add constraint FK_OP1S_SAWP505E_01 foreign key (MCL_ITEM)
+  references SAWP505E (CATITE) on delete cascade;
+alter table SPLIT_STA_ITM_OP1S
+  add constraint MCL_CHK_01_OCT_16_225615557
+  check ("SPLIT_TYP" IS NOT NULL);
+

@@ -1,0 +1,70 @@
+create table ORDP920B
+(
+  statb     VARCHAR2(1),
+  ordnob    NUMBER(11),
+  lineb     NUMBER(7,2),
+  itemnb    VARCHAR2(25),
+  ordqtb    NUMBER(13,4),
+  alcqtb    NUMBER(13,4),
+  pckqtb    NUMBER(13,4),
+  shpidb    VARCHAR2(20),
+  orgqtb    NUMBER(13,4),
+  sllumb    VARCHAR2(3),
+  cusitb    VARCHAR2(25),
+  zipcdb    VARCHAR2(15),
+  orditb    VARCHAR2(6),
+  itpasb    VARCHAR2(20),
+  rtfixb    VARCHAR2(1),
+  prfixb    VARCHAR2(1),
+  hdrtab    NUMBER(9,2),
+  hdrtmb    NUMBER(5),
+  hdprcb    NUMBER(9,2),
+  actqtb    NUMBER(13,4),
+  bymaxb    VARCHAR2(1),
+  manctb    VARCHAR2(3),
+  totctb    VARCHAR2(3),
+  authb     VARCHAR2(1),
+  ntshpb    VARCHAR2(8),
+  prstdb    NUMBER(6),
+  prsttb    NUMBER(6),
+  maxqtb    NUMBER(9),
+  qtmulb    NUMBER(9),
+  invctb    NUMBER(3),
+  labctb    NUMBER(3),
+  depdtb    NUMBER(6),
+  deptmb    NUMBER(6),
+  subrcb    NUMBER(3),
+  repckb    VARCHAR2(1),
+  orgitb    VARCHAR2(6),
+  excptn_sw VARCHAR2(1) default 'N',
+  div_part  NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+compress for all operations;
+comment on column ORDP920B.statb
+  is 'This is the Detail Order Line Status.';
+comment on column ORDP920B.lineb
+  is 'This is the Order Detail Line Number.';
+comment on column ORDP920B.itemnb
+  is 'This represents the code for an Item Number.';
+comment on column ORDP920B.ordqtb
+  is 'This is the Order Quantity Stock.';
+comment on column ORDP920B.sllumb
+  is 'This is the Selling Unit of Measure.';
+comment on column ORDP920B.cusitb
+  is 'This is the Customer Item Code.';
+comment on column ORDP920B.excptn_sw
+  is 'Exception Switch';
+create index N_ORDP920B_01 on ORDP920B (ORDITB, ORDNOB, DIV_PART)
+  compress;
+alter table ORDP920B
+  add constraint UNQ_ORDP920B_01 unique (DIV_PART, ORDNOB, LINEB);
+alter table ORDP920B
+  add constraint MCL_CHK_01_OCT_16_225615404
+  check ("EXCPTN_SW" IS NOT NULL);
+alter table ORDP920B
+  add constraint MCL_CHK_01_OCT_16_225615405
+  check ("DIV_PART" IS NOT NULL);
+alter table ORDP920B
+  add constraint ORDP920B_CHK1
+  check (EXCPTN_SW in('Y', 'N'));
+

@@ -1,0 +1,22 @@
+create table PRCS_CNTL_RSTRN_CN2P
+(
+  prcs_id  VARCHAR2(30),
+  rstrn_id VARCHAR2(30) not null
+)
+;
+create index FK_CN2P_CN1P_01 on PRCS_CNTL_RSTRN_CN2P (PRCS_ID)
+  compress;
+create index FK_CN2P_CN1P_02 on PRCS_CNTL_RSTRN_CN2P (RSTRN_ID)
+  compress;
+alter table PRCS_CNTL_RSTRN_CN2P
+  add constraint PK_CN2P primary key (PRCS_ID, RSTRN_ID);
+alter table PRCS_CNTL_RSTRN_CN2P
+  add constraint FK_CN2P_CN1P_01 foreign key (PRCS_ID)
+  references PRCS_CNTL_DFN_CN1P (PRCS_ID);
+alter table PRCS_CNTL_RSTRN_CN2P
+  add constraint FK_CN2P_CN1P_02 foreign key (RSTRN_ID)
+  references PRCS_CNTL_DFN_CN1P (PRCS_ID);
+alter table PRCS_CNTL_RSTRN_CN2P
+  add constraint MCL_CHK_01_OCT_16_225615325
+  check ("PRCS_ID" IS NOT NULL);
+

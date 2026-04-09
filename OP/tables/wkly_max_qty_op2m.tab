@@ -1,0 +1,36 @@
+create table WKLY_MAX_QTY_OP2M
+(
+  cust_item_sid NUMBER,
+  eff_dt        DATE not null,
+  end_dt        DATE,
+  max_qty       NUMBER,
+  dist_sw       VARCHAR2(1),
+  div_part      NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+compress for all operations;
+create index FK_OP2M_OP1M_01 on WKLY_MAX_QTY_OP2M (DIV_PART, CUST_ITEM_SID)
+  compress;
+alter table WKLY_MAX_QTY_OP2M
+  add constraint PK_OP2M primary key (DIV_PART, CUST_ITEM_SID, EFF_DT);
+alter table WKLY_MAX_QTY_OP2M
+  add constraint FK_OP2M_OP1M_01 foreign key (DIV_PART, CUST_ITEM_SID)
+  references WKLY_MAX_CUST_ITEM_OP1M (DIV_PART, CUST_ITEM_SID) on delete cascade;
+alter table WKLY_MAX_QTY_OP2M
+  add constraint CHK_OP2M_DIST_SW
+  check (dist_sw IN ('Y', 'N'));
+alter table WKLY_MAX_QTY_OP2M
+  add constraint MCL_CHK_01_OCT_16_225615256
+  check ("CUST_ITEM_SID" IS NOT NULL);
+alter table WKLY_MAX_QTY_OP2M
+  add constraint MCL_CHK_01_OCT_16_225615258
+  check ("END_DT" IS NOT NULL);
+alter table WKLY_MAX_QTY_OP2M
+  add constraint MCL_CHK_01_OCT_16_225615259
+  check ("MAX_QTY" IS NOT NULL);
+alter table WKLY_MAX_QTY_OP2M
+  add constraint MCL_CHK_01_OCT_16_225615260
+  check ("DIST_SW" IS NOT NULL);
+alter table WKLY_MAX_QTY_OP2M
+  add constraint MCL_CHK_01_OCT_16_225615261
+  check ("DIV_PART" IS NOT NULL);
+

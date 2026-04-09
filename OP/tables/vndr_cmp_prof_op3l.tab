@@ -1,0 +1,25 @@
+create table VNDR_CMP_PROF_OP3L
+(
+  prof_id NUMBER,
+  descr   VARCHAR2(40),
+  pct     NUMBER,
+  typ     VARCHAR2(3) default 'DVC'
+)
+;
+create index N_OP3L_01 on VNDR_CMP_PROF_OP3L (TYP, PROF_ID)
+  compress;
+alter table VNDR_CMP_PROF_OP3L
+  add constraint PK_OP3L primary key (PROF_ID);
+alter table VNDR_CMP_PROF_OP3L
+  add constraint MCL_CHK_01_OCT_16_225615457
+  check ("PROF_ID" IS NOT NULL);
+alter table VNDR_CMP_PROF_OP3L
+  add constraint MCL_CHK_01_OCT_16_225615458
+  check ("DESCR" IS NOT NULL);
+alter table VNDR_CMP_PROF_OP3L
+  add constraint MCL_CHK_01_OCT_16_225615459
+  check ("PCT" IS NOT NULL);
+alter table VNDR_CMP_PROF_OP3L
+  add constraint MCL_CHK_01_OCT_16_225615460
+  check ("TYP" IS NOT NULL);
+

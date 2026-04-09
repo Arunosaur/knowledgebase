@@ -1,0 +1,14 @@
+create table RTE_GRP_ORD_RT3O
+(
+  rte_grp_num NUMBER not null,
+  ord_num     NUMBER not null
+)
+;
+create index FK_RT3O_RT2G_01 on RTE_GRP_ORD_RT3O (RTE_GRP_NUM)
+  compress;
+alter table RTE_GRP_ORD_RT3O
+  add constraint PK_RT3O primary key (RTE_GRP_NUM, ORD_NUM);
+alter table RTE_GRP_ORD_RT3O
+  add constraint FK_RT3O_RT2G_01 foreign key (RTE_GRP_NUM)
+  references RTE_GRP_RT2G (RTE_GRP_NUM) on delete cascade;
+

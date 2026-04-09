@@ -1,0 +1,15 @@
+create table BUNDL_DIST_ITEM_BD1I
+(
+  dist_id  VARCHAR2(10) not null,
+  dist_sfx NUMBER not null,
+  item_num VARCHAR2(25) not null,
+  unq_cd   VARCHAR2(3),
+  div_part NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part') not null
+)
+;
+alter table BUNDL_DIST_ITEM_BD1I
+  add constraint PK_BD1I primary key (DIV_PART, DIST_ID, DIST_SFX, ITEM_NUM, UNQ_CD);
+alter table BUNDL_DIST_ITEM_BD1I
+  add constraint MCL_CHK_01_OCT_16_225615440
+  check ("UNQ_CD" IS NOT NULL);
+

@@ -1,0 +1,11 @@
+create table SAWP652E
+(
+  state  VARCHAR2(1),
+  trntye VARCHAR2(2),
+  trdsce VARCHAR2(40),
+  extcte VARCHAR2(1)
+)
+;
+alter table SAWP652E
+  add constraint UNQ_SAWP652E_01 unique (TRNTYE);
+

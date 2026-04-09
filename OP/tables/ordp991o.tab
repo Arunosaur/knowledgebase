@@ -1,0 +1,16 @@
+create table ORDP991O
+(
+  stato  VARCHAR2(1),
+  otypeo VARCHAR2(2) not null,
+  otdsco VARCHAR2(40),
+  vso    VARCHAR2(1),
+  prtyo  NUMBER(2),
+  allco  VARCHAR2(1),
+  pckso  VARCHAR2(1),
+  pckco  VARCHAR2(1),
+  alcrto VARCHAR2(1)
+)
+;
+alter table ORDP991O
+  add constraint PK_ORDP991O primary key (OTYPEO);
+

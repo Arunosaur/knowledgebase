@@ -1,0 +1,71 @@
+create table CUST_AUTO_RTE_RT2C
+(
+  rte_grp_num   NUMBER,
+  cust_id       VARCHAR2(8),
+  llr_dt        DATE,
+  load_num      VARCHAR2(4),
+  depart_ts     DATE,
+  stop_num      NUMBER,
+  eta_ts        DATE,
+  new_load      VARCHAR2(4),
+  new_depart_ts DATE,
+  new_stop      NUMBER,
+  new_eta_ts    DATE,
+  stat_cd       VARCHAR2(3),
+  last_chg_ts   DATE,
+  user_id       VARCHAR2(8),
+  err_msg       VARCHAR2(80),
+  div_part      NUMBER(3) default SYS_CONTEXT('userinfo', 'div_part')
+)
+;
+alter table CUST_AUTO_RTE_RT2C
+  add constraint PK_RT2C primary key (DIV_PART, RTE_GRP_NUM, CUST_ID, LLR_DT);
+alter table CUST_AUTO_RTE_RT2C
+  add constraint CHK_RT2C_STAT_CD
+  check (stat_cd IN ('NCH','IMP','WRK','CMP','CAN','ERR'));
+alter table CUST_AUTO_RTE_RT2C
+  add constraint MCL_CHK_01_OCT_16_2256151
+  check ("STAT_CD" IS NOT NULL);
+alter table CUST_AUTO_RTE_RT2C
+  add constraint MCL_CHK_01_OCT_16_2256152
+  check ("LAST_CHG_TS" IS NOT NULL);
+alter table CUST_AUTO_RTE_RT2C
+  add constraint MCL_CHK_01_OCT_16_2256153
+  check ("USER_ID" IS NOT NULL);
+alter table CUST_AUTO_RTE_RT2C
+  add constraint MCL_CHK_01_OCT_16_2256154
+  check ("DIV_PART" IS NOT NULL);
+alter table CUST_AUTO_RTE_RT2C
+  add constraint MCL_CHK_01_OCT_16_225615618
+  check ("RTE_GRP_NUM" IS NOT NULL);
+alter table CUST_AUTO_RTE_RT2C
+  add constraint MCL_CHK_01_OCT_16_225615619
+  check ("CUST_ID" IS NOT NULL);
+alter table CUST_AUTO_RTE_RT2C
+  add constraint MCL_CHK_01_OCT_16_225615620
+  check ("LLR_DT" IS NOT NULL);
+alter table CUST_AUTO_RTE_RT2C
+  add constraint MCL_CHK_01_OCT_16_225615621
+  check ("LOAD_NUM" IS NOT NULL);
+alter table CUST_AUTO_RTE_RT2C
+  add constraint MCL_CHK_01_OCT_16_225615622
+  check ("DEPART_TS" IS NOT NULL);
+alter table CUST_AUTO_RTE_RT2C
+  add constraint MCL_CHK_01_OCT_16_225615623
+  check ("STOP_NUM" IS NOT NULL);
+alter table CUST_AUTO_RTE_RT2C
+  add constraint MCL_CHK_01_OCT_16_225615624
+  check ("ETA_TS" IS NOT NULL);
+alter table CUST_AUTO_RTE_RT2C
+  add constraint MCL_CHK_01_OCT_16_225615625
+  check ("NEW_LOAD" IS NOT NULL);
+alter table CUST_AUTO_RTE_RT2C
+  add constraint MCL_CHK_01_OCT_16_225615626
+  check ("NEW_DEPART_TS" IS NOT NULL);
+alter table CUST_AUTO_RTE_RT2C
+  add constraint MCL_CHK_01_OCT_16_225615627
+  check ("NEW_STOP" IS NOT NULL);
+alter table CUST_AUTO_RTE_RT2C
+  add constraint MCL_CHK_01_OCT_16_225615628
+  check ("NEW_ETA_TS" IS NOT NULL);
+
