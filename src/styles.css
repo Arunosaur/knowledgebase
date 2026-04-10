@@ -1,0 +1,102 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #f3f1ea;
+  --panel: #fffdf7;
+  --ink: #13213a;
+  --muted: #5b667b;
+  --accent: #0f9d58;
+  --accent-2: #f4a261;
+  --danger: #d62828;
+  --line: #d7d2c4;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: 'IBM Plex Sans', sans-serif;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 15% 20%, rgba(244, 162, 97, 0.18), transparent 35%),
+    radial-gradient(circle at 80% 0%, rgba(15, 157, 88, 0.15), transparent 42%),
+    linear-gradient(180deg, #f8f6ef 0%, #efe8db 100%);
+  min-height: 100vh;
+}
+
+.app-shell { max-width: 1200px; margin: 0 auto; padding: 18px; }
+.hero h1 { font-family: 'Space Grotesk', sans-serif; margin: 0; font-size: clamp(1.6rem, 3vw, 2.8rem); }
+.hero p { color: var(--muted); margin: 6px 0 12px; }
+.mode-row { display: flex; gap: 10px; }
+button {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--ink);
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+button.active, button:hover { border-color: var(--accent); }
+button.secondary { border-style: dashed; }
+
+.health-badge { display: flex; gap: 12px; margin: 12px 0; color: var(--muted); }
+.dot { display: inline-block; width: 8px; height: 8px; border-radius: 999px; margin-right: 6px; }
+.dot.ok { background: var(--accent); }
+.dot.bad { background: var(--danger); }
+.demo-banner { background: #ffe58a; padding: 8px 12px; border-radius: 10px; margin: 10px 0; }
+
+.ask-mode, .panel-card, .settings-panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px;
+  margin-top: 14px;
+}
+.sample-wrap { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.sample-chip { font-size: 0.85rem; }
+.thread { display: grid; gap: 10px; max-height: 46vh; overflow: auto; margin-bottom: 10px; }
+.msg { border: 1px solid var(--line); border-radius: 12px; padding: 10px; }
+.msg-user { background: #edf7ff; }
+.msg-assistant { background: #fff; }
+.msg-role { font-size: 0.75rem; color: var(--muted); margin-bottom: 4px; }
+.msg-content { white-space: pre-wrap; }
+.msg-pills { display: flex; gap: 8px; margin-top: 8px; color: var(--muted); font-size: 0.85rem; }
+
+.input-row textarea, .hint-wrap input, .inline-form input, select {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 8px;
+  font: inherit;
+  background: white;
+}
+.input-actions { display: flex; gap: 8px; margin-top: 8px; }
+.hint-wrap { margin: 8px 0; }
+
+.context-wrap { margin-top: 8px; }
+.context-track { height: 8px; border-radius: 999px; background: #e8e3d5; overflow: hidden; }
+.context-fill { height: 100%; transition: width 200ms ease; }
+.context-line, .context-note { color: var(--muted); font-size: 0.85rem; margin-bottom: 4px; }
+.context-warning { border: 1px solid #f8b4b4; background: #fff1f1; border-radius: 10px; padding: 10px; margin-top: 8px; }
+.context-actions { display: flex; gap: 8px; margin-top: 8px; }
+.trim-note { color: var(--muted); font-size: 0.85rem; margin-top: 6px; }
+
+.group-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.group-card { text-align: left; }
+.group-title { font-family: 'Space Grotesk', sans-serif; font-weight: 700; }
+.group-meta, .group-health { color: var(--muted); font-size: 0.85rem; }
+
+.explore-header { display: flex; justify-content: space-between; gap: 10px; align-items: center; }
+.tab-row { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
+.inline-form { display: grid; grid-template-columns: 1fr 1fr 100px auto; gap: 8px; }
+.table-list { max-height: 45vh; overflow: auto; margin-top: 8px; display: grid; gap: 6px; }
+.erd-placeholder { padding: 18px; border: 1px dashed var(--line); border-radius: 10px; color: var(--muted); }
+.settings-panel { color: var(--muted); }
+.toast { position: fixed; bottom: 14px; right: 14px; background: #13213a; color: #fff; padding: 8px 12px; border-radius: 8px; }
+
+@media (max-width: 768px) {
+  .inline-form { grid-template-columns: 1fr; }
+  .mode-row { flex-wrap: wrap; }
+}

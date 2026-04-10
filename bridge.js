@@ -1722,6 +1722,40 @@ const server = http.createServer(async (req, res) => {
 
 
   try {
+    const reactIndex = path.join(__dirname, 'public', 'dist', 'index.html');
+    const hasReactBuild = fs.existsSync(reactIndex);
+    const apiPrefixes = [
+      '/health', '/pool-status', '/myip', '/semantic/', '/jira/', '/ollama/', '/knowledge/', '/docs/', '/db/', '/groups', '/config', '/debug/', '/msal-browser.min.js'
+    ];
+
+    const isApiPath = apiPrefixes.some(prefix => pathname === prefix || pathname.startsWith(prefix));
+
+    if (req.method === 'GET' && hasReactBuild) {
+      const distRelative = pathname.replace(/^\/+/, '');
+      const distCandidate = path.join(__dirname, 'public', 'dist', distRelative);
+      if (distRelative && fs.existsSync(distCandidate) && fs.statSync(distCandidate).isFile()) {
+        const ext = path.extname(distCandidate).toLowerCase();
+        const mime = {
+          '.js': 'application/javascript; charset=utf-8',
+          '.css': 'text/css; charset=utf-8',
+          '.json': 'application/json; charset=utf-8',
+          '.svg': 'image/svg+xml',
+          '.png': 'image/png',
+          '.jpg': 'image/jpeg',
+          '.jpeg': 'image/jpeg',
+          '.ico': 'image/x-icon',
+          '.map': 'application/json; charset=utf-8',
+        }[ext] || 'application/octet-stream';
+        res.writeHead(200, { 'Content-Type': mime });
+        return fs.createReadStream(distCandidate).pipe(res);
+      }
+
+      if (!isApiPath) {
+        res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+        return fs.createReadStream(reactIndex).pipe(res);
+      }
+    }
+
     if (pathname === '/' && req.method === 'GET') {
       const publicIndex = path.join(__dirname, 'public', 'index.html');
       const fallbackIndex = path.join(__dirname, 'knowledge-base.html');

@@ -251,6 +251,11 @@ echo
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "WMS·IQ is ready"
 echo "- App:            $LOCAL_URL"
+if [ -f "$ROOT/public/dist/index.html" ]; then
+  echo "⚛️  React UI available at $LOCAL_URL"
+else
+  echo "📄 Legacy UI at $LOCAL_URL (React build not found)"
+fi
 echo "- Bridge health:  $LOCAL_URL/health"
 echo "- Semantic health: http://127.0.0.1:3334/status"
 echo "- Bridge PID:     $BRIDGE_PID"
