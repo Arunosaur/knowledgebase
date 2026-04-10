@@ -20,6 +20,10 @@ const createOllamaRoutes = require('./lib/ollama-routes');
 const createSemanticRoutes = require('./lib/semantic-routes');
 const graphStore = require('./lib/graph-store');
 
+process.on('unhandledRejection', (reason) => {
+  console.error('[BRIDGE] Unhandled rejection:', reason);
+});
+
 // load config.json from same directory
 const cfgPath = path.join(__dirname, 'config.json');
 let config;
@@ -1750,7 +1754,7 @@ const server = http.createServer(async (req, res) => {
         return fs.createReadStream(distCandidate).pipe(res);
       }
 
-      if (!isApiPath) {
+      if (!isApiPath && (pathname === '/' || pathname === '/index.html')) {
         res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
         return fs.createReadStream(reactIndex).pipe(res);
       }

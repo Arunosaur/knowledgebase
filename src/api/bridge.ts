@@ -67,7 +67,8 @@ export const bridgeApi = {
   },
 
   docsList: () => request<{ files?: DocHit[] } | DocHit[]>('/docs/list'),
-  docsSearch: (q: string, limit = 10) => request<DocHit[]>(`/docs/search?q=${encodeURIComponent(q)}&limit=${limit}`),
+  docsSearch: (q: string, limit = 10, group?: string) =>
+    request<DocHit[]>(`/docs/search?q=${encodeURIComponent(q)}&limit=${limit}${group ? `&group=${encodeURIComponent(group)}` : ''}`),
 
   knowledgeSearch: (q: string, limit = 5) =>
     request<KnowledgeHit[]>(`/knowledge/search?q=${encodeURIComponent(q)}&limit=${limit}`),

@@ -1,7 +1,12 @@
 export interface DocHit {
-  fileId?: string;
-  fileName?: string;
+  chunk_text?: string;
   text?: string;
+  file_name?: string;
+  fileName?: string;
+  title?: string;
+  group_id?: string;
+  similarity?: string;
+  fileId?: string;
   score?: number;
 }
 
