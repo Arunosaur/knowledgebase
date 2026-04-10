@@ -14,6 +14,7 @@ function randomId(): string {
 export function useConversation(modelName: string, systemPrompt: string) {
   const [messages, setMessages] = useState<QAMessage[]>([]);
   const [trimNote, setTrimNote] = useState('');
+  const [currentTopic, setCurrentTopic] = useState('');
 
   const modelLimit = MODEL_LIMITS[modelName] || 8192;
 
@@ -80,16 +81,27 @@ export function useConversation(modelName: string, systemPrompt: string) {
     setTrimNote('');
   };
 
+  const updateTopic = (question: string) => {
+    const codeMatch = question.match(/\bEX\d+\b|\bSDN[-_]?\d+\b|\b[A-Z_]{4,}\b/);
+    if (codeMatch) {
+      setCurrentTopic(codeMatch[0]);
+    } else if (question.length > 20) {
+      setCurrentTopic(question.slice(0, 60));
+    }
+  };
+
   return {
     messages,
     tokenEstimate,
     modelLimit,
     usagePercent,
     trimNote,
+    currentTopic,
     appendUser,
     appendAssistant,
     clearConversation,
     summarizeAndReset,
+    updateTopic,
     getHistoryForModel,
   };
 }

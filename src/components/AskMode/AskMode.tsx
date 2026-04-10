@@ -99,16 +99,32 @@ export function AskMode({ activeGroup, defaultModel }: Props) {
         { role: 'user' as const, content: question },
       ];
 
-      const ai = await bridgeApi.ollamaChat({
-        model: defaultModel,
-        messages,
-        stream: false,
-      });
+      let ai: { response?: string; choices?: Array<{ message?: { content?: string } }> } | null = null;
+      let timeoutError = false;
+      try {
+        ai = await bridgeApi.ollamaChat({
+          model: defaultModel,
+          messages,
+          stream: false,
+        });
+      } catch (err) {
+        timeoutError = String(err).toLowerCase().includes('timeout') || String(err).toLowerCase().includes('504');
+      }
 
-      const content =
-        ai.response ||
-        ai.choices?.[0]?.message?.content ||
-        'I do not have enough information to answer right now.';
+      let content: string;
+      if (timeoutError) {
+        content = '⚠️ The AI took too long to respond. Try asking a more specific question.';
+      } else if (ai) {
+        content =
+          ai.response ||
+          ai.choices?.[0]?.message?.content ||
+          '';
+        if (!content.trim()) {
+          content = "I don't have enough information to answer right now.";
+        }
+      } else {
+        content = "I don't have enough information to answer right now.";
+      }
 
       convo.appendAssistant({
         content,
@@ -117,6 +133,8 @@ export function AskMode({ activeGroup, defaultModel }: Props) {
         jiraHits: jiraIssues,
         dbHits: [],
       });
+
+      convo.updateTopic(question);
     } finally {
       setLoading(false);
     }

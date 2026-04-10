@@ -6,6 +6,7 @@ config.json
 docs-index/
 knowledge-index/
 semantic-index/
+semantic-index/scan-state.json
 pgdata/
 .bulk-upload-state.json
 .fix_*.py

@@ -53,6 +53,9 @@ SEMANTIC_INDEX_DIR.mkdir(parents=True, exist_ok=True)
 if not SEMANTIC_INDEX_PATH.exists():
     SEMANTIC_INDEX_PATH.write_text('[]\n', encoding='utf-8')
 
+# Persist scan state across restarts
+STATE_FILE = SEMANTIC_INDEX_DIR / 'scan-state.json'
+
 state = {
     'running': False,
     'paused': False,
@@ -66,6 +69,34 @@ state = {
 }
 state_lock = threading.Lock()
 index_lock = threading.Lock()
+
+
+def _load_state():
+    """Load persisted state fields on startup."""
+    if STATE_FILE.exists():
+        try:
+            saved = json.loads(STATE_FILE.read_text(encoding='utf-8'))
+            state['paused'] = bool(saved.get('paused', False))
+            state['pauseReason'] = saved.get('pauseReason', None)
+            state['lastScan'] = saved.get('lastScan', None)
+            print(f"[STATE] Loaded: paused={state['paused']} lastScan={state['lastScan']}")
+        except Exception as e:
+            print(f"[STATE] Could not load scan-state.json: {e}")
+
+
+def _save_state():
+    """Persist paused/lastScan to disk."""
+    try:
+        STATE_FILE.write_text(json.dumps({
+            'paused': state['paused'],
+            'pauseReason': state['pauseReason'],
+            'lastScan': state['lastScan'],
+        }), encoding='utf-8')
+    except Exception as e:
+        print(f"[STATE] Could not save scan-state.json: {e}")
+
+
+_load_state()
 
 auto_probe = {
     'queue': [],
@@ -528,6 +559,7 @@ def pause_scan():
         state['paused'] = True
         state['running'] = False
         state['pauseReason'] = 'manual-pause'
+        _save_state()
     return jsonify({'ok': True, 'paused': True})
 
 
@@ -536,6 +568,7 @@ def resume_scan():
     with state_lock:
         state['paused'] = False
         state['pauseReason'] = None
+        _save_state()
     return jsonify({'ok': True, 'paused': False})
 
 
@@ -892,6 +925,7 @@ def scan():
         state['paused'] = True
         state['pauseReason'] = 'auto-paused after full scan'
         state['currentSchema'] = schemas[0] if schemas else None
+        _save_state()
 
     items = _load_index()
     with state_lock:
